@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Namespace do
-  let!(:namespace) { create(:namespace) }
+  let!(:namespace) { build_stubbed(:namespace) }
 
   describe 'associations' do
     it { is_expected.to have_many :projects }
@@ -36,7 +36,7 @@ describe Namespace do
         it { expect(group).not_to be_valid }
 
         it 'rejects nested paths' do
-          parent = create(:group, :nested, path: 'environments')
+          parent = build_stubbed(:group, :nested, path: 'environments')
           namespace = build(:group, path: 'folders', parent: parent)
 
           expect(namespace).not_to be_valid
@@ -80,7 +80,7 @@ describe Namespace do
   end
 
   describe '.search' do
-    let(:namespace) { create(:namespace) }
+    let(:namespace) { build_stubbed(:namespace) }
 
     it 'returns namespaces with a matching name' do
       expect(described_class.search(namespace.name)).to eq([namespace])
@@ -111,7 +111,7 @@ describe Namespace do
     let(:namespace) { create :namespace }
 
     let(:project1) do
-      create(:project,
+      build_stubbed(:project,
              namespace: namespace,
              statistics: build(:project_statistics,
                                storage_size:         606,
@@ -121,7 +121,7 @@ describe Namespace do
     end
 
     let(:project2) do
-      create(:project,
+      build_stubbed(:project,
              namespace: namespace,
              statistics: build(:project_statistics,
                                storage_size:         60,
@@ -154,7 +154,7 @@ describe Namespace do
   describe '#move_dir' do
     before do
       @namespace = create :namespace
-      @project = create(:project_empty_repo, namespace: @namespace)
+      @project = build_stubbed(:project_empty_repo, namespace: @namespace)
       allow(@namespace).to receive(:path_changed?).and_return(true)
     end
 
@@ -171,13 +171,13 @@ describe Namespace do
     end
 
     context "when any project has container images" do
-      let(:container_repository) { create(:container_repository) }
+      let(:container_repository) { build_stubbed(:container_repository) }
 
       before do
         stub_container_registry_config(enabled: true)
         stub_container_registry_tags(repository: :any, tags: ['tag'])
 
-        create(:project, namespace: @namespace, container_repositories: [container_repository])
+        build_stubbed(:project, namespace: @namespace, container_repositories: [container_repository])
 
         allow(@namespace).to receive(:path_was).and_return(@namespace.path)
         allow(@namespace).to receive(:path).and_return('new_path')
@@ -189,9 +189,9 @@ describe Namespace do
     end
 
     context 'with subgroups' do
-      let(:parent) { create(:group, name: 'parent', path: 'parent') }
-      let(:child) { create(:group, name: 'child', path: 'child', parent: parent) }
-      let!(:project) { create(:project_empty_repo, path: 'the-project', namespace: child) }
+      let(:parent) { build_stubbed(:group, name: 'parent', path: 'parent') }
+      let(:child) { build_stubbed(:group, name: 'child', path: 'child', parent: parent) }
+      let!(:project) { build_stubbed(:project_empty_repo, path: 'the-project', namespace: child) }
       let(:uploads_dir) { File.join(CarrierWave.root, FileUploader.base_dir) }
       let(:pages_dir) { File.join(TestEnv.pages_path) }
 
@@ -231,7 +231,7 @@ describe Namespace do
   end
 
   describe '#rm_dir', 'callback' do
-    let!(:project) { create(:project_empty_repo, namespace: namespace) }
+    let!(:project) { build_stubbed(:project_empty_repo, namespace: namespace) }
     let(:repository_storage_path) { Gitlab.config.repositories.storages.default['path'] }
     let(:path_in_dir) { File.join(repository_storage_path, namespace.full_path) }
     let(:deleted_path) { namespace.full_path.gsub(namespace.path, "#{namespace.full_path}+#{namespace.id}+deleted") }
@@ -252,9 +252,9 @@ describe Namespace do
     end
 
     context 'in sub-groups' do
-      let(:parent) { create(:group, path: 'parent') }
-      let(:child) { create(:group, parent: parent, path: 'child') }
-      let!(:project) { create(:project_empty_repo, namespace: child) }
+      let(:parent) { build_stubbed(:group, path: 'parent') }
+      let(:child) { build_stubbed(:group, parent: parent, path: 'child') }
+      let!(:project) { build_stubbed(:project_empty_repo, namespace: child) }
       let(:path_in_dir) { File.join(repository_storage_path, 'parent', 'child') }
       let(:deleted_path) { File.join('parent', "child+#{child.id}+deleted") }
       let(:deleted_path_in_dir) { File.join(repository_storage_path, deleted_path) }
@@ -283,7 +283,7 @@ describe Namespace do
 
   describe '.find_by_path_or_name' do
     before do
-      @namespace = create(:namespace, name: 'WoW', path: 'woW')
+      @namespace = build_stubbed(:namespace, name: 'WoW', path: 'woW')
     end
 
     it { expect(described_class.find_by_path_or_name('wow')).to eq(@namespace) }
@@ -292,8 +292,8 @@ describe Namespace do
   end
 
   describe ".clean_path" do
-    let!(:user)       { create(:user, username: "johngitlab-etc") }
-    let!(:namespace)  { create(:namespace, path: "JohnGitLab-etc1") }
+    let!(:user)       { build_stubbed(:user, username: "johngitlab-etc") }
+    let!(:namespace)  { build_stubbed(:namespace, path: "JohnGitLab-etc1") }
 
     it "cleans the path and makes sure it's available" do
       expect(described_class.clean_path("-john+gitlab-ETC%.git@gmail.com")).to eq("johngitlab-ETC2")
@@ -302,10 +302,10 @@ describe Namespace do
   end
 
   describe '#ancestors', :nested_groups do
-    let(:group) { create(:group) }
-    let(:nested_group) { create(:group, parent: group) }
-    let(:deep_nested_group) { create(:group, parent: nested_group) }
-    let(:very_deep_nested_group) { create(:group, parent: deep_nested_group) }
+    let(:group) { build_stubbed(:group) }
+    let(:nested_group) { build_stubbed(:group, parent: group) }
+    let(:deep_nested_group) { build_stubbed(:group, parent: nested_group) }
+    let(:very_deep_nested_group) { build_stubbed(:group, parent: deep_nested_group) }
 
     it 'returns the correct ancestors' do
       expect(very_deep_nested_group.ancestors).to include(group, nested_group, deep_nested_group)
@@ -330,12 +330,12 @@ describe Namespace do
   end
 
   describe '#descendants', :nested_groups do
-    let!(:group) { create(:group, path: 'git_lab') }
-    let!(:nested_group) { create(:group, parent: group) }
-    let!(:deep_nested_group) { create(:group, parent: nested_group) }
-    let!(:very_deep_nested_group) { create(:group, parent: deep_nested_group) }
-    let!(:another_group) { create(:group, path: 'gitllab') }
-    let!(:another_group_nested) { create(:group, path: 'foo', parent: another_group) }
+    let!(:group) { build_stubbed(:group, path: 'git_lab') }
+    let!(:nested_group) { build_stubbed(:group, parent: group) }
+    let!(:deep_nested_group) { build_stubbed(:group, parent: nested_group) }
+    let!(:very_deep_nested_group) { build_stubbed(:group, parent: deep_nested_group) }
+    let!(:another_group) { build_stubbed(:group, path: 'gitllab') }
+    let!(:another_group_nested) { build_stubbed(:group, path: 'foo', parent: another_group) }
 
     it 'returns the correct descendants' do
       expect(very_deep_nested_group.descendants.to_a).to eq([])
@@ -362,12 +362,12 @@ describe Namespace do
   end
 
   describe '#users_with_descendants', :nested_groups do
-    let(:user_a) { create(:user) }
-    let(:user_b) { create(:user) }
+    let(:user_a) { build_stubbed(:user) }
+    let(:user_b) { build_stubbed(:user) }
 
-    let(:group) { create(:group) }
-    let(:nested_group) { create(:group, parent: group) }
-    let(:deep_nested_group) { create(:group, parent: nested_group) }
+    let(:group) { build_stubbed(:group) }
+    let(:nested_group) { build_stubbed(:group, parent: group) }
+    let(:deep_nested_group) { build_stubbed(:group, parent: nested_group) }
 
     it 'returns member users on every nest level without duplication' do
       group.add_developer(user_a)
@@ -381,7 +381,7 @@ describe Namespace do
   end
 
   describe '#soft_delete_without_removing_associations' do
-    let(:project1) { create(:project_empty_repo, namespace: namespace) }
+    let(:project1) { build_stubbed(:project_empty_repo, namespace: namespace) }
 
     it 'updates the deleted_at timestamp but preserves projects' do
       namespace.soft_delete_without_removing_associations
@@ -399,10 +399,10 @@ describe Namespace do
   end
 
   describe '#all_projects' do
-    let(:group) { create(:group) }
-    let(:child) { create(:group, parent: group) }
-    let!(:project1) { create(:project_empty_repo, namespace: group) }
-    let!(:project2) { create(:project_empty_repo, namespace: child) }
+    let(:group) { build_stubbed(:group) }
+    let(:child) { build_stubbed(:group, parent: group) }
+    let!(:project1) { build_stubbed(:project_empty_repo, namespace: group) }
+    let!(:project2) { build_stubbed(:project_empty_repo, namespace: child) }
 
     it { expect(group.all_projects.to_a).to eq([project2, project1]) }
   end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe LegacyDiffDiscussion do
-  subject { create(:legacy_diff_note_on_merge_request).to_discussion }
+  subject { build_stubbed(:legacy_diff_note_on_merge_request).to_discussion }
 
   describe '#reply_attributes' do
     it 'includes line_code' do

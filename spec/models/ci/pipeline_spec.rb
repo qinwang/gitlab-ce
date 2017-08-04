@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe Ci::Pipeline, :mailer do
-  let(:user) { create(:user) }
-  set(:project) { create(:project) }
+  let(:user) { build_stubbed(:user) }
+  set(:project) { build_stubbed(:project) }
 
   let(:pipeline) do
-    create(:ci_empty_pipeline, status: :created, project: project)
+    build_stubbed(:ci_empty_pipeline, status: :created, project: project)
   end
 
   it { is_expected.to belong_to(:project) }
@@ -81,8 +81,8 @@ describe Ci::Pipeline, :mailer do
     subject { pipeline.retried }
 
     before do
-      @build1 = create(:ci_build, pipeline: pipeline, name: 'deploy', retried: true)
-      @build2 = create(:ci_build, pipeline: pipeline, name: 'deploy')
+      @build1 = build_stubbed(:ci_build, pipeline: pipeline, name: 'deploy', retried: true)
+      @build2 = build_stubbed(:ci_build, pipeline: pipeline, name: 'deploy')
     end
 
     it 'returns old builds' do
@@ -91,31 +91,31 @@ describe Ci::Pipeline, :mailer do
   end
 
   describe "coverage" do
-    let(:project) { create(:project, build_coverage_regex: "/.*/") }
-    let(:pipeline) { create(:ci_empty_pipeline, project: project) }
+    let(:project) { build_stubbed(:project, build_coverage_regex: "/.*/") }
+    let(:pipeline) { build_stubbed(:ci_empty_pipeline, project: project) }
 
     it "calculates average when there are two builds with coverage" do
-      create(:ci_build, name: "rspec", coverage: 30, pipeline: pipeline)
-      create(:ci_build, name: "rubocop", coverage: 40, pipeline: pipeline)
+      build_stubbed(:ci_build, name: "rspec", coverage: 30, pipeline: pipeline)
+      build_stubbed(:ci_build, name: "rubocop", coverage: 40, pipeline: pipeline)
       expect(pipeline.coverage).to eq("35.00")
     end
 
     it "calculates average when there are two builds with coverage and one with nil" do
-      create(:ci_build, name: "rspec", coverage: 30, pipeline: pipeline)
-      create(:ci_build, name: "rubocop", coverage: 40, pipeline: pipeline)
-      create(:ci_build, pipeline: pipeline)
+      build_stubbed(:ci_build, name: "rspec", coverage: 30, pipeline: pipeline)
+      build_stubbed(:ci_build, name: "rubocop", coverage: 40, pipeline: pipeline)
+      build_stubbed(:ci_build, pipeline: pipeline)
       expect(pipeline.coverage).to eq("35.00")
     end
 
     it "calculates average when there are two builds with coverage and one is retried" do
-      create(:ci_build, name: "rspec", coverage: 30, pipeline: pipeline)
-      create(:ci_build, name: "rubocop", coverage: 30, pipeline: pipeline, retried: true)
-      create(:ci_build, name: "rubocop", coverage: 40, pipeline: pipeline)
+      build_stubbed(:ci_build, name: "rspec", coverage: 30, pipeline: pipeline)
+      build_stubbed(:ci_build, name: "rubocop", coverage: 30, pipeline: pipeline, retried: true)
+      build_stubbed(:ci_build, name: "rubocop", coverage: 40, pipeline: pipeline)
       expect(pipeline.coverage).to eq("35.00")
     end
 
     it "calculates average when there is one build without coverage" do
-      FactoryGirl.create(:ci_build, pipeline: pipeline)
+      FactoryGirl.build_stubbed(:ci_build, pipeline: pipeline)
       expect(pipeline.coverage).to be_nil
     end
   end
@@ -155,7 +155,7 @@ describe Ci::Pipeline, :mailer do
     end
 
     def create_build(name, status)
-      create(:ci_build, name: name, status: status, pipeline: pipeline)
+      build_stubbed(:ci_build, name: name, status: status, pipeline: pipeline)
     end
   end
 
@@ -181,7 +181,7 @@ describe Ci::Pipeline, :mailer do
 
       context 'when there is auto_canceled_by' do
         before do
-          pipeline.update(auto_canceled_by: create(:ci_empty_pipeline))
+          pipeline.update(auto_canceled_by: build_stubbed(:ci_empty_pipeline))
         end
 
         it 'is auto canceled' do
@@ -210,25 +210,25 @@ describe Ci::Pipeline, :mailer do
 
   describe 'pipeline stages' do
     before do
-      create(:commit_status, pipeline: pipeline,
+      build_stubbed(:commit_status, pipeline: pipeline,
                              stage: 'build',
                              name: 'linux',
                              stage_idx: 0,
                              status: 'success')
 
-      create(:commit_status, pipeline: pipeline,
+      build_stubbed(:commit_status, pipeline: pipeline,
                              stage: 'build',
                              name: 'mac',
                              stage_idx: 0,
                              status: 'failed')
 
-      create(:commit_status, pipeline: pipeline,
+      build_stubbed(:commit_status, pipeline: pipeline,
                              stage: 'deploy',
                              name: 'staging',
                              stage_idx: 2,
                              status: 'running')
 
-      create(:commit_status, pipeline: pipeline,
+      build_stubbed(:commit_status, pipeline: pipeline,
                              stage: 'test',
                              name: 'rspec',
                              stage_idx: 1,
@@ -237,7 +237,7 @@ describe Ci::Pipeline, :mailer do
 
     describe '#stage_seeds' do
       let(:pipeline) do
-        create(:ci_pipeline, config: { rspec: { script: 'rake' } })
+        build_stubbed(:ci_pipeline, config: { rspec: { script: 'rake' } })
       end
 
       it 'returns preseeded stage seeds object' do
@@ -268,7 +268,7 @@ describe Ci::Pipeline, :mailer do
 
         context 'when commit status is retried' do
           before do
-            create(:commit_status, pipeline: pipeline,
+            build_stubbed(:commit_status, pipeline: pipeline,
                                    stage: 'build',
                                    name: 'mac',
                                    stage_idx: 0,
@@ -287,7 +287,7 @@ describe Ci::Pipeline, :mailer do
 
       context 'when there is a stage with warnings' do
         before do
-          create(:commit_status, pipeline: pipeline,
+          build_stubbed(:commit_status, pipeline: pipeline,
                                  stage: 'deploy',
                                  name: 'prod:2',
                                  stage_idx: 2,
@@ -322,7 +322,7 @@ describe Ci::Pipeline, :mailer do
 
     context 'with status in stage' do
       before do
-        create(:commit_status, pipeline: pipeline, stage: 'test')
+        build_stubbed(:commit_status, pipeline: pipeline, stage: 'test')
       end
 
       it { expect(subject).to be_a Ci::LegacyStage }
@@ -332,7 +332,7 @@ describe Ci::Pipeline, :mailer do
 
     context 'without status in stage' do
       before do
-        create(:commit_status, pipeline: pipeline, stage: 'build')
+        build_stubbed(:commit_status, pipeline: pipeline, stage: 'build')
       end
 
       it 'return stage object' do
@@ -425,9 +425,9 @@ describe Ci::Pipeline, :mailer do
     end
 
     describe 'merge request metrics' do
-      let(:project) { create(:project, :repository) }
-      let(:pipeline) { FactoryGirl.create(:ci_empty_pipeline, status: 'created', project: project, ref: 'master', sha: project.repository.commit('master').id) }
-      let!(:merge_request) { create(:merge_request, source_project: project, source_branch: pipeline.ref) }
+      let(:project) { build_stubbed(:project, :repository) }
+      let(:pipeline) { FactoryGirl.build_stubbed(:ci_empty_pipeline, status: 'created', project: project, ref: 'master', sha: project.repository.commit('master').id) }
+      let!(:merge_request) { build_stubbed(:merge_request, source_project: project, source_branch: pipeline.ref) }
 
       before do
         expect(PipelineMetricsWorker).to receive(:perform_async).with(pipeline.id)
@@ -455,7 +455,7 @@ describe Ci::Pipeline, :mailer do
     end
 
     def create_build(name, *traits, queued_at: current, started_from: 0, **opts)
-      create(:ci_build, *traits,
+      build_stubbed(:ci_build, *traits,
              name: name,
              pipeline: pipeline,
              queued_at: queued_at,
@@ -489,10 +489,10 @@ describe Ci::Pipeline, :mailer do
   end
 
   context 'with non-empty project' do
-    let(:project) { create(:project, :repository) }
+    let(:project) { build_stubbed(:project, :repository) }
 
     let(:pipeline) do
-      create(:ci_pipeline,
+      build_stubbed(:ci_pipeline,
              project: project,
              ref: project.default_branch,
              sha: project.commit.sha)
@@ -526,14 +526,14 @@ describe Ci::Pipeline, :mailer do
     end
 
     context 'when action defined' do
-      let!(:manual) { create(:ci_build, :manual, pipeline: pipeline, name: 'deploy') }
+      let!(:manual) { build_stubbed(:ci_build, :manual, pipeline: pipeline, name: 'deploy') }
 
       it 'returns one action' do
         is_expected.to contain_exactly(manual)
       end
 
       context 'there are multiple of the same name' do
-        let!(:manual2) { create(:ci_build, :manual, pipeline: pipeline, name: 'deploy') }
+        let!(:manual2) { build_stubbed(:ci_build, :manual, pipeline: pipeline, name: 'deploy') }
 
         before do
           manual.update(retried: true)
@@ -570,7 +570,7 @@ describe Ci::Pipeline, :mailer do
     end
 
     context 'when pipeline does not have stage seeds' do
-      subject { create(:ci_pipeline_without_jobs) }
+      subject { build_stubbed(:ci_pipeline_without_jobs) }
 
       it { is_expected.not_to have_stage_seeds }
     end
@@ -623,7 +623,7 @@ describe Ci::Pipeline, :mailer do
     end
 
     def create_pipeline(status, ref, sha)
-      create(:ci_empty_pipeline, status: status, ref: ref, sha: sha)
+      build_stubbed(:ci_empty_pipeline, status: status, ref: ref, sha: sha)
     end
   end
 
@@ -707,7 +707,7 @@ describe Ci::Pipeline, :mailer do
 
   describe '#status' do
     let(:build) do
-      create(:ci_build, :created, pipeline: pipeline, name: 'test')
+      build_stubbed(:ci_build, :created, pipeline: pipeline, name: 'test')
     end
 
     subject { pipeline.reload.status }
@@ -752,7 +752,7 @@ describe Ci::Pipeline, :mailer do
 
       context 'when build is pending' do
         let(:build) do
-          create(:ci_build, :pending, pipeline: pipeline)
+          build_stubbed(:ci_build, :pending, pipeline: pipeline)
         end
 
         it { is_expected.to eq('canceled') }
@@ -814,7 +814,7 @@ describe Ci::Pipeline, :mailer do
     subject { pipeline.detailed_status(user) }
 
     context 'when pipeline is created' do
-      let(:pipeline) { create(:ci_pipeline, status: :created) }
+      let(:pipeline) { build_stubbed(:ci_pipeline, status: :created) }
 
       it 'returns detailed status for created pipeline' do
         expect(subject.text).to eq 'created'
@@ -822,7 +822,7 @@ describe Ci::Pipeline, :mailer do
     end
 
     context 'when pipeline is pending' do
-      let(:pipeline) { create(:ci_pipeline, status: :pending) }
+      let(:pipeline) { build_stubbed(:ci_pipeline, status: :pending) }
 
       it 'returns detailed status for pending pipeline' do
         expect(subject.text).to eq 'pending'
@@ -830,7 +830,7 @@ describe Ci::Pipeline, :mailer do
     end
 
     context 'when pipeline is running' do
-      let(:pipeline) { create(:ci_pipeline, status: :running) }
+      let(:pipeline) { build_stubbed(:ci_pipeline, status: :running) }
 
       it 'returns detailed status for running pipeline' do
         expect(subject.text).to eq 'running'
@@ -838,7 +838,7 @@ describe Ci::Pipeline, :mailer do
     end
 
     context 'when pipeline is successful' do
-      let(:pipeline) { create(:ci_pipeline, status: :success) }
+      let(:pipeline) { build_stubbed(:ci_pipeline, status: :success) }
 
       it 'returns detailed status for successful pipeline' do
         expect(subject.text).to eq 'passed'
@@ -846,7 +846,7 @@ describe Ci::Pipeline, :mailer do
     end
 
     context 'when pipeline is failed' do
-      let(:pipeline) { create(:ci_pipeline, status: :failed) }
+      let(:pipeline) { build_stubbed(:ci_pipeline, status: :failed) }
 
       it 'returns detailed status for failed pipeline' do
         expect(subject.text).to eq 'failed'
@@ -854,7 +854,7 @@ describe Ci::Pipeline, :mailer do
     end
 
     context 'when pipeline is canceled' do
-      let(:pipeline) { create(:ci_pipeline, status: :canceled) }
+      let(:pipeline) { build_stubbed(:ci_pipeline, status: :canceled) }
 
       it 'returns detailed status for canceled pipeline' do
         expect(subject.text).to eq 'canceled'
@@ -862,7 +862,7 @@ describe Ci::Pipeline, :mailer do
     end
 
     context 'when pipeline is skipped' do
-      let(:pipeline) { create(:ci_pipeline, status: :skipped) }
+      let(:pipeline) { build_stubbed(:ci_pipeline, status: :skipped) }
 
       it 'returns detailed status for skipped pipeline' do
         expect(subject.text).to eq 'skipped'
@@ -870,7 +870,7 @@ describe Ci::Pipeline, :mailer do
     end
 
     context 'when pipeline is blocked' do
-      let(:pipeline) { create(:ci_pipeline, status: :manual) }
+      let(:pipeline) { build_stubbed(:ci_pipeline, status: :manual) }
 
       it 'returns detailed status for blocked pipeline' do
         expect(subject.text).to eq 'blocked'
@@ -878,10 +878,10 @@ describe Ci::Pipeline, :mailer do
     end
 
     context 'when pipeline is successful but with warnings' do
-      let(:pipeline) { create(:ci_pipeline, status: :success) }
+      let(:pipeline) { build_stubbed(:ci_pipeline, status: :success) }
 
       before do
-        create(:ci_build, :allowed_to_fail, :failed, pipeline: pipeline)
+        build_stubbed(:ci_build, :allowed_to_fail, :failed, pipeline: pipeline)
       end
 
       it 'retruns detailed status for successful pipeline with warnings' do
@@ -894,7 +894,7 @@ describe Ci::Pipeline, :mailer do
     %i[created running pending].each do |status0|
       context "when there is a build #{status0}" do
         before do
-          create(:ci_build, status0, pipeline: pipeline)
+          build_stubbed(:ci_build, status0, pipeline: pipeline)
         end
 
         it 'is cancelable' do
@@ -904,7 +904,7 @@ describe Ci::Pipeline, :mailer do
 
       context "when there is an external job #{status0}" do
         before do
-          create(:generic_commit_status, status0, pipeline: pipeline)
+          build_stubbed(:generic_commit_status, status0, pipeline: pipeline)
         end
 
         it 'is cancelable' do
@@ -915,8 +915,8 @@ describe Ci::Pipeline, :mailer do
       %i[success failed canceled].each do |status1|
         context "when there are generic_commit_status jobs for #{status0} and #{status1}" do
           before do
-            create(:generic_commit_status, status0, pipeline: pipeline)
-            create(:generic_commit_status, status1, pipeline: pipeline)
+            build_stubbed(:generic_commit_status, status0, pipeline: pipeline)
+            build_stubbed(:generic_commit_status, status1, pipeline: pipeline)
           end
 
           it 'is cancelable' do
@@ -926,8 +926,8 @@ describe Ci::Pipeline, :mailer do
 
         context "when there are generic_commit_status and ci_build jobs for #{status0} and #{status1}" do
           before do
-            create(:generic_commit_status, status0, pipeline: pipeline)
-            create(:ci_build, status1, pipeline: pipeline)
+            build_stubbed(:generic_commit_status, status0, pipeline: pipeline)
+            build_stubbed(:ci_build, status1, pipeline: pipeline)
           end
 
           it 'is cancelable' do
@@ -937,8 +937,8 @@ describe Ci::Pipeline, :mailer do
 
         context "when there are ci_build jobs for #{status0} and #{status1}" do
           before do
-            create(:ci_build, status0, pipeline: pipeline)
-            create(:ci_build, status1, pipeline: pipeline)
+            build_stubbed(:ci_build, status0, pipeline: pipeline)
+            build_stubbed(:ci_build, status1, pipeline: pipeline)
           end
 
           it 'is cancelable' do
@@ -951,7 +951,7 @@ describe Ci::Pipeline, :mailer do
     %i[success failed canceled].each do |status|
       context "when there is a build #{status}" do
         before do
-          create(:ci_build, status, pipeline: pipeline)
+          build_stubbed(:ci_build, status, pipeline: pipeline)
         end
 
         it 'is not cancelable' do
@@ -961,7 +961,7 @@ describe Ci::Pipeline, :mailer do
 
       context "when there is an external job #{status}" do
         before do
-          create(:generic_commit_status, status, pipeline: pipeline)
+          build_stubbed(:generic_commit_status, status, pipeline: pipeline)
         end
 
         it 'is not cancelable' do
@@ -972,7 +972,7 @@ describe Ci::Pipeline, :mailer do
 
     context 'when there is a manual action present in the pipeline' do
       before do
-        create(:ci_build, :manual, pipeline: pipeline)
+        build_stubbed(:ci_build, :manual, pipeline: pipeline)
       end
 
       it 'is not cancelable' do
@@ -986,8 +986,8 @@ describe Ci::Pipeline, :mailer do
 
     context 'when there is a running external job and a regular job' do
       before do
-        create(:ci_build, :running, pipeline: pipeline)
-        create(:generic_commit_status, :running, pipeline: pipeline)
+        build_stubbed(:ci_build, :running, pipeline: pipeline)
+        build_stubbed(:generic_commit_status, :running, pipeline: pipeline)
 
         pipeline.cancel_running
       end
@@ -999,8 +999,8 @@ describe Ci::Pipeline, :mailer do
 
     context 'when jobs are in different stages' do
       before do
-        create(:ci_build, :running, stage_idx: 0, pipeline: pipeline)
-        create(:ci_build, :running, stage_idx: 1, pipeline: pipeline)
+        build_stubbed(:ci_build, :running, stage_idx: 0, pipeline: pipeline)
+        build_stubbed(:ci_build, :running, stage_idx: 1, pipeline: pipeline)
 
         pipeline.cancel_running
       end
@@ -1012,8 +1012,8 @@ describe Ci::Pipeline, :mailer do
 
     context 'when there are created builds present in the pipeline' do
       before do
-        create(:ci_build, :running, stage_idx: 0, pipeline: pipeline)
-        create(:ci_build, :created, stage_idx: 1, pipeline: pipeline)
+        build_stubbed(:ci_build, :running, stage_idx: 0, pipeline: pipeline)
+        build_stubbed(:ci_build, :created, stage_idx: 1, pipeline: pipeline)
 
         pipeline.cancel_running
       end
@@ -1035,8 +1035,8 @@ describe Ci::Pipeline, :mailer do
 
     context 'when there is a failed build and failed external status' do
       before do
-        create(:ci_build, :failed, name: 'build', pipeline: pipeline)
-        create(:generic_commit_status, :failed, name: 'jenkins', pipeline: pipeline)
+        build_stubbed(:ci_build, :failed, name: 'build', pipeline: pipeline)
+        build_stubbed(:generic_commit_status, :failed, name: 'jenkins', pipeline: pipeline)
 
         pipeline.retry_failed(user)
       end
@@ -1048,8 +1048,8 @@ describe Ci::Pipeline, :mailer do
 
     context 'when builds are in different stages' do
       before do
-        create(:ci_build, :failed, name: 'build', stage_idx: 0, pipeline: pipeline)
-        create(:ci_build, :failed, name: 'jenkins', stage_idx: 1, pipeline: pipeline)
+        build_stubbed(:ci_build, :failed, name: 'build', stage_idx: 0, pipeline: pipeline)
+        build_stubbed(:ci_build, :failed, name: 'jenkins', stage_idx: 1, pipeline: pipeline)
 
         pipeline.retry_failed(user)
       end
@@ -1061,8 +1061,8 @@ describe Ci::Pipeline, :mailer do
 
     context 'when there are canceled and failed' do
       before do
-        create(:ci_build, :failed, name: 'build', stage_idx: 0, pipeline: pipeline)
-        create(:ci_build, :canceled, name: 'jenkins', stage_idx: 1, pipeline: pipeline)
+        build_stubbed(:ci_build, :failed, name: 'build', stage_idx: 0, pipeline: pipeline)
+        build_stubbed(:ci_build, :canceled, name: 'jenkins', stage_idx: 1, pipeline: pipeline)
 
         pipeline.retry_failed(user)
       end
@@ -1078,7 +1078,7 @@ describe Ci::Pipeline, :mailer do
     let!(:build_b) { create_build('b', 1) }
 
     let!(:hook) do
-      create(:project_hook, project: project, pipeline_events: enabled)
+      build_stubbed(:project_hook, project: project, pipeline_events: enabled)
     end
 
     before do
@@ -1164,7 +1164,7 @@ describe Ci::Pipeline, :mailer do
     end
 
     def create_build(name, stage_idx)
-      create(:ci_build,
+      build_stubbed(:ci_build,
              :created,
              pipeline: pipeline,
              name: name,
@@ -1173,24 +1173,24 @@ describe Ci::Pipeline, :mailer do
   end
 
   describe "#merge_requests" do
-    let(:project) { create(:project) }
-    let(:pipeline) { create(:ci_empty_pipeline, status: 'created', project: project, ref: 'master', sha: 'a288a022a53a5a944fae87bcec6efc87b7061808') }
+    let(:project) { build_stubbed(:project) }
+    let(:pipeline) { build_stubbed(:ci_empty_pipeline, status: 'created', project: project, ref: 'master', sha: 'a288a022a53a5a944fae87bcec6efc87b7061808') }
 
     it "returns merge requests whose `diff_head_sha` matches the pipeline's SHA" do
       allow_any_instance_of(MergeRequest).to receive(:diff_head_sha) { 'a288a022a53a5a944fae87bcec6efc87b7061808' }
-      merge_request = create(:merge_request, source_project: project, head_pipeline: pipeline, source_branch: pipeline.ref)
+      merge_request = build_stubbed(:merge_request, source_project: project, head_pipeline: pipeline, source_branch: pipeline.ref)
 
       expect(pipeline.merge_requests).to eq([merge_request])
     end
 
     it "doesn't return merge requests whose source branch doesn't match the pipeline's ref" do
-      create(:merge_request, source_project: project, source_branch: 'feature', target_branch: 'master')
+      build_stubbed(:merge_request, source_project: project, source_branch: 'feature', target_branch: 'master')
 
       expect(pipeline.merge_requests).to be_empty
     end
 
     it "doesn't return merge requests whose `diff_head_sha` doesn't match the pipeline's SHA" do
-      create(:merge_request, source_project: project, source_branch: pipeline.ref)
+      build_stubbed(:merge_request, source_project: project, source_branch: pipeline.ref)
       allow_any_instance_of(MergeRequest).to receive(:diff_head_sha) { '97de212e80737a608d939f648d959671fb0a0142b' }
 
       expect(pipeline.merge_requests).to be_empty
@@ -1198,17 +1198,17 @@ describe Ci::Pipeline, :mailer do
   end
 
   describe "#all_merge_requests" do
-    let(:project) { create(:project) }
-    let(:pipeline) { create(:ci_empty_pipeline, status: 'created', project: project, ref: 'master') }
+    let(:project) { build_stubbed(:project) }
+    let(:pipeline) { build_stubbed(:ci_empty_pipeline, status: 'created', project: project, ref: 'master') }
 
     it "returns all merge requests having the same source branch" do
-      merge_request = create(:merge_request, source_project: project, source_branch: pipeline.ref)
+      merge_request = build_stubbed(:merge_request, source_project: project, source_branch: pipeline.ref)
 
       expect(pipeline.all_merge_requests).to eq([merge_request])
     end
 
     it "doesn't return merge requests having a different source branch" do
-      create(:merge_request, source_project: project, source_branch: 'feature', target_branch: 'master')
+      build_stubbed(:merge_request, source_project: project, source_branch: 'feature', target_branch: 'master')
 
       expect(pipeline.all_merge_requests).to be_empty
     end
@@ -1216,7 +1216,7 @@ describe Ci::Pipeline, :mailer do
 
   describe '#stuck?' do
     before do
-      create(:ci_build, :pending, pipeline: pipeline)
+      build_stubbed(:ci_build, :pending, pipeline: pipeline)
     end
 
     context 'when pipeline is stuck' do
@@ -1227,7 +1227,7 @@ describe Ci::Pipeline, :mailer do
 
     context 'when pipeline is not stuck' do
       before do
-        create(:ci_runner, :shared, :online)
+        build_stubbed(:ci_runner, :shared, :online)
       end
 
       it 'is not stuck' do
@@ -1239,7 +1239,7 @@ describe Ci::Pipeline, :mailer do
   describe '#has_yaml_errors?' do
     context 'when pipeline has errors' do
       let(:pipeline) do
-        create(:ci_pipeline, config: { rspec: nil })
+        build_stubbed(:ci_pipeline, config: { rspec: nil })
       end
 
       it 'contains yaml errors' do
@@ -1249,7 +1249,7 @@ describe Ci::Pipeline, :mailer do
 
     context 'when pipeline does not have errors' do
       let(:pipeline) do
-        create(:ci_pipeline, config: { rspec: { script: 'rake test' } })
+        build_stubbed(:ci_pipeline, config: { rspec: { script: 'rake test' } })
       end
 
       it 'does not containyaml errors' do
@@ -1259,13 +1259,13 @@ describe Ci::Pipeline, :mailer do
   end
 
   describe 'notifications when pipeline success or failed' do
-    let(:project) { create(:project, :repository) }
+    let(:project) { build_stubbed(:project, :repository) }
 
     let(:pipeline) do
-      create(:ci_pipeline,
+      build_stubbed(:ci_pipeline,
              project: project,
              sha: project.commit('master').sha,
-             user: create(:user))
+             user: build_stubbed(:user))
     end
 
     before do
@@ -1305,8 +1305,8 @@ describe Ci::Pipeline, :mailer do
     context 'with failed pipeline' do
       before do
         perform_enqueued_jobs do
-          create(:ci_build, :failed, pipeline: pipeline)
-          create(:generic_commit_status, :failed, pipeline: pipeline)
+          build_stubbed(:ci_build, :failed, pipeline: pipeline)
+          build_stubbed(:generic_commit_status, :failed, pipeline: pipeline)
 
           pipeline.drop
         end

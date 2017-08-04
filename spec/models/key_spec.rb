@@ -26,7 +26,7 @@ describe Key, :mailer do
   end
 
   describe "Methods" do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
     it { is_expected.to respond_to :projects }
     it { is_expected.to respond_to :publishable_key }
 
@@ -37,7 +37,7 @@ describe Key, :mailer do
     end
 
     describe "#update_last_used_at" do
-      let(:key) { create(:key) }
+      let(:key) { build_stubbed(:key) }
 
       context 'when key was not updated during the last day' do
         before do
@@ -66,20 +66,20 @@ describe Key, :mailer do
   end
 
   context "validation of uniqueness (based on fingerprint uniqueness)" do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     it "accepts the key once" do
       expect(build(:key, user: user)).to be_valid
     end
 
     it "does not accept the exact same key twice" do
-      first_key = create(:key, user: user)
+      first_key = build_stubbed(:key, user: user)
 
       expect(build(:key, user: user, key: first_key.key)).not_to be_valid
     end
 
     it "does not accept a duplicate key with a different comment" do
-      first_key = create(:key, user: user)
+      first_key = build_stubbed(:key, user: user)
       duplicate = build(:key, user: user, key: first_key.key)
       duplicate.key << ' extra comment'
 
@@ -154,7 +154,7 @@ describe Key, :mailer do
     end
 
     it 'removes key from authorized_file' do
-      key = create(:personal_key)
+      key = build_stubbed(:personal_key)
       expect(GitlabShellWorker).to receive(:perform_async).with(:remove_key, key.shell_id, key.key)
       key.destroy
     end
@@ -171,11 +171,11 @@ describe Key, :mailer do
   end
 
   describe 'notification' do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     it 'sends a notification' do
       perform_enqueued_jobs do
-        create(:key, user: user)
+        build_stubbed(:key, user: user)
       end
 
       should_email(user)

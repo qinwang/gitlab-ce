@@ -23,13 +23,13 @@ describe List do
 
   describe '#destroy' do
     it 'can be destroyed when when list_type is set to label' do
-      subject = create(:list)
+      subject = build_stubbed(:list)
 
       expect(subject.destroy).to be_truthy
     end
 
     it 'can not be destroyed when when list_type is set to closed' do
-      subject = create(:closed_list)
+      subject = build_stubbed(:closed_list)
 
       expect(subject.destroy).to be_falsey
     end

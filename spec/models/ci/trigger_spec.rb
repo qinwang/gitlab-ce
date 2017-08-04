@@ -11,20 +11,20 @@ describe Ci::Trigger do
 
   describe 'before_validation' do
     it 'sets an random token if none provided' do
-      trigger = create(:ci_trigger_without_token, project: project)
+      trigger = build_stubbed(:ci_trigger_without_token, project: project)
 
       expect(trigger.token).not_to be_nil
     end
 
     it 'does not set a random token if one provided' do
-      trigger = create(:ci_trigger, project: project, token: 'token')
+      trigger = build_stubbed(:ci_trigger, project: project, token: 'token')
 
       expect(trigger.token).to eq('token')
     end
   end
 
   describe '#short_token' do
-    let(:trigger) { create(:ci_trigger, token: '12345678') }
+    let(:trigger) { build_stubbed(:ci_trigger, token: '12345678') }
 
     subject { trigger.short_token }
 
@@ -34,7 +34,7 @@ describe Ci::Trigger do
   end
 
   describe '#legacy?' do
-    let(:trigger) { create(:ci_trigger, owner: owner, project: project) }
+    let(:trigger) { build_stubbed(:ci_trigger, owner: owner, project: project) }
 
     subject { trigger }
 
@@ -45,14 +45,14 @@ describe Ci::Trigger do
     end
 
     context 'when owner is set' do
-      let(:owner) { create(:user) }
+      let(:owner) { build_stubbed(:user) }
 
       it { is_expected.not_to be_legacy }
     end
   end
 
   describe '#can_access_project?' do
-    let(:trigger) { create(:ci_trigger, owner: owner, project: project) }
+    let(:trigger) { build_stubbed(:ci_trigger, owner: owner, project: project) }
 
     context 'when owner is blank' do
       let(:owner) { nil }
@@ -63,7 +63,7 @@ describe Ci::Trigger do
     end
 
     context 'when owner is set' do
-      let(:owner) { create(:user) }
+      let(:owner) { build_stubbed(:user) }
 
       subject { trigger.can_access_project? }
 

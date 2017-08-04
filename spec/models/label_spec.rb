@@ -83,7 +83,7 @@ describe Label do
   end
 
   describe 'priorization' do
-    subject(:label) { create(:label) }
+    subject(:label) { build_stubbed(:label) }
 
     let(:project) { label.project }
 
@@ -101,7 +101,7 @@ describe Label do
       end
 
       context 'when label is prioritized' do
-        let!(:priority) { create(:label_priority, project: project, label: label, priority: 0) }
+        let!(:priority) { build_stubbed(:label_priority, project: project, label: label, priority: 0) }
 
         it 'does not create a label priority' do
           expect { label.prioritize!(project, 1) }.not_to change(label.priorities, :count)
@@ -117,7 +117,7 @@ describe Label do
 
     describe '#unprioritize!' do
       it 'removes label priority' do
-        create(:label_priority, project: project, label: label, priority: 0)
+        build_stubbed(:label_priority, project: project, label: label, priority: 0)
 
         expect { label.unprioritize!(project) }.to change(label.priorities, :count).by(-1)
       end
@@ -132,7 +132,7 @@ describe Label do
 
       context 'when label is prioritized' do
         it 'returns label priority' do
-          create(:label_priority, project: project, label: label, priority: 1)
+          build_stubbed(:label_priority, project: project, label: label, priority: 1)
 
           expect(label.priority(project)).to eq 1
         end

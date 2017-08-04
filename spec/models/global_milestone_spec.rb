@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe GlobalMilestone do
-  let(:user) { create(:user) }
-  let(:user2) { create(:user) }
-  let(:group) { create(:group) }
-  let(:project1) { create(:project, group: group) }
-  let(:project2) { create(:project, path: 'gitlab-ci', group: group) }
-  let(:project3) { create(:project, path: 'cookbook-gitlab', group: group) }
+  let(:user) { build_stubbed(:user) }
+  let(:user2) { build_stubbed(:user) }
+  let(:group) { build_stubbed(:group) }
+  let(:project1) { build_stubbed(:project, group: group) }
+  let(:project2) { build_stubbed(:project, path: 'gitlab-ci', group: group) }
+  let(:project3) { build_stubbed(:project, path: 'cookbook-gitlab', group: group) }
 
   describe '.build_collection' do
     let(:milestone1_due_date) { 2.weeks.from_now.to_date }
@@ -95,12 +95,12 @@ describe GlobalMilestone do
   describe '.states_count' do
     context 'when the projects have milestones' do
       before do
-        create(:closed_milestone, title: 'Active Group Milestone', project: project3)
-        create(:active_milestone, title: 'Active Group Milestone', project: project1)
-        create(:active_milestone, title: 'Active Group Milestone', project: project2)
-        create(:closed_milestone, title: 'Closed Group Milestone', project: project1)
-        create(:closed_milestone, title: 'Closed Group Milestone', project: project2)
-        create(:closed_milestone, title: 'Closed Group Milestone', project: project3)
+        build_stubbed(:closed_milestone, title: 'Active Group Milestone', project: project3)
+        build_stubbed(:active_milestone, title: 'Active Group Milestone', project: project1)
+        build_stubbed(:active_milestone, title: 'Active Group Milestone', project: project2)
+        build_stubbed(:closed_milestone, title: 'Closed Group Milestone', project: project1)
+        build_stubbed(:closed_milestone, title: 'Closed Group Milestone', project: project2)
+        build_stubbed(:closed_milestone, title: 'Closed Group Milestone', project: project3)
       end
 
       it 'returns the quantity of global milestones in each possible state' do
@@ -128,9 +128,9 @@ describe GlobalMilestone do
   end
 
   describe '#initialize' do
-    let(:milestone1_project1) { create(:milestone, title: "Milestone v1.2", project: project1) }
-    let(:milestone1_project2) { create(:milestone, title: "Milestone v1.2", project: project2) }
-    let(:milestone1_project3) { create(:milestone, title: "Milestone v1.2", project: project3) }
+    let(:milestone1_project1) { build_stubbed(:milestone, title: "Milestone v1.2", project: project1) }
+    let(:milestone1_project2) { build_stubbed(:milestone, title: "Milestone v1.2", project: project2) }
+    let(:milestone1_project3) { build_stubbed(:milestone, title: "Milestone v1.2", project: project3) }
 
     before do
       milestones =
@@ -154,7 +154,7 @@ describe GlobalMilestone do
   end
 
   describe '#safe_title' do
-    let(:milestone) { create(:milestone, title: "git / test", project: project1) }
+    let(:milestone) { build_stubbed(:milestone, title: "git / test", project: project1) }
 
     it 'strips out slashes and spaces' do
       global_milestone = described_class.new(milestone.title, Milestone.where(id: milestone.id))
@@ -168,8 +168,8 @@ describe GlobalMilestone do
       it 'returns active' do
         title = 'Active Group Milestone'
         milestones = [
-          create(:active_milestone, title: title),
-          create(:closed_milestone, title: title)
+          build_stubbed(:active_milestone, title: title),
+          build_stubbed(:closed_milestone, title: title)
         ]
         global_milestone = described_class.new(title, milestones)
 
@@ -181,8 +181,8 @@ describe GlobalMilestone do
       it 'returns closed' do
         title = 'Closed Group Milestone'
         milestones = [
-          create(:closed_milestone, title: title),
-          create(:closed_milestone, title: title)
+          build_stubbed(:closed_milestone, title: title),
+          build_stubbed(:closed_milestone, title: title)
         ]
         global_milestone = described_class.new(title, milestones)
 

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Commit do
-  let(:project) { create(:project, :public, :repository) }
+  let(:project) { build_stubbed(:project, :public, :repository) }
   let(:commit)  { project.commit }
 
   describe 'modules' do
@@ -15,12 +15,12 @@ describe Commit do
 
   describe '#author' do
     it 'looks up the author in a case-insensitive way' do
-      user = create(:user, email: commit.author_email.upcase)
+      user = build_stubbed(:user, email: commit.author_email.upcase)
       expect(commit.author).to eq(user)
     end
 
     it 'caches the author', :request_store do
-      user = create(:user, email: commit.author_email)
+      user = build_stubbed(:user, email: commit.author_email)
       expect(User).to receive(:find_by_any_email).and_call_original
 
       expect(commit.author).to eq(user)
@@ -32,7 +32,7 @@ describe Commit do
   end
 
   describe '#to_reference' do
-    let(:project) { create(:project, :repository, path: 'sample-project') }
+    let(:project) { build_stubbed(:project, :repository, path: 'sample-project') }
 
     it 'returns a String reference to the object' do
       expect(commit.to_reference).to eq commit.id
@@ -45,7 +45,7 @@ describe Commit do
   end
 
   describe '#reference_link_text' do
-    let(:project) { create(:project, :repository, path: 'sample-project') }
+    let(:project) { build_stubbed(:project, :repository, path: 'sample-project') }
 
     it 'returns a String reference to the object' do
       expect(commit.reference_link_text).to eq commit.short_id
@@ -149,7 +149,7 @@ eos
 
   describe '#closes_issues' do
     let(:issue) { create :issue, project: project }
-    let(:other_project) { create(:project, :public) }
+    let(:other_project) { build_stubbed(:project, :public) }
     let(:other_issue) { create :issue, project: other_project }
     let(:commiter) { create :user }
 
@@ -172,9 +172,9 @@ eos
   end
 
   it_behaves_like 'a mentionable' do
-    subject { create(:project, :repository).commit }
+    subject { build_stubbed(:project, :repository).commit }
 
-    let(:author) { create(:user, email: subject.author_email) }
+    let(:author) { build_stubbed(:user, email: subject.author_email) }
     let(:backref_text) { "commit #{subject.id}" }
     let(:set_mentionable_text) do
       ->(txt) { allow(subject).to receive(:safe_message).and_return(txt) }
@@ -299,13 +299,13 @@ eos
 
   describe '#last_pipeline' do
     let!(:first_pipeline) do
-      create(:ci_empty_pipeline,
+      build_stubbed(:ci_empty_pipeline,
         project: project,
         sha: commit.sha,
         status: 'success')
     end
     let!(:second_pipeline) do
-      create(:ci_empty_pipeline,
+      build_stubbed(:ci_empty_pipeline,
         project: project,
         sha: commit.sha,
         status: 'success')
@@ -320,7 +320,7 @@ eos
     context 'without ref argument' do
       before do
         %w[success failed created pending].each do |status|
-          create(:ci_empty_pipeline,
+          build_stubbed(:ci_empty_pipeline,
                  project: project,
                  sha: commit.sha,
                  status: status)
@@ -335,7 +335,7 @@ eos
 
     context 'when a particular ref is specified' do
       let!(:pipeline_from_master) do
-        create(:ci_empty_pipeline,
+        build_stubbed(:ci_empty_pipeline,
                project: project,
                sha: commit.sha,
                ref: 'master',
@@ -343,7 +343,7 @@ eos
       end
 
       let!(:pipeline_from_fix) do
-        create(:ci_empty_pipeline,
+        build_stubbed(:ci_empty_pipeline,
                project: project,
                sha: commit.sha,
                ref: 'fix',
@@ -367,14 +367,14 @@ eos
     let(:user2) { build(:user) }
 
     let!(:note1) do
-      create(:note_on_commit,
+      build_stubbed(:note_on_commit,
              commit_id: commit.id,
              project: project,
              note: 'foo')
     end
 
     let!(:note2) do
-      create(:note_on_commit,
+      build_stubbed(:note_on_commit,
              commit_id: commit.id,
              project: project,
              note: 'bar')

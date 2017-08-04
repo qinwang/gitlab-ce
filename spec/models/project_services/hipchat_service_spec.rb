@@ -26,8 +26,8 @@ describe HipchatService do
 
   describe "Execute" do
     let(:hipchat) { described_class.new }
-    let(:user)    { create(:user) }
-    let(:project) { create(:project, :repository) }
+    let(:user)    { build_stubbed(:user) }
+    let(:project) { build_stubbed(:project, :repository) }
     let(:api_url) { 'https://hipchat.example.com/v2/room/123456/notification?auth_token=verySecret' }
     let(:project_name) { project.name_with_namespace.gsub(/\s/, '') }
     let(:token) { 'verySecret' }
@@ -121,7 +121,7 @@ describe HipchatService do
     end
 
     context 'issue events' do
-      let(:issue) { create(:issue, title: 'Awesome issue', description: '**please** fix') }
+      let(:issue) { build_stubbed(:issue, title: 'Awesome issue', description: '**please** fix') }
       let(:issue_service) { Issues::CreateService.new(project, user) }
       let(:issues_sample_data) { issue_service.hook_data(issue, 'open') }
 
@@ -144,7 +144,7 @@ describe HipchatService do
     end
 
     context 'merge request events' do
-      let(:merge_request) { create(:merge_request, description: '**please** fix', title: 'Awesome merge request', target_project: project, source_project: project) }
+      let(:merge_request) { build_stubbed(:merge_request, description: '**please** fix', title: 'Awesome merge request', target_project: project, source_project: project) }
       let(:merge_service) { MergeRequests::CreateService.new(project, user) }
       let(:merge_sample_data) { merge_service.hook_data(merge_request, 'open') }
 
@@ -168,12 +168,12 @@ describe HipchatService do
     end
 
     context "Note events" do
-      let(:user) { create(:user) }
-      let(:project) { create(:project, :repository, creator: user) }
+      let(:user) { build_stubbed(:user) }
+      let(:project) { build_stubbed(:project, :repository, creator: user) }
 
       context 'when commit comment event triggered' do
         let(:commit_note) do
-          create(:note_on_commit, author: user, project: project,
+          build_stubbed(:note_on_commit, author: user, project: project,
                                   commit_id: project.repository.commit.id,
                                   note: 'a comment on a commit')
         end
@@ -200,12 +200,12 @@ describe HipchatService do
 
       context 'when merge request comment event triggered' do
         let(:merge_request) do
-          create(:merge_request, source_project: project,
+          build_stubbed(:merge_request, source_project: project,
                                  target_project: project)
         end
 
         let(:merge_request_note) do
-          create(:note_on_merge_request, noteable: merge_request,
+          build_stubbed(:note_on_merge_request, noteable: merge_request,
                                          project: project,
                                          note: "merge request **note**")
         end
@@ -231,9 +231,9 @@ describe HipchatService do
       end
 
       context 'when issue comment event triggered' do
-        let(:issue) { create(:issue, project: project) }
+        let(:issue) { build_stubbed(:issue, project: project) }
         let(:issue_note) do
-          create(:note_on_issue, noteable: issue, project: project,
+          build_stubbed(:note_on_issue, noteable: issue, project: project,
                                  note: "issue **note**")
         end
 
@@ -256,9 +256,9 @@ describe HipchatService do
       end
 
       context 'when snippet comment event triggered' do
-        let(:snippet) { create(:project_snippet, project: project) }
+        let(:snippet) { build_stubbed(:project_snippet, project: project) }
         let(:snippet_note) do
-          create(:note_on_project_snippet, noteable: snippet,
+          build_stubbed(:note_on_project_snippet, noteable: snippet,
                                            project: project,
                                            note: "snippet note")
         end
@@ -285,7 +285,7 @@ describe HipchatService do
     end
 
     context 'pipeline events' do
-      let(:pipeline) { create(:ci_empty_pipeline, user: create(:user)) }
+      let(:pipeline) { build_stubbed(:ci_empty_pipeline, user: build_stubbed(:user)) }
       let(:data) { Gitlab::DataBuilder::Pipeline.build(pipeline) }
 
       context 'for failed' do

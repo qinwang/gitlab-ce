@@ -13,7 +13,7 @@ describe Mentionable do
   end
 
   describe 'references' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
     let(:mentionable) { Example.new }
 
     it 'excludes JIRA references' do
@@ -28,17 +28,17 @@ end
 
 describe Issue, "Mentionable" do
   describe '#mentioned_users' do
-    let!(:user) { create(:user, username: 'stranger') }
-    let!(:user2) { create(:user, username: 'john') }
-    let!(:user3) { create(:user, username: 'jim') }
-    let(:issue) { create(:issue, description: "#{user.to_reference} mentioned") }
+    let!(:user) { build_stubbed(:user, username: 'stranger') }
+    let!(:user2) { build_stubbed(:user, username: 'john') }
+    let!(:user3) { build_stubbed(:user, username: 'jim') }
+    let(:issue) { build_stubbed(:issue, description: "#{user.to_reference} mentioned") }
 
     subject { issue.mentioned_users }
 
     it { expect(subject).to contain_exactly(user) }
 
     context 'when a note on personal snippet' do
-      let!(:note) { create(:note_on_personal_snippet, note: "#{user.to_reference} mentioned #{user3.to_reference}") }
+      let!(:note) { build_stubbed(:note_on_personal_snippet, note: "#{user.to_reference} mentioned #{user3.to_reference}") }
 
       subject { note.mentioned_users }
 
@@ -48,12 +48,12 @@ describe Issue, "Mentionable" do
 
   describe '#referenced_mentionables' do
     context 'with an issue on a private project' do
-      let(:project) { create(:project, :public) }
-      let(:issue) { create(:issue, project: project) }
-      let(:public_issue) { create(:issue, project: project) }
-      let(:private_project) { create(:project, :private) }
-      let(:private_issue) { create(:issue, project: private_project) }
-      let(:user) { create(:user) }
+      let(:project) { build_stubbed(:project, :public) }
+      let(:issue) { build_stubbed(:issue, project: project) }
+      let(:public_issue) { build_stubbed(:issue, project: project) }
+      let(:private_project) { build_stubbed(:project, :private) }
+      let(:private_issue) { build_stubbed(:issue, project: private_project) }
+      let(:user) { build_stubbed(:user) }
 
       def referenced_issues(current_user)
         issue.title = "#{private_issue.to_reference(project)} and #{public_issue.to_reference}"
@@ -85,13 +85,13 @@ describe Issue, "Mentionable" do
   end
 
   describe '#create_cross_references!' do
-    let(:project) { create(:project, :repository) }
+    let(:project) { build_stubbed(:project, :repository) }
     let(:author)  { build(:user) }
     let(:commit)  { project.commit }
     let(:commit2) { project.commit }
 
     let!(:issue) do
-      create(:issue, project: project, description: "See #{commit.to_reference}")
+      build_stubbed(:issue, project: project, description: "See #{commit.to_reference}")
     end
 
     it 'correctly removes already-mentioned Commits' do
@@ -102,8 +102,8 @@ describe Issue, "Mentionable" do
   end
 
   describe '#create_new_cross_references!' do
-    let(:project) { create(:project) }
-    let(:author)  { create(:author) }
+    let(:project) { build_stubbed(:project) }
+    let(:author)  { build_stubbed(:author) }
     let(:issues)  { create_list(:issue, 2, project: project, author: author) }
 
     before do
@@ -150,8 +150,8 @@ describe Issue, "Mentionable" do
       end
 
       it 'notifies new references from project snippet note' do
-        snippet = create(:snippet, project: project)
-        note = create(:note, note: issues[0].to_reference, noteable: snippet, project: project, author: author)
+        snippet = build_stubbed(:snippet, project: project)
+        note = build_stubbed(:note, note: issues[0].to_reference, noteable: snippet, project: project, author: author)
 
         expect(SystemNoteService).to receive(:cross_reference).with(issues[1], any_args)
 
@@ -161,13 +161,13 @@ describe Issue, "Mentionable" do
     end
 
     def create_issue(description:)
-      create(:issue, project: project, description: description, author: author)
+      build_stubbed(:issue, project: project, description: description, author: author)
     end
   end
 end
 
 describe Commit, 'Mentionable' do
-  let(:project) { create(:project, :public, :repository) }
+  let(:project) { build_stubbed(:project, :public, :repository) }
   let(:commit)  { project.commit }
 
   describe '#matches_cross_reference_regex?' do
@@ -196,7 +196,7 @@ describe Commit, 'Mentionable' do
     end
 
     it 'is true if issue referenced by url' do
-      issue = create(:issue, project: project)
+      issue = build_stubbed(:issue, project: project)
 
       allow(commit.raw).to receive(:message).and_return Gitlab::UrlBuilder.build(issue)
 
@@ -204,7 +204,7 @@ describe Commit, 'Mentionable' do
     end
 
     context 'with external issue tracker' do
-      let(:project) { create(:jira_project, :repository) }
+      let(:project) { build_stubbed(:jira_project, :repository) }
 
       it 'is true if external issues referenced' do
         allow(commit.raw).to receive(:message).and_return 'JIRA-123'

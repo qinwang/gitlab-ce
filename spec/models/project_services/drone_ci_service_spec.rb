@@ -31,7 +31,7 @@ describe DroneCiService, :use_clean_rails_memory_store_caching do
 
   shared_context :drone_ci_service do
     let(:drone)      { DroneCiService.new }
-    let(:project)    { create(:project, :repository, name: 'project') }
+    let(:project)    { build_stubbed(:project, :repository, name: 'project') }
     let(:path)       { project.full_path }
     let(:drone_url)  { 'http://drone.example.com' }
     let(:sha)        { '2ab7834c' }
@@ -117,7 +117,7 @@ describe DroneCiService, :use_clean_rails_memory_store_caching do
   describe "execute" do
     include_context :drone_ci_service
 
-    let(:user)    { create(:user, username: 'username') }
+    let(:user)    { build_stubbed(:user, username: 'username') }
     let(:push_sample_data) do
       Gitlab::DataBuilder::Push.build_sample(project, user)
     end

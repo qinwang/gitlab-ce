@@ -1,24 +1,24 @@
 require 'spec_helper'
 
 describe Noteable do
-  let!(:active_diff_note1) { create(:diff_note_on_merge_request) }
+  let!(:active_diff_note1) { build_stubbed(:diff_note_on_merge_request) }
   let(:project) { active_diff_note1.project }
   subject { active_diff_note1.noteable }
-  let!(:active_diff_note2) { create(:diff_note_on_merge_request, project: project, noteable: subject, in_reply_to: active_diff_note1) }
-  let!(:active_diff_note3) { create(:diff_note_on_merge_request, project: project, noteable: subject, position: active_position2) }
-  let!(:outdated_diff_note1) { create(:diff_note_on_merge_request, project: project, noteable: subject, position: outdated_position) }
-  let!(:outdated_diff_note2) { create(:diff_note_on_merge_request, project: project, noteable: subject, in_reply_to: outdated_diff_note1) }
-  let!(:discussion_note1) { create(:discussion_note_on_merge_request, project: project, noteable: subject) }
-  let!(:discussion_note2) { create(:discussion_note_on_merge_request, in_reply_to: discussion_note1) }
-  let!(:commit_diff_note1) { create(:diff_note_on_commit, project: project) }
-  let!(:commit_diff_note2) { create(:diff_note_on_commit, project: project, in_reply_to: commit_diff_note1) }
-  let!(:commit_note1) { create(:note_on_commit, project: project) }
-  let!(:commit_note2) { create(:note_on_commit, project: project) }
-  let!(:commit_discussion_note1) { create(:discussion_note_on_commit, project: project) }
-  let!(:commit_discussion_note2) { create(:discussion_note_on_commit, in_reply_to: commit_discussion_note1) }
-  let!(:commit_discussion_note3) { create(:discussion_note_on_commit, project: project) }
-  let!(:note1) { create(:note, project: project, noteable: subject) }
-  let!(:note2) { create(:note, project: project, noteable: subject) }
+  let!(:active_diff_note2) { build_stubbed(:diff_note_on_merge_request, project: project, noteable: subject, in_reply_to: active_diff_note1) }
+  let!(:active_diff_note3) { build_stubbed(:diff_note_on_merge_request, project: project, noteable: subject, position: active_position2) }
+  let!(:outdated_diff_note1) { build_stubbed(:diff_note_on_merge_request, project: project, noteable: subject, position: outdated_position) }
+  let!(:outdated_diff_note2) { build_stubbed(:diff_note_on_merge_request, project: project, noteable: subject, in_reply_to: outdated_diff_note1) }
+  let!(:discussion_note1) { build_stubbed(:discussion_note_on_merge_request, project: project, noteable: subject) }
+  let!(:discussion_note2) { build_stubbed(:discussion_note_on_merge_request, in_reply_to: discussion_note1) }
+  let!(:commit_diff_note1) { build_stubbed(:diff_note_on_commit, project: project) }
+  let!(:commit_diff_note2) { build_stubbed(:diff_note_on_commit, project: project, in_reply_to: commit_diff_note1) }
+  let!(:commit_note1) { build_stubbed(:note_on_commit, project: project) }
+  let!(:commit_note2) { build_stubbed(:note_on_commit, project: project) }
+  let!(:commit_discussion_note1) { build_stubbed(:discussion_note_on_commit, project: project) }
+  let!(:commit_discussion_note2) { build_stubbed(:discussion_note_on_commit, in_reply_to: commit_discussion_note1) }
+  let!(:commit_discussion_note3) { build_stubbed(:discussion_note_on_commit, project: project) }
+  let!(:note1) { build_stubbed(:note, project: project, noteable: subject) }
+  let!(:note2) { build_stubbed(:note, project: project, noteable: subject) }
 
   let(:active_position2) do
     Gitlab::Diff::Position.new(

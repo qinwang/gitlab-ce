@@ -41,25 +41,25 @@ describe User do
     it { is_expected.to have_many(:reported_abuse_reports).dependent(:destroy).class_name('AbuseReport') }
 
     describe "#abuse_report" do
-      let(:current_user) { create(:user) }
-      let(:other_user) { create(:user) }
+      let(:current_user) { build_stubbed(:user) }
+      let(:other_user) { build_stubbed(:user) }
 
       it { is_expected.to have_one(:abuse_report) }
 
       it "refers to the abuse report whose user_id is the current user" do
-        abuse_report = create(:abuse_report, reporter: other_user, user: current_user)
+        abuse_report = build_stubbed(:abuse_report, reporter: other_user, user: current_user)
 
         expect(current_user.abuse_report).to eq(abuse_report)
       end
 
       it "does not refer to the abuse report whose reporter_id is the current user" do
-        create(:abuse_report, reporter: current_user, user: other_user)
+        build_stubbed(:abuse_report, reporter: current_user, user: other_user)
 
         expect(current_user.abuse_report).to be_nil
       end
 
       it "does not update the user_id of an abuse report when the user is updated" do
-        abuse_report = create(:abuse_report, reporter: current_user, user: other_user)
+        abuse_report = build_stubbed(:abuse_report, reporter: current_user, user: other_user)
 
         current_user.block
 
@@ -69,8 +69,8 @@ describe User do
 
     describe '#group_members' do
       it 'does not include group memberships for which user is a requester' do
-        user = create(:user)
-        group = create(:group, :public, :access_requestable)
+        user = build_stubbed(:user)
+        group = build_stubbed(:group, :public, :access_requestable)
         group.request_access(user)
 
         expect(user.group_members).to be_empty
@@ -79,8 +79,8 @@ describe User do
 
     describe '#project_members' do
       it 'does not include project memberships for which user is a requester' do
-        user = create(:user)
-        project = create(:project, :public, :access_requestable)
+        user = build_stubbed(:user)
+        project = build_stubbed(:project, :public, :access_requestable)
         project.request_access(user)
 
         expect(user.project_members).to be_empty
@@ -270,8 +270,8 @@ describe User do
   describe "scopes" do
     describe ".with_two_factor" do
       it "returns users with 2fa enabled via OTP" do
-        user_with_2fa = create(:user, :two_factor_via_otp)
-        user_without_2fa = create(:user)
+        user_with_2fa = build_stubbed(:user, :two_factor_via_otp)
+        user_without_2fa = build_stubbed(:user)
         users_with_two_factor = described_class.with_two_factor.pluck(:id)
 
         expect(users_with_two_factor).to include(user_with_2fa.id)
@@ -279,8 +279,8 @@ describe User do
       end
 
       it "returns users with 2fa enabled via U2F" do
-        user_with_2fa = create(:user, :two_factor_via_u2f)
-        user_without_2fa = create(:user)
+        user_with_2fa = build_stubbed(:user, :two_factor_via_u2f)
+        user_without_2fa = build_stubbed(:user)
         users_with_two_factor = described_class.with_two_factor.pluck(:id)
 
         expect(users_with_two_factor).to include(user_with_2fa.id)
@@ -288,8 +288,8 @@ describe User do
       end
 
       it "returns users with 2fa enabled via OTP and U2F" do
-        user_with_2fa = create(:user, :two_factor_via_otp, :two_factor_via_u2f)
-        user_without_2fa = create(:user)
+        user_with_2fa = build_stubbed(:user, :two_factor_via_otp, :two_factor_via_u2f)
+        user_without_2fa = build_stubbed(:user)
         users_with_two_factor = described_class.with_two_factor.pluck(:id)
 
         expect(users_with_two_factor).to eq([user_with_2fa.id])
@@ -299,8 +299,8 @@ describe User do
 
     describe ".without_two_factor" do
       it "excludes users with 2fa enabled via OTP" do
-        user_with_2fa = create(:user, :two_factor_via_otp)
-        user_without_2fa = create(:user)
+        user_with_2fa = build_stubbed(:user, :two_factor_via_otp)
+        user_without_2fa = build_stubbed(:user)
         users_without_two_factor = described_class.without_two_factor.pluck(:id)
 
         expect(users_without_two_factor).to include(user_without_2fa.id)
@@ -308,8 +308,8 @@ describe User do
       end
 
       it "excludes users with 2fa enabled via U2F" do
-        user_with_2fa = create(:user, :two_factor_via_u2f)
-        user_without_2fa = create(:user)
+        user_with_2fa = build_stubbed(:user, :two_factor_via_u2f)
+        user_without_2fa = build_stubbed(:user)
         users_without_two_factor = described_class.without_two_factor.pluck(:id)
 
         expect(users_without_two_factor).to include(user_without_2fa.id)
@@ -317,8 +317,8 @@ describe User do
       end
 
       it "excludes users with 2fa enabled via OTP and U2F" do
-        user_with_2fa = create(:user, :two_factor_via_otp, :two_factor_via_u2f)
-        user_without_2fa = create(:user)
+        user_with_2fa = build_stubbed(:user, :two_factor_via_otp, :two_factor_via_u2f)
+        user_without_2fa = build_stubbed(:user)
         users_without_two_factor = described_class.without_two_factor.pluck(:id)
 
         expect(users_without_two_factor).to include(user_without_2fa.id)
@@ -332,8 +332,8 @@ describe User do
         user_2 = create :user
         user_3 = create :user
         current_user = create :user
-        create(:todo, user: current_user, author: user_2, state: :done)
-        create(:todo, user: current_user, author: user_3, state: :pending)
+        build_stubbed(:todo, user: current_user, author: user_2, state: :done)
+        build_stubbed(:todo, user: current_user, author: user_3, state: :pending)
 
         expect(described_class.todo_authors(current_user.id, 'pending')).to eq [user_3]
         expect(described_class.todo_authors(current_user.id, 'done')).to eq [user_2]
@@ -350,8 +350,8 @@ describe User do
 
   describe 'before save hook' do
     context 'when saving an external user' do
-      let(:user)          { create(:user) }
-      let(:external_user) { create(:user, external: true) }
+      let(:user)          { build_stubbed(:user) }
+      let(:external_user) { build_stubbed(:user, external: true) }
 
       it "sets other properties aswell" do
         expect(external_user.can_create_team).to be_falsey
@@ -364,7 +364,7 @@ describe User do
   describe 'after update hook' do
     describe '.update_invalid_gpg_signatures' do
       let(:user) do
-        create(:user, email: 'tula.torphy@abshire.ca').tap do |user|
+        build_stubbed(:user, email: 'tula.torphy@abshire.ca').tap do |user|
           user.skip_reconfirmation!
         end
       end
@@ -383,7 +383,7 @@ describe User do
 
   describe '#update_tracked_fields!', :clean_gitlab_redis_shared_state do
     let(:request) { OpenStruct.new(remote_ip: "127.0.0.1") }
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     it 'writes trackable attributes' do
       expect do
@@ -400,7 +400,7 @@ describe User do
     end
 
     it 'writes trackable attributes for a different user' do
-      user2 = create(:user)
+      user2 = build_stubbed(:user)
 
       user.update_tracked_fields!(request)
 
@@ -411,9 +411,9 @@ describe User do
   end
 
   shared_context 'user keys' do
-    let(:user) { create(:user) }
-    let!(:key) { create(:key, user: user) }
-    let!(:deploy_key) { create(:deploy_key, user: user) }
+    let(:user) { build_stubbed(:user) }
+    let!(:key) { build_stubbed(:key, user: user) }
+    let!(:deploy_key) { build_stubbed(:deploy_key, user: user) }
   end
 
   describe '#keys' do
@@ -443,7 +443,7 @@ describe User do
       allow_any_instance_of(ApplicationSetting).to receive(:send_user_confirmation_email).and_return(true)
     end
 
-    let(:user) { create(:user, confirmed_at: nil, unconfirmed_email: 'test@gitlab.com') }
+    let(:user) { build_stubbed(:user, confirmed_at: nil, unconfirmed_email: 'test@gitlab.com') }
 
     it 'returns unconfirmed' do
       expect(user.confirmed?).to be_falsey
@@ -456,7 +456,7 @@ describe User do
   end
 
   describe '#to_reference' do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     it 'returns a String reference to the object' do
       expect(user.to_reference).to eq "@#{user.username}"
@@ -465,28 +465,28 @@ describe User do
 
   describe '#generate_password' do
     it "does not generate password by default" do
-      user = create(:user, password: 'abcdefghe')
+      user = build_stubbed(:user, password: 'abcdefghe')
       expect(user.password).to eq('abcdefghe')
     end
   end
 
   describe 'authentication token' do
     it "has authentication token" do
-      user = create(:user)
+      user = build_stubbed(:user)
       expect(user.authentication_token).not_to be_blank
     end
   end
 
   describe 'ensure incoming email token' do
     it 'has incoming email token' do
-      user = create(:user)
+      user = build_stubbed(:user)
       expect(user.incoming_email_token).not_to be_blank
     end
   end
 
   describe '#ensure_user_rights_and_limits' do
     describe 'with external user' do
-      let(:user) { create(:user, external: true) }
+      let(:user) { build_stubbed(:user, external: true) }
 
       it 'receives callback when external changes' do
         expect(user).to receive(:ensure_user_rights_and_limits)
@@ -503,7 +503,7 @@ describe User do
     end
 
     describe 'without external user' do
-      let(:user) { create(:user, external: false) }
+      let(:user) { build_stubbed(:user, external: false) }
 
       it 'receives callback when external changes' do
         expect(user).to receive(:ensure_user_rights_and_limits)
@@ -520,7 +520,7 @@ describe User do
 
   describe 'rss token' do
     it 'ensures an rss token on read' do
-      user = create(:user, rss_token: nil)
+      user = build_stubbed(:user, rss_token: nil)
       rss_token = user.rss_token
       expect(rss_token).not_to be_blank
       expect(user.reload.rss_token).to eq rss_token
@@ -549,7 +549,7 @@ describe User do
 
   describe '#disable_two_factor!' do
     it 'clears all 2FA-related fields' do
-      user = create(:user, :two_factor)
+      user = build_stubbed(:user, :two_factor)
 
       expect(user).to be_two_factor_enabled
       expect(user.encrypted_otp_secret).not_to be_nil
@@ -569,13 +569,13 @@ describe User do
 
   describe 'projects' do
     before do
-      @user = create(:user)
+      @user = build_stubbed(:user)
 
-      @project = create(:project, namespace: @user.namespace)
-      @project_2 = create(:project, group: create(:group)) do |project|
+      @project = build_stubbed(:project, namespace: @user.namespace)
+      @project_2 = build_stubbed(:project, group: build_stubbed(:group)) do |project|
         project.add_master(@user)
       end
-      @project_3 = create(:project, group: create(:group)) do |project|
+      @project_3 = build_stubbed(:project, group: build_stubbed(:group)) do |project|
         project.add_developer(@user)
       end
     end
@@ -620,7 +620,7 @@ describe User do
   describe 'namespaced' do
     before do
       @user = create :user
-      @project = create(:project, namespace: @user.namespace)
+      @project = build_stubbed(:project, namespace: @user.namespace)
     end
 
     it { expect(@user.several_namespaces?).to be_falsey }
@@ -628,7 +628,7 @@ describe User do
   end
 
   describe 'blocking user' do
-    let(:user) { create(:user, name: 'John Smith') }
+    let(:user) { build_stubbed(:user, name: 'John Smith') }
 
     it "blocks user" do
       user.block
@@ -677,17 +677,17 @@ describe User do
   end
 
   describe '.without_projects' do
-    let!(:project) { create(:project, :public, :access_requestable) }
-    let!(:user) { create(:user) }
-    let!(:user_without_project) { create(:user) }
-    let!(:user_without_project2) { create(:user) }
+    let!(:project) { build_stubbed(:project, :public, :access_requestable) }
+    let!(:user) { build_stubbed(:user) }
+    let!(:user_without_project) { build_stubbed(:user) }
+    let!(:user_without_project2) { build_stubbed(:user) }
 
     before do
       # add user to project
       project.team << [user, :master]
 
       # create invite to projet
-      create(:project_member, :developer, project: project, invite_token: '1234', invite_email: 'inviteduser1@example.com')
+      build_stubbed(:project_member, :developer, project: project, invite_token: '1234', invite_email: 'inviteduser1@example.com')
 
       # create request to join project
       project.request_access(user_without_project2)
@@ -700,7 +700,7 @@ describe User do
 
   describe 'user creation' do
     describe 'normal user' do
-      let(:user) { create(:user, name: 'John Smith') }
+      let(:user) { build_stubbed(:user, name: 'John Smith') }
 
       it { expect(user.admin?).to be_falsey }
       it { expect(user.require_ssh_key?).to be_truthy }
@@ -769,13 +769,13 @@ describe User do
 
   describe '.find_by_any_email' do
     it 'finds by primary email' do
-      user = create(:user, email: 'foo@example.com')
+      user = build_stubbed(:user, email: 'foo@example.com')
 
       expect(described_class.find_by_any_email(user.email)).to eq user
     end
 
     it 'finds by secondary email' do
-      email = create(:email, email: 'foo@example.com')
+      email = build_stubbed(:email, email: 'foo@example.com')
       user  = email.user
 
       expect(described_class.find_by_any_email(email.email)).to eq user
@@ -787,9 +787,9 @@ describe User do
   end
 
   describe '.search' do
-    let!(:user) { create(:user, name: 'user', username: 'usern', email: 'email@gmail.com') }
-    let!(:user2) { create(:user, name: 'user name', username: 'username', email: 'someemail@gmail.com') }
-    let!(:user3) { create(:user, name: 'us', username: 'se', email: 'foo@gmail.com') }
+    let!(:user) { build_stubbed(:user, name: 'user', username: 'usern', email: 'email@gmail.com') }
+    let!(:user2) { build_stubbed(:user, name: 'user name', username: 'username', email: 'someemail@gmail.com') }
+    let!(:user3) { build_stubbed(:user, name: 'us', username: 'se', email: 'foo@gmail.com') }
 
     describe 'name matching' do
       it 'returns users with a matching name with exact match first' do
@@ -853,10 +853,10 @@ describe User do
   describe '.search_with_secondary_emails' do
     delegate :search_with_secondary_emails, to: :described_class
 
-    let!(:user) { create(:user, name: 'John Doe', username: 'john.doe', email: 'john.doe@example.com' ) }
-    let!(:another_user) { create(:user, name: 'Albert Smith', username: 'albert.smith', email: 'albert.smith@example.com' ) }
+    let!(:user) { build_stubbed(:user, name: 'John Doe', username: 'john.doe', email: 'john.doe@example.com' ) }
+    let!(:another_user) { build_stubbed(:user, name: 'Albert Smith', username: 'albert.smith', email: 'albert.smith@example.com' ) }
     let!(:email) do
-      create(:email, user: another_user, email: 'alias@example.com')
+      build_stubbed(:email, user: another_user, email: 'alias@example.com')
     end
 
     it 'returns users with a matching name' do
@@ -910,9 +910,9 @@ describe User do
     end
 
     it 'returns multiple users with matching secondary emails' do
-      email1 = create(:email, email: '1_testemail@example.com')
-      email2 = create(:email, email: '2_testemail@example.com')
-      email3 = create(:email, email: 'other@email.com')
+      email1 = build_stubbed(:email, email: '1_testemail@example.com')
+      email2 = build_stubbed(:email, email: '2_testemail@example.com')
+      email3 = build_stubbed(:email, email: 'other@email.com')
       email3.user.update_attributes!(email: 'another@mail.com')
 
       expect(
@@ -927,8 +927,8 @@ describe User do
 
   describe '.find_by_ssh_key_id' do
     context 'using an existing SSH key ID' do
-      let(:user) { create(:user) }
-      let(:key) { create(:key, user: user) }
+      let(:user) { build_stubbed(:user) }
+      let(:key) { build_stubbed(:key, user: user) }
 
       it 'returns the corresponding User' do
         expect(described_class.find_by_ssh_key_id(key.id)).to eq(user)
@@ -944,7 +944,7 @@ describe User do
 
   describe '.by_login' do
     let(:username) { 'John' }
-    let!(:user) { create(:user, username: username) }
+    let!(:user) { build_stubbed(:user, username: username) }
 
     it 'gets the correct user' do
       expect(described_class.by_login(user.email.upcase)).to eq user
@@ -962,7 +962,7 @@ describe User do
     end
 
     it 'is case-insensitive' do
-      user = create(:user, username: 'JohnDoe')
+      user = build_stubbed(:user, username: 'JohnDoe')
       expect(described_class.find_by_username('JOHNDOE')).to eq user
     end
   end
@@ -974,13 +974,13 @@ describe User do
     end
 
     it 'is case-insensitive' do
-      user = create(:user, username: 'JohnDoe')
+      user = build_stubbed(:user, username: 'JohnDoe')
       expect(described_class.find_by_username!('JOHNDOE')).to eq user
     end
   end
 
   describe '.find_by_full_path' do
-    let!(:user) { create(:user) }
+    let!(:user) { build_stubbed(:user) }
 
     context 'with a route matching the given path' do
       let!(:route) { user.namespace.route }
@@ -1031,7 +1031,7 @@ describe User do
 
     context 'with a group route matching the given path' do
       context 'when the group namespace has an owner_id (legacy data)' do
-        let!(:group) { create(:group, path: 'group_path', owner: user) }
+        let!(:group) { build_stubbed(:group, path: 'group_path', owner: user) }
 
         it 'returns nil' do
           expect(described_class.find_by_full_path('group_path')).to eq(nil)
@@ -1039,7 +1039,7 @@ describe User do
       end
 
       context 'when the group namespace does not have an owner_id' do
-        let!(:group) { create(:group, path: 'group_path') }
+        let!(:group) { build_stubbed(:group, path: 'group_path') }
 
         it 'returns nil' do
           expect(described_class.find_by_full_path('group_path')).to eq(nil)
@@ -1060,7 +1060,7 @@ describe User do
   end
 
   describe '#avatar_type' do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     it 'is true if avatar is image' do
       user.update_attribute(:avatar, 'uploads/avatar.png')
@@ -1074,7 +1074,7 @@ describe User do
   end
 
   describe '#avatar_url' do
-    let(:user) { create(:user, :with_avatar) }
+    let(:user) { build_stubbed(:user, :with_avatar) }
 
     context 'when avatar file is uploaded' do
       let(:gitlab_host) { "http://#{Gitlab.config.gitlab.host}" }
@@ -1132,17 +1132,17 @@ describe User do
   context 'ldap synchronized user' do
     describe '#ldap_user?' do
       it 'is true if provider name starts with ldap' do
-        user = create(:omniauth_user, provider: 'ldapmain')
+        user = build_stubbed(:omniauth_user, provider: 'ldapmain')
         expect(user.ldap_user?).to be_truthy
       end
 
       it 'is false for other providers' do
-        user = create(:omniauth_user, provider: 'other-provider')
+        user = build_stubbed(:omniauth_user, provider: 'other-provider')
         expect(user.ldap_user?).to be_falsey
       end
 
       it 'is false if no extern_uid is provided' do
-        user = create(:omniauth_user, extern_uid: nil)
+        user = build_stubbed(:omniauth_user, extern_uid: nil)
         expect(user.ldap_user?).to be_falsey
       end
     end
@@ -1155,7 +1155,7 @@ describe User do
     end
 
     describe '#ldap_block' do
-      let(:user) { create(:omniauth_user, provider: 'ldapmain', name: 'John Smith') }
+      let(:user) { build_stubbed(:omniauth_user, provider: 'ldapmain', name: 'John Smith') }
 
       it 'blocks user flaging the action caming from ldap' do
         user.ldap_block
@@ -1166,7 +1166,7 @@ describe User do
   end
 
   describe '#full_website_url' do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     it 'begins with http if website url omits it' do
       user.website_url = 'test.com'
@@ -1188,7 +1188,7 @@ describe User do
   end
 
   describe '#short_website_url' do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     it 'does not begin with http if website url omits it' do
       user.website_url = 'test.com'
@@ -1224,8 +1224,8 @@ describe User do
   describe '#starred?' do
     it 'determines if user starred a project' do
       user = create :user
-      project1 = create(:project, :public)
-      project2 = create(:project, :public)
+      project1 = build_stubbed(:project, :public)
+      project2 = build_stubbed(:project, :public)
 
       expect(user.starred?(project1)).to be_falsey
       expect(user.starred?(project2)).to be_falsey
@@ -1251,7 +1251,7 @@ describe User do
   describe '#toggle_star' do
     it 'toggles stars' do
       user = create :user
-      project = create(:project, :public)
+      project = build_stubbed(:project, :public)
 
       expect(user.starred?(project)).to be_falsey
       user.toggle_star(project)
@@ -1303,13 +1303,13 @@ describe User do
   end
 
   describe "#contributed_projects" do
-    subject { create(:user) }
-    let!(:project1) { create(:project) }
-    let!(:project2) { create(:project, forked_from_project: project3) }
-    let!(:project3) { create(:project) }
-    let!(:merge_request) { create(:merge_request, source_project: project2, target_project: project3, author: subject) }
-    let!(:push_event) { create(:push_event, project: project1, author: subject) }
-    let!(:merge_event) { create(:event, :created, project: project3, target: merge_request, author: subject) }
+    subject { build_stubbed(:user) }
+    let!(:project1) { build_stubbed(:project) }
+    let!(:project2) { build_stubbed(:project, forked_from_project: project3) }
+    let!(:project3) { build_stubbed(:project) }
+    let!(:merge_request) { build_stubbed(:merge_request, source_project: project2, target_project: project3, author: subject) }
+    let!(:push_event) { build_stubbed(:push_event, project: project1, author: subject) }
+    let!(:merge_event) { build_stubbed(:event, :created, project: project3, target: merge_request, author: subject) }
 
     before do
       project1.team << [subject, :master]
@@ -1330,7 +1330,7 @@ describe User do
   end
 
   describe '#can_be_removed?' do
-    subject { create(:user) }
+    subject { build_stubbed(:user) }
 
     context 'no owned groups' do
       it { expect(subject.can_be_removed?).to be_truthy }
@@ -1338,7 +1338,7 @@ describe User do
 
     context 'has owned groups' do
       before do
-        group = create(:group)
+        group = build_stubbed(:group)
         group.add_owner(subject)
       end
 
@@ -1347,14 +1347,14 @@ describe User do
   end
 
   describe "#recent_push" do
-    subject { create(:user) }
-    let!(:project1) { create(:project, :repository) }
-    let!(:project2) { create(:project, :repository, forked_from_project: project1) }
+    subject { build_stubbed(:user) }
+    let!(:project1) { build_stubbed(:project, :repository) }
+    let!(:project2) { build_stubbed(:project, :repository, forked_from_project: project1) }
 
     let!(:push_event) do
-      event = create(:push_event, project: project2, author: subject)
+      event = build_stubbed(:push_event, project: project2, author: subject)
 
-      create(:push_event_payload,
+      build_stubbed(:push_event_payload,
              event: event,
              commit_to: '1cf19a015df3523caf0a1f9d40c98a267d6a2fc2',
              commit_count: 0,
@@ -1379,7 +1379,7 @@ describe User do
     end
 
     it "excludes push event if MR is opened for it" do
-      create(:merge_request, source_project: project2, target_project: project1, source_branch: project2.default_branch, target_branch: 'fix', author: subject)
+      build_stubbed(:merge_request, source_project: project2, target_project: project1, source_branch: project2.default_branch, target_branch: 'fix', author: subject)
 
       expect(subject.recent_push).to eq(nil)
     end
@@ -1388,9 +1388,9 @@ describe User do
       expect(subject.recent_push(project1)).to eq(nil)
       expect(subject.recent_push(project2)).to eq(push_event)
 
-      push_event1 = create(:push_event, project: project1, author: subject)
+      push_event1 = build_stubbed(:push_event, project: project1, author: subject)
 
-      create(:push_event_payload,
+      build_stubbed(:push_event_payload,
              event: push_event1,
              commit_to: '1cf19a015df3523caf0a1f9d40c98a267d6a2fc2',
              commit_count: 0,
@@ -1401,8 +1401,8 @@ describe User do
   end
 
   describe '#authorized_groups' do
-    let!(:user) { create(:user) }
-    let!(:private_group) { create(:group) }
+    let!(:user) { build_stubbed(:user) }
+    let!(:private_group) { build_stubbed(:group) }
 
     before do
       private_group.add_user(user, Gitlab::Access::MASTER)
@@ -1416,16 +1416,16 @@ describe User do
   describe '#authorized_projects', truncate: true do
     context 'with a minimum access level' do
       it 'includes projects for which the user is an owner' do
-        user = create(:user)
-        project = create(:project, :private, namespace: user.namespace)
+        user = build_stubbed(:user)
+        project = build_stubbed(:project, :private, namespace: user.namespace)
 
         expect(user.authorized_projects(Gitlab::Access::REPORTER))
           .to contain_exactly(project)
       end
 
       it 'includes projects for which the user is a master' do
-        user = create(:user)
-        project = create(:project, :private)
+        user = build_stubbed(:user)
+        project = build_stubbed(:project, :private)
 
         project.team << [user, Gitlab::Access::MASTER]
 
@@ -1435,16 +1435,16 @@ describe User do
     end
 
     it "includes user's personal projects" do
-      user    = create(:user)
-      project = create(:project, :private, namespace: user.namespace)
+      user    = build_stubbed(:user)
+      project = build_stubbed(:project, :private, namespace: user.namespace)
 
       expect(user.authorized_projects).to include(project)
     end
 
     it "includes personal projects user has been given access to" do
-      user1   = create(:user)
-      user2   = create(:user)
-      project = create(:project, :private, namespace: user1.namespace)
+      user1   = build_stubbed(:user)
+      user2   = build_stubbed(:user)
+      project = build_stubbed(:project, :private, namespace: user1.namespace)
 
       project.team << [user2, Gitlab::Access::DEVELOPER]
 
@@ -1452,9 +1452,9 @@ describe User do
     end
 
     it "includes projects of groups user has been added to" do
-      group   = create(:group)
-      project = create(:project, group: group)
-      user    = create(:user)
+      group   = build_stubbed(:group)
+      project = build_stubbed(:project, group: group)
+      user    = build_stubbed(:user)
 
       group.add_developer(user)
 
@@ -1462,9 +1462,9 @@ describe User do
     end
 
     it "does not include projects of groups user has been removed from" do
-      group   = create(:group)
-      project = create(:project, group: group)
-      user    = create(:user)
+      group   = build_stubbed(:group)
+      project = build_stubbed(:project, group: group)
+      user    = build_stubbed(:user)
 
       member = group.add_developer(user)
       expect(user.authorized_projects).to include(project)
@@ -1474,9 +1474,9 @@ describe User do
     end
 
     it "includes projects shared with user's group" do
-      user    = create(:user)
-      project = create(:project, :private)
-      group   = create(:group)
+      user    = build_stubbed(:user)
+      project = build_stubbed(:project, :private)
+      group   = build_stubbed(:group)
 
       group.add_reporter(user)
       project.project_group_links.create(group: group)
@@ -1485,9 +1485,9 @@ describe User do
     end
 
     it "does not include destroyed projects user had access to" do
-      user1   = create(:user)
-      user2   = create(:user)
-      project = create(:project, :private, namespace: user1.namespace)
+      user1   = build_stubbed(:user)
+      user2   = build_stubbed(:user)
+      project = build_stubbed(:project, :private, namespace: user1.namespace)
 
       project.team << [user2, Gitlab::Access::DEVELOPER]
       expect(user2.authorized_projects).to include(project)
@@ -1497,9 +1497,9 @@ describe User do
     end
 
     it "does not include projects of destroyed groups user had access to" do
-      group   = create(:group)
-      project = create(:project, namespace: group)
-      user    = create(:user)
+      group   = build_stubbed(:group)
+      project = build_stubbed(:project, namespace: group)
+      user    = build_stubbed(:user)
 
       group.add_developer(user)
       expect(user.authorized_projects).to include(project)
@@ -1510,12 +1510,12 @@ describe User do
   end
 
   describe '#projects_where_can_admin_issues' do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     it 'includes projects for which the user access level is above or equal to reporter' do
-      reporter_project  = create(:project) { |p| p.add_reporter(user) }
-      developer_project = create(:project) { |p| p.add_developer(user) }
-      master_project    = create(:project) { |p| p.add_master(user) }
+      reporter_project  = build_stubbed(:project) { |p| p.add_reporter(user) }
+      developer_project = build_stubbed(:project) { |p| p.add_developer(user) }
+      master_project    = build_stubbed(:project) { |p| p.add_master(user) }
 
       expect(user.projects_where_can_admin_issues.to_a).to eq([master_project, developer_project, reporter_project])
       expect(user.can?(:admin_issue, master_project)).to eq(true)
@@ -1524,8 +1524,8 @@ describe User do
     end
 
     it 'does not include for which the user access level is below reporter' do
-      project = create(:project)
-      guest_project = create(:project) { |p| p.add_guest(user) }
+      project = build_stubbed(:project)
+      guest_project = build_stubbed(:project) { |p| p.add_guest(user) }
 
       expect(user.projects_where_can_admin_issues.to_a).to be_empty
       expect(user.can?(:admin_issue, guest_project)).to eq(false)
@@ -1533,14 +1533,14 @@ describe User do
     end
 
     it 'does not include archived projects' do
-      project = create(:project, :archived)
+      project = build_stubbed(:project, :archived)
 
       expect(user.projects_where_can_admin_issues.to_a).to be_empty
       expect(user.can?(:admin_issue, project)).to eq(false)
     end
 
     it 'does not include projects for which issues are disabled' do
-      project = create(:project, :issues_disabled)
+      project = build_stubbed(:project, :issues_disabled)
 
       expect(user.projects_where_can_admin_issues.to_a).to be_empty
       expect(user.can?(:admin_issue, project)).to eq(false)
@@ -1548,15 +1548,15 @@ describe User do
   end
 
   describe '#ci_authorized_runners' do
-    let(:user) { create(:user) }
-    let(:runner) { create(:ci_runner) }
+    let(:user) { build_stubbed(:user) }
+    let(:runner) { build_stubbed(:ci_runner) }
 
     before do
       project.runners << runner
     end
 
     context 'without any projects' do
-      let(:project) { create(:project) }
+      let(:project) { build_stubbed(:project) }
 
       it 'does not load' do
         expect(user.ci_authorized_runners).to be_empty
@@ -1564,8 +1564,8 @@ describe User do
     end
 
     context 'with personal projects runners' do
-      let(:namespace) { create(:namespace, owner: user) }
-      let(:project) { create(:project, namespace: namespace) }
+      let(:namespace) { build_stubbed(:namespace, owner: user) }
+      let(:project) { build_stubbed(:project, namespace: namespace) }
 
       it 'loads' do
         expect(user.ci_authorized_runners).to contain_exactly(runner)
@@ -1595,8 +1595,8 @@ describe User do
     end
 
     context 'with groups projects runners' do
-      let(:group) { create(:group) }
-      let(:project) { create(:project, group: group) }
+      let(:group) { build_stubbed(:group) }
+      let(:project) { build_stubbed(:project, group: group) }
 
       def add_user(access)
         group.add_user(user, access)
@@ -1606,7 +1606,7 @@ describe User do
     end
 
     context 'with other projects runners' do
-      let(:project) { create(:project) }
+      let(:project) { build_stubbed(:project) }
 
       def add_user(access)
         project.team << [user, access]
@@ -1617,9 +1617,9 @@ describe User do
   end
 
   describe '#projects_with_reporter_access_limited_to' do
-    let(:project1) { create(:project) }
-    let(:project2) { create(:project) }
-    let(:user) { create(:user) }
+    let(:project1) { build_stubbed(:project) }
+    let(:project2) { build_stubbed(:project) }
+    let(:user) { build_stubbed(:user) }
 
     before do
       project1.team << [user, :reporter]
@@ -1654,7 +1654,7 @@ describe User do
 
   describe '#all_expanded_groups' do
     # foo/bar would also match foo/barbaz instead of just foo/bar and foo/bar/baz
-    let!(:user) { create(:user) }
+    let!(:user) { build_stubbed(:user) }
 
     #                group
     #        _______ (foo) _______
@@ -1760,9 +1760,9 @@ describe User do
   end
 
   describe '#refresh_authorized_projects', clean_gitlab_redis_shared_state: true do
-    let(:project1) { create(:project) }
-    let(:project2) { create(:project) }
-    let(:user) { create(:user) }
+    let(:project1) { build_stubbed(:project) }
+    let(:project2) { build_stubbed(:project) }
+    let(:user) { build_stubbed(:user) }
 
     before do
       project1.team << [user, :reporter]
@@ -1847,7 +1847,7 @@ describe User do
 
     context "when a regular user exists with the username 'ghost'" do
       it "creates a ghost user with a non-conflicting username" do
-        create(:user, username: 'ghost')
+        build_stubbed(:user, username: 'ghost')
         ghost = described_class.ghost
 
         expect(ghost).to be_persisted
@@ -1857,7 +1857,7 @@ describe User do
 
     context "when a regular user exists with the email 'ghost@example.com'" do
       it "creates a ghost user with a non-conflicting email" do
-        create(:user, email: 'ghost@example.com')
+        build_stubbed(:user, email: 'ghost@example.com')
         ghost = described_class.ghost
 
         expect(ghost).to be_persisted
@@ -1951,8 +1951,8 @@ describe User do
   context '.active' do
     before do
       described_class.ghost
-      create(:user, name: 'user', state: 'active')
-      create(:user, name: 'user', state: 'blocked')
+      build_stubbed(:user, name: 'user', state: 'active')
+      build_stubbed(:user, name: 'user', state: 'blocked')
     end
 
     it 'only counts active and non internal users' do
@@ -1962,7 +1962,7 @@ describe User do
 
   describe 'preferred language' do
     it 'is English by default' do
-      user = create(:user)
+      user = build_stubbed(:user)
 
       expect(user.preferred_language).to eq('en')
     end
@@ -2012,7 +2012,7 @@ describe User do
     end
 
     it 'returns false for ldap user' do
-      user = create(:omniauth_user, provider: 'ldapmain')
+      user = build_stubbed(:omniauth_user, provider: 'ldapmain')
 
       expect(user.allow_password_authentication?).to be_falsey
     end

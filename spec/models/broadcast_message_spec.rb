@@ -22,26 +22,26 @@ describe BroadcastMessage do
 
   describe '.current', :use_clean_rails_memory_store_caching do
     it 'returns message if time match' do
-      message = create(:broadcast_message)
+      message = build_stubbed(:broadcast_message)
 
       expect(described_class.current).to include(message)
     end
 
     it 'returns multiple messages if time match' do
-      message1 = create(:broadcast_message)
-      message2 = create(:broadcast_message)
+      message1 = build_stubbed(:broadcast_message)
+      message2 = build_stubbed(:broadcast_message)
 
       expect(described_class.current).to contain_exactly(message1, message2)
     end
 
     it 'returns empty list if time not come' do
-      create(:broadcast_message, :future)
+      build_stubbed(:broadcast_message, :future)
 
       expect(described_class.current).to be_empty
     end
 
     it 'returns empty list if time has passed' do
-      create(:broadcast_message, :expired)
+      build_stubbed(:broadcast_message, :expired)
 
       expect(described_class.current).to be_empty
     end

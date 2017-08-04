@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe GenericCommitStatus do
-  let(:project) { create(:project) }
-  let(:pipeline) { create(:ci_pipeline, project: project) }
+  let(:project) { build_stubbed(:project) }
+  let(:pipeline) { build_stubbed(:ci_pipeline, project: project) }
   let(:external_url) { 'http://example.gitlab.com/status' }
 
   let(:generic_commit_status) do
-    create(:generic_commit_status, pipeline: pipeline,
+    build_stubbed(:generic_commit_status, pipeline: pipeline,
                                    target_url: external_url)
   end
 
@@ -34,7 +34,7 @@ describe GenericCommitStatus do
   end
 
   describe '#detailed_status' do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
     let(:status) { generic_commit_status.detailed_status(user) }
 
     it 'returns detailed status object' do

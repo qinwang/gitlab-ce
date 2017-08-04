@@ -3,7 +3,7 @@ require 'spec_helper'
 describe MergeRequest do
   include RepoHelpers
 
-  subject { create(:merge_request) }
+  subject { build_stubbed(:merge_request) }
 
   describe 'associations' do
     it { is_expected.to belong_to(:target_project).class_name('Project') }
@@ -66,9 +66,9 @@ describe MergeRequest do
   end
 
   describe '#target_branch_sha' do
-    let(:project) { create(:project, :repository) }
+    let(:project) { build_stubbed(:project, :repository) }
 
-    subject { create(:merge_request, source_project: project, target_project: project) }
+    subject { build_stubbed(:merge_request, source_project: project, target_project: project) }
 
     context 'when the target branch does not exist' do
       before do
@@ -122,7 +122,7 @@ describe MergeRequest do
   end
 
   describe '#assignee_or_author?' do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     it 'returns true for a user that is assigned to a merge request' do
       subject.assignee = user
@@ -172,7 +172,7 @@ describe MergeRequest do
       end
 
       it 'caches an internal issue' do
-        issue  = create(:issue, project: subject.project)
+        issue  = build_stubbed(:issue, project: subject.project)
         commit = double('commit1', safe_message: "Fixes #{issue.to_reference}")
         allow(subject).to receive(:commits).and_return([commit])
 
@@ -197,7 +197,7 @@ describe MergeRequest do
       end
 
       it 'does not cache an internal issue' do
-        issue  = create(:issue, project: subject.project)
+        issue  = build_stubbed(:issue, project: subject.project)
         commit = double('commit1', safe_message: "Fixes #{issue.to_reference}")
         allow(subject).to receive(:commits).and_return([commit])
 
@@ -211,14 +211,14 @@ describe MergeRequest do
     let(:last_branch_commit) { subject.source_project.repository.commit(subject.source_branch) }
 
     context 'with diffs' do
-      subject { create(:merge_request, :with_diffs) }
+      subject { build_stubbed(:merge_request, :with_diffs) }
       it 'returns the sha of the source branch last commit' do
         expect(subject.source_branch_sha).to eq(last_branch_commit.sha)
       end
     end
 
     context 'without diffs' do
-      subject { create(:merge_request, :without_diffs) }
+      subject { build_stubbed(:merge_request, :without_diffs) }
       it 'returns the sha of the source branch last commit' do
         expect(subject.source_branch_sha).to eq(last_branch_commit.sha)
       end
@@ -369,13 +369,13 @@ describe MergeRequest do
   end
 
   describe "#related_notes" do
-    let!(:merge_request) { create(:merge_request) }
+    let!(:merge_request) { build_stubbed(:merge_request) }
 
     before do
       allow(merge_request).to receive(:commits) { [merge_request.source_project.repository.commit] }
-      create(:note_on_commit, commit_id: merge_request.commits.first.id,
+      build_stubbed(:note_on_commit, commit_id: merge_request.commits.first.id,
                               project: merge_request.project)
-      create(:note, noteable: merge_request, project: merge_request.project)
+      build_stubbed(:note, noteable: merge_request, project: merge_request.project)
     end
 
     it "includes notes for commits" do
@@ -384,7 +384,7 @@ describe MergeRequest do
     end
 
     it "includes notes for commits from target project as well" do
-      create(:note_on_commit, commit_id: merge_request.commits.first.id,
+      build_stubbed(:note_on_commit, commit_id: merge_request.commits.first.id,
                               project: merge_request.target_project)
 
       expect(merge_request.commits).not_to be_empty
@@ -394,8 +394,8 @@ describe MergeRequest do
 
   describe '#for_fork?' do
     it 'returns true if the merge request is for a fork' do
-      subject.source_project = build_stubbed(:project, namespace: create(:group))
-      subject.target_project = build_stubbed(:project, namespace: create(:group))
+      subject.source_project = build_stubbed(:project, namespace: build_stubbed(:group))
+      subject.target_project = build_stubbed(:project, namespace: build_stubbed(:group))
 
       expect(subject.for_fork?).to be_truthy
     end
@@ -457,7 +457,7 @@ describe MergeRequest do
         subject.project.team << [subject.author, :developer]
         commit = double(:commit, safe_message: 'Fixes TEST-3')
 
-        create(:jira_service, project: subject.project)
+        build_stubbed(:jira_service, project: subject.project)
 
         allow(subject).to receive(:commits).and_return([commit])
         allow(subject).to receive(:description).and_return('Is related to TEST-2 and TEST-3')
@@ -534,8 +534,8 @@ describe MergeRequest do
   end
 
   describe '#can_remove_source_branch?' do
-    let(:user) { create(:user) }
-    let(:user2) { create(:user) }
+    let(:user) { build_stubbed(:user) }
+    let(:user2) { build_stubbed(:user) }
 
     before do
       subject.source_project.team << [user, :master]
@@ -590,7 +590,7 @@ describe MergeRequest do
     end
 
     it 'includes its closed issues in the body' do
-      issue = create(:issue, project: subject.project)
+      issue = build_stubbed(:issue, project: subject.project)
 
       subject.project.team << [subject.author, :developer]
       subject.description = "This issue Closes #{issue.to_reference}"
@@ -632,7 +632,7 @@ describe MergeRequest do
 
   describe "#reset_merge_when_pipeline_succeeds" do
     let(:merge_if_green) do
-      create :merge_request, merge_when_pipeline_succeeds: true, merge_user: create(:user),
+      create :merge_request, merge_when_pipeline_succeeds: true, merge_user: build_stubbed(:user),
                              merge_params: { "should_remove_source_branch" => "1", "commit_message" => "msg" }
     end
 
@@ -671,11 +671,11 @@ describe MergeRequest do
   end
 
   describe '#diverged_commits_count' do
-    let(:project)      { create(:project, :repository) }
-    let(:fork_project) { create(:project, :repository, forked_from_project: project) }
+    let(:project)      { build_stubbed(:project, :repository) }
+    let(:fork_project) { build_stubbed(:project, :repository, forked_from_project: project) }
 
     context 'when the target branch does not exist anymore' do
-      subject { create(:merge_request, source_project: project, target_project: project) }
+      subject { build_stubbed(:merge_request, source_project: project, target_project: project) }
 
       before do
         project.repository.raw_repository.delete_branch(subject.target_branch)
@@ -692,7 +692,7 @@ describe MergeRequest do
     end
 
     context 'diverged on same repository' do
-      subject(:merge_request_with_divergence) { create(:merge_request, :diverged, source_project: project, target_project: project) }
+      subject(:merge_request_with_divergence) { build_stubbed(:merge_request, :diverged, source_project: project, target_project: project) }
 
       it 'counts commits that are on target branch but not on source branch' do
         expect(subject.diverged_commits_count).to eq(29)
@@ -700,7 +700,7 @@ describe MergeRequest do
     end
 
     context 'diverged on fork' do
-      subject(:merge_request_fork_with_divergence) { create(:merge_request, :diverged, source_project: fork_project, target_project: project) }
+      subject(:merge_request_fork_with_divergence) { build_stubbed(:merge_request, :diverged, source_project: fork_project, target_project: project) }
 
       it 'counts commits that are on target branch but not on source branch' do
         expect(subject.diverged_commits_count).to eq(29)
@@ -708,7 +708,7 @@ describe MergeRequest do
     end
 
     context 'rebased on fork' do
-      subject(:merge_request_rebased) { create(:merge_request, :rebased, source_project: fork_project, target_project: project) }
+      subject(:merge_request_rebased) { build_stubbed(:merge_request, :rebased, source_project: fork_project, target_project: project) }
 
       it 'counts commits that are on target branch but not on source branch' do
         expect(subject.diverged_commits_count).to eq(0)
@@ -752,7 +752,7 @@ describe MergeRequest do
   end
 
   it_behaves_like 'an editable mentionable' do
-    subject { create(:merge_request, :simple) }
+    subject { build_stubbed(:merge_request, :simple) }
 
     let(:backref_text) { "merge request #{subject.to_reference}" }
     let(:set_mentionable_text) { ->(txt) { subject.description = txt } }
@@ -776,7 +776,7 @@ describe MergeRequest do
   describe '#head_pipeline' do
     describe 'when the source project exists' do
       it 'returns the latest pipeline' do
-        pipeline = create(:ci_empty_pipeline, project: subject.source_project, ref: 'master', status: 'running', sha: "123abc", head_pipeline_of: subject)
+        pipeline = build_stubbed(:ci_empty_pipeline, project: subject.source_project, ref: 'master', status: 'running', sha: "123abc", head_pipeline_of: subject)
 
         expect(subject.head_pipeline).to eq(pipeline)
       end
@@ -795,7 +795,7 @@ describe MergeRequest do
     shared_examples 'returning pipelines with proper ordering' do
       let!(:all_pipelines) do
         subject.all_commit_shas.map do |sha|
-          create(:ci_empty_pipeline,
+          build_stubbed(:ci_empty_pipeline,
                  project: subject.source_project,
                  sha: sha,
                  ref: subject.source_branch)
@@ -824,7 +824,7 @@ describe MergeRequest do
       subject { build(:merge_request) }
 
       let!(:pipeline) do
-        create(:ci_empty_pipeline,
+        build_stubbed(:ci_empty_pipeline,
                project: subject.project,
                sha: subject.diff_head_sha,
                ref: subject.source_branch)
@@ -891,18 +891,18 @@ describe MergeRequest do
   end
 
   describe '#participants' do
-    let(:project) { create(:project, :public) }
+    let(:project) { build_stubbed(:project, :public) }
 
     let(:mr) do
-      create(:merge_request, source_project: project, target_project: project)
+      build_stubbed(:merge_request, source_project: project, target_project: project)
     end
 
     let!(:note1) do
-      create(:note_on_merge_request, noteable: mr, project: project, note: 'a')
+      build_stubbed(:note_on_merge_request, noteable: mr, project: project, note: 'a')
     end
 
     let!(:note2) do
-      create(:note_on_merge_request, noteable: mr, project: project, note: 'b')
+      build_stubbed(:note_on_merge_request, noteable: mr, project: project, note: 'b')
     end
 
     it 'includes the merge request author' do
@@ -916,9 +916,9 @@ describe MergeRequest do
 
   describe 'cached counts' do
     it 'updates when assignees change' do
-      user1 = create(:user)
-      user2 = create(:user)
-      mr = create(:merge_request, assignee: user1)
+      user1 = build_stubbed(:user)
+      user2 = build_stubbed(:user)
+      mr = build_stubbed(:merge_request, assignee: user1)
       mr.project.add_developer(user1)
       mr.project.add_developer(user2)
 
@@ -951,9 +951,9 @@ describe MergeRequest do
   end
 
   describe '#check_if_can_be_merged' do
-    let(:project) { create(:project, only_allow_merge_if_pipeline_succeeds: true) }
+    let(:project) { build_stubbed(:project, only_allow_merge_if_pipeline_succeeds: true) }
 
-    subject { create(:merge_request, source_project: project, merge_status: :unchecked) }
+    subject { build_stubbed(:merge_request, source_project: project, merge_status: :unchecked) }
 
     context 'when it is not broken and has no conflicts' do
       before do
@@ -989,9 +989,9 @@ describe MergeRequest do
   end
 
   describe '#mergeable?' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
-    subject { create(:merge_request, source_project: project) }
+    subject { build_stubbed(:merge_request, source_project: project) }
 
     it 'returns false if #mergeable_state? is false' do
       expect(subject).to receive(:mergeable_state?) { false }
@@ -1009,9 +1009,9 @@ describe MergeRequest do
   end
 
   describe '#mergeable_state?' do
-    let(:project) { create(:project, :repository) }
+    let(:project) { build_stubbed(:project, :repository) }
 
-    subject { create(:merge_request, source_project: project) }
+    subject { build_stubbed(:merge_request, source_project: project) }
 
     it 'checks if merge request can be merged' do
       allow(subject).to receive(:mergeable_ci_state?) { true }
@@ -1074,8 +1074,8 @@ describe MergeRequest do
   end
 
   describe '#mergeable_ci_state?' do
-    let(:project) { create(:project, only_allow_merge_if_pipeline_succeeds: true) }
-    let(:pipeline) { create(:ci_empty_pipeline) }
+    let(:project) { build_stubbed(:project, only_allow_merge_if_pipeline_succeeds: true) }
+    let(:pipeline) { build_stubbed(:ci_empty_pipeline) }
 
     subject { build(:merge_request, target_project: project) }
 
@@ -1121,7 +1121,7 @@ describe MergeRequest do
 
       context 'and a failed pipeline is associated' do
         before do
-          pipeline.statuses << create(:commit_status, status: 'failed', project: project)
+          pipeline.statuses << build_stubbed(:commit_status, status: 'failed', project: project)
           allow(subject).to receive(:head_pipeline) { pipeline }
         end
 
@@ -1139,10 +1139,10 @@ describe MergeRequest do
   end
 
   describe '#mergeable_discussions_state?' do
-    let(:merge_request) { create(:merge_request_with_diff_notes, source_project: project) }
+    let(:merge_request) { build_stubbed(:merge_request_with_diff_notes, source_project: project) }
 
     context 'when project.only_allow_merge_if_all_discussions_are_resolved == true' do
-      let(:project) { create(:project, :repository, only_allow_merge_if_all_discussions_are_resolved: true) }
+      let(:project) { build_stubbed(:project, :repository, only_allow_merge_if_all_discussions_are_resolved: true) }
 
       context 'with all discussions resolved' do
         before do
@@ -1176,7 +1176,7 @@ describe MergeRequest do
     end
 
     context 'when project.only_allow_merge_if_all_discussions_are_resolved == false' do
-      let(:project) { create(:project, :repository, only_allow_merge_if_all_discussions_are_resolved: false) }
+      let(:project) { build_stubbed(:project, :repository, only_allow_merge_if_all_discussions_are_resolved: false) }
 
       context 'with unresolved discussions' do
         before do
@@ -1191,9 +1191,9 @@ describe MergeRequest do
   end
 
   describe "#environments_for" do
-    let(:project)       { create(:project, :repository) }
+    let(:project)       { build_stubbed(:project, :repository) }
     let(:user)          { project.creator }
-    let(:merge_request) { create(:merge_request, source_project: project) }
+    let(:merge_request) { build_stubbed(:merge_request, source_project: project) }
 
     before do
       merge_request.source_project.add_master(user)
@@ -1204,8 +1204,8 @@ describe MergeRequest do
       let(:environments) { create_list(:environment, 3, project: project) }
 
       before do
-        create(:deployment, environment: environments.first, ref: 'master', sha: project.commit('master').id)
-        create(:deployment, environment: environments.second, ref: 'feature', sha: project.commit('feature').id)
+        build_stubbed(:deployment, environment: environments.first, ref: 'master', sha: project.commit('master').id)
+        build_stubbed(:deployment, environment: environments.second, ref: 'feature', sha: project.commit('feature').id)
       end
 
       it 'selects deployed environments' do
@@ -1215,21 +1215,21 @@ describe MergeRequest do
 
     context 'with environments on source project' do
       let(:source_project) do
-        create(:project, :repository) do |fork_project|
+        build_stubbed(:project, :repository) do |fork_project|
           fork_project.create_forked_project_link(forked_to_project_id: fork_project.id, forked_from_project_id: project.id)
         end
       end
 
       let(:merge_request) do
-        create(:merge_request,
+        build_stubbed(:merge_request,
                source_project: source_project, source_branch: 'feature',
                target_project: project)
       end
 
-      let(:source_environment) { create(:environment, project: source_project) }
+      let(:source_environment) { build_stubbed(:environment, project: source_project) }
 
       before do
-        create(:deployment, environment: source_environment, ref: 'feature', sha: merge_request.diff_head_sha)
+        build_stubbed(:deployment, environment: source_environment, ref: 'feature', sha: merge_request.diff_head_sha)
       end
 
       it 'selects deployed environments' do
@@ -1237,10 +1237,10 @@ describe MergeRequest do
       end
 
       context 'with environments on target project' do
-        let(:target_environment) { create(:environment, project: project) }
+        let(:target_environment) { build_stubbed(:environment, project: project) }
 
         before do
-          create(:deployment, environment: target_environment, tag: true, sha: merge_request.diff_head_sha)
+          build_stubbed(:deployment, environment: target_environment, tag: true, sha: merge_request.diff_head_sha)
         end
 
         it 'selects deployed environments' do
@@ -1261,7 +1261,7 @@ describe MergeRequest do
   end
 
   describe "#reload_diff" do
-    let(:discussion) { create(:diff_note_on_merge_request, project: subject.project, noteable: subject).to_discussion }
+    let(:discussion) { build_stubbed(:diff_note_on_merge_request, project: subject.project, noteable: subject).to_discussion }
     let(:commit) { subject.project.commit(sample_commit.id) }
 
     it "does not change existing merge request diff" do
@@ -1358,7 +1358,7 @@ describe MergeRequest do
 
   describe "#diff_refs" do
     context "with diffs" do
-      subject { create(:merge_request, :with_diffs) }
+      subject { build_stubbed(:merge_request, :with_diffs) }
 
       it "does not touch the repository" do
         subject # Instantiate the object
@@ -1381,14 +1381,14 @@ describe MergeRequest do
   end
 
   describe "#source_project_missing?" do
-    let(:project)      { create(:project) }
-    let(:fork_project) { create(:project, forked_from_project: project) }
-    let(:user)         { create(:user) }
+    let(:project)      { build_stubbed(:project) }
+    let(:fork_project) { build_stubbed(:project, forked_from_project: project) }
+    let(:user)         { build_stubbed(:user) }
     let(:unlink_project) { Projects::UnlinkForkService.new(fork_project, user) }
 
     context "when the fork exists" do
       let(:merge_request) do
-        create(:merge_request,
+        build_stubbed(:merge_request,
           source_project: fork_project,
           target_project: project)
       end
@@ -1397,14 +1397,14 @@ describe MergeRequest do
     end
 
     context "when the source project is the same as the target project" do
-      let(:merge_request) { create(:merge_request, source_project: project) }
+      let(:merge_request) { build_stubbed(:merge_request, source_project: project) }
 
       it { expect(merge_request.source_project_missing?).to be_falsey }
     end
 
     context "when the fork does not exist" do
       let(:merge_request) do
-        create(:merge_request,
+        build_stubbed(:merge_request,
           source_project: fork_project,
           target_project: project)
       end
@@ -1427,14 +1427,14 @@ describe MergeRequest do
   end
 
   describe "#closed_without_fork?" do
-    let(:project)      { create(:project) }
-    let(:fork_project) { create(:project, forked_from_project: project) }
-    let(:user)         { create(:user) }
+    let(:project)      { build_stubbed(:project) }
+    let(:fork_project) { build_stubbed(:project, forked_from_project: project) }
+    let(:user)         { build_stubbed(:user) }
     let(:unlink_project) { Projects::UnlinkForkService.new(fork_project, user) }
 
     context "when the merge request is closed" do
       let(:closed_merge_request) do
-        create(:closed_merge_request,
+        build_stubbed(:closed_merge_request,
           source_project: fork_project,
           target_project: project)
       end
@@ -1453,7 +1453,7 @@ describe MergeRequest do
 
     context "when the merge request is open" do
       let(:open_merge_request) do
-        create(:merge_request,
+        build_stubbed(:merge_request,
           source_project: fork_project,
           target_project: project)
       end
@@ -1473,12 +1473,12 @@ describe MergeRequest do
       end
 
       context 'forked project' do
-        let(:project)      { create(:project) }
-        let(:user)         { create(:user) }
-        let(:fork_project) { create(:project, forked_from_project: project, namespace: user.namespace) }
+        let(:project)      { build_stubbed(:project) }
+        let(:user)         { build_stubbed(:user) }
+        let(:fork_project) { build_stubbed(:project, forked_from_project: project, namespace: user.namespace) }
 
         let!(:merge_request) do
-          create(:closed_merge_request,
+          build_stubbed(:closed_merge_request,
             source_project: fork_project,
             target_project: project)
         end
@@ -1512,7 +1512,7 @@ describe MergeRequest do
 
   describe '#mergeable_with_quick_action?' do
     def create_pipeline(status)
-      pipeline = create(:ci_pipeline_with_one_job,
+      pipeline = build_stubbed(:ci_pipeline_with_one_job,
         project: project,
         ref:     merge_request.source_branch,
         sha:     merge_request.diff_head_sha,
@@ -1522,10 +1522,10 @@ describe MergeRequest do
       pipeline
     end
 
-    let(:project)       { create(:project, :public, :repository, only_allow_merge_if_pipeline_succeeds: true) }
-    let(:developer)     { create(:user) }
-    let(:user)          { create(:user) }
-    let(:merge_request) { create(:merge_request, source_project: project) }
+    let(:project)       { build_stubbed(:project, :public, :repository, only_allow_merge_if_pipeline_succeeds: true) }
+    let(:developer)     { build_stubbed(:user) }
+    let(:user)          { build_stubbed(:user) }
+    let(:merge_request) { build_stubbed(:merge_request, source_project: project) }
     let(:mr_sha)        { merge_request.diff_head_sha }
 
     before do
@@ -1638,7 +1638,7 @@ describe MergeRequest do
   end
 
   describe '#merge_request_diff_for' do
-    subject { create(:merge_request, importing: true) }
+    subject { build_stubbed(:merge_request, importing: true) }
     let!(:merge_request_diff1) { subject.merge_request_diffs.create(head_commit_sha: '6f6d7e7ed97bb5f0054f2b1df789b39ca89b6ff9') }
     let!(:merge_request_diff2) { subject.merge_request_diffs.create(head_commit_sha: nil) }
     let!(:merge_request_diff3) { subject.merge_request_diffs.create(head_commit_sha: '5937ac0a7beb003549fc5fd26fc247adbce4a52e') }
@@ -1657,7 +1657,7 @@ describe MergeRequest do
   end
 
   describe '#version_params_for' do
-    subject { create(:merge_request, importing: true) }
+    subject { build_stubbed(:merge_request, importing: true) }
     let(:project) { subject.project }
     let!(:merge_request_diff1) { subject.merge_request_diffs.create(head_commit_sha: '6f6d7e7ed97bb5f0054f2b1df789b39ca89b6ff9') }
     let!(:merge_request_diff2) { subject.merge_request_diffs.create(head_commit_sha: nil) }

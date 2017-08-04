@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe ProjectWiki do
-  let(:project) { create(:project) }
+  let(:project) { build_stubbed(:project) }
   let(:repository) { project.repository }
   let(:user) { project.owner }
   let(:gitlab_shell) { Gitlab::Shell.new }

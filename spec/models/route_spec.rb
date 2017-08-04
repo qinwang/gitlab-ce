@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Route do
-  let(:group) { create(:group, path: 'git_lab', name: 'git_lab') }
+  let(:group) { build_stubbed(:group, path: 'git_lab', name: 'git_lab') }
   let(:route) { group.route }
 
   describe 'relationships' do
@@ -42,11 +42,11 @@ describe Route do
   end
 
   describe '.inside_path' do
-    let!(:nested_group) { create(:group, path: 'test', name: 'test', parent: group) }
-    let!(:deep_nested_group) { create(:group, path: 'foo', name: 'foo', parent: nested_group) }
-    let!(:another_group) { create(:group, path: 'other') }
-    let!(:similar_group) { create(:group, path: 'gitllab') }
-    let!(:another_group_nested) { create(:group, path: 'another', name: 'another', parent: similar_group) }
+    let!(:nested_group) { build_stubbed(:group, path: 'test', name: 'test', parent: group) }
+    let!(:deep_nested_group) { build_stubbed(:group, path: 'foo', name: 'foo', parent: nested_group) }
+    let!(:another_group) { build_stubbed(:group, path: 'other') }
+    let!(:similar_group) { build_stubbed(:group, path: 'gitllab') }
+    let!(:another_group_nested) { build_stubbed(:group, path: 'another', name: 'another', parent: similar_group) }
 
     it 'returns correct routes' do
       expect(described_class.inside_path('git_lab')).to match_array([nested_group.route, deep_nested_group.route])
@@ -54,11 +54,11 @@ describe Route do
   end
 
   describe '#rename_descendants' do
-    let!(:nested_group) { create(:group, path: 'test', name: 'test', parent: group) }
-    let!(:deep_nested_group) { create(:group, path: 'foo', name: 'foo', parent: nested_group) }
-    let!(:similar_group) { create(:group, path: 'gitlab-org', name: 'gitlab-org') }
-    let!(:another_group) { create(:group, path: 'gittlab', name: 'gitllab') }
-    let!(:another_group_nested) { create(:group, path: 'git_lab', name: 'git_lab', parent: another_group) }
+    let!(:nested_group) { build_stubbed(:group, path: 'test', name: 'test', parent: group) }
+    let!(:deep_nested_group) { build_stubbed(:group, path: 'foo', name: 'foo', parent: nested_group) }
+    let!(:similar_group) { build_stubbed(:group, path: 'gitlab-org', name: 'gitlab-org') }
+    let!(:another_group) { build_stubbed(:group, path: 'gittlab', name: 'gitllab') }
+    let!(:another_group_nested) { build_stubbed(:group, path: 'git_lab', name: 'git_lab', parent: another_group) }
 
     context 'path update' do
       context 'when route name is set' do

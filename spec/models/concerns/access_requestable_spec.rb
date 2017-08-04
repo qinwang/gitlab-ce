@@ -3,16 +3,16 @@ require 'spec_helper'
 describe AccessRequestable do
   describe 'Group' do
     describe '#request_access' do
-      let(:group) { create(:group, :public, :access_requestable) }
-      let(:user) { create(:user) }
+      let(:group) { build_stubbed(:group, :public, :access_requestable) }
+      let(:user) { build_stubbed(:user) }
 
       it { expect(group.request_access(user)).to be_a(GroupMember) }
       it { expect(group.request_access(user).user).to eq(user) }
     end
 
     describe '#access_requested?' do
-      let(:group) { create(:group, :public, :access_requestable) }
-      let(:user) { create(:user) }
+      let(:group) { build_stubbed(:group, :public, :access_requestable) }
+      let(:user) { build_stubbed(:user) }
 
       before do
         group.request_access(user)
@@ -24,15 +24,15 @@ describe AccessRequestable do
 
   describe 'Project' do
     describe '#request_access' do
-      let(:project) { create(:project, :public, :access_requestable) }
-      let(:user) { create(:user) }
+      let(:project) { build_stubbed(:project, :public, :access_requestable) }
+      let(:user) { build_stubbed(:user) }
 
       it { expect(project.request_access(user)).to be_a(ProjectMember) }
     end
 
     describe '#access_requested?' do
-      let(:project) { create(:project, :public, :access_requestable) }
-      let(:user) { create(:user) }
+      let(:project) { build_stubbed(:project, :public, :access_requestable) }
+      let(:user) { build_stubbed(:user) }
 
       before do
         project.request_access(user)

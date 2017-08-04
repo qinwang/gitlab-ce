@@ -18,9 +18,9 @@ describe AwardEmoji do
     # To circumvent a bug in the shoulda matchers
     describe "scoped uniqueness validation" do
       it "rejects duplicate award emoji" do
-        user  = create(:user)
-        issue = create(:issue)
-        create(:award_emoji, user: user, awardable: issue)
+        user  = build_stubbed(:user)
+        issue = build_stubbed(:issue)
+        build_stubbed(:award_emoji, user: user, awardable: issue)
         new_award = build(:award_emoji, user: user, awardable: issue)
 
         expect(new_award).not_to be_valid
@@ -32,9 +32,9 @@ describe AwardEmoji do
       # also needs to be moved to the ghost user - this cannot happen unless
       # the uniqueness validation is disabled for ghost users.
       it "allows duplicate award emoji for ghost users" do
-        user  = create(:user, :ghost)
-        issue = create(:issue)
-        create(:award_emoji, user: user, awardable: issue)
+        user  = build_stubbed(:user, :ghost)
+        issue = build_stubbed(:issue)
+        build_stubbed(:award_emoji, user: user, awardable: issue)
         new_award = build(:award_emoji, user: user, awardable: issue)
 
         expect(new_award).to be_valid

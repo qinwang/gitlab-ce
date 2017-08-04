@@ -56,7 +56,7 @@ describe Ci::Runner do
     end
 
     it 'returns the token if it does not have a description' do
-      runner = FactoryGirl.create(:ci_runner)
+      runner = FactoryGirl.build_stubbed(:ci_runner)
       expect(runner.display_name).to eq runner.description
     end
 
@@ -68,7 +68,7 @@ describe Ci::Runner do
 
   describe '#assign_to' do
     let!(:project) { FactoryGirl.create :project }
-    let!(:shared_runner) { FactoryGirl.create(:ci_runner, :shared) }
+    let!(:shared_runner) { FactoryGirl.build_stubbed(:ci_runner, :shared) }
 
     before do
       shared_runner.assign_to(project)
@@ -83,15 +83,15 @@ describe Ci::Runner do
     subject { described_class.online }
 
     before do
-      @runner1 = FactoryGirl.create(:ci_runner, :shared, contacted_at: 1.year.ago)
-      @runner2 = FactoryGirl.create(:ci_runner, :shared, contacted_at: 1.second.ago)
+      @runner1 = FactoryGirl.build_stubbed(:ci_runner, :shared, contacted_at: 1.year.ago)
+      @runner2 = FactoryGirl.build_stubbed(:ci_runner, :shared, contacted_at: 1.second.ago)
     end
 
     it { is_expected.to eq([@runner2])}
   end
 
   describe '#online?' do
-    let(:runner) { FactoryGirl.create(:ci_runner, :shared) }
+    let(:runner) { FactoryGirl.build_stubbed(:ci_runner, :shared) }
 
     subject { runner.online? }
 
@@ -121,9 +121,9 @@ describe Ci::Runner do
   end
 
   describe '#can_pick?' do
-    let(:pipeline) { create(:ci_pipeline) }
-    let(:build) { create(:ci_build, pipeline: pipeline) }
-    let(:runner) { create(:ci_runner) }
+    let(:pipeline) { build_stubbed(:ci_pipeline) }
+    let(:build) { build_stubbed(:ci_build, pipeline: pipeline) }
+    let(:runner) { build_stubbed(:ci_runner) }
 
     subject { runner.can_pick?(build) }
 
@@ -301,7 +301,7 @@ describe Ci::Runner do
   end
 
   describe '#status' do
-    let(:runner) { FactoryGirl.create(:ci_runner, :shared, contacted_at: 1.second.ago) }
+    let(:runner) { FactoryGirl.build_stubbed(:ci_runner, :shared, contacted_at: 1.second.ago) }
 
     subject { runner.status }
 
@@ -339,7 +339,7 @@ describe Ci::Runner do
   end
 
   describe '#tick_runner_queue' do
-    let(:runner) { create(:ci_runner) }
+    let(:runner) { build_stubbed(:ci_runner) }
 
     it 'returns a new last_update value' do
       expect(runner.tick_runner_queue).not_to be_empty
@@ -347,7 +347,7 @@ describe Ci::Runner do
   end
 
   describe '#ensure_runner_queue_value' do
-    let(:runner) { create(:ci_runner) }
+    let(:runner) { build_stubbed(:ci_runner) }
 
     it 'sets a new last_update value when it is called the first time' do
       last_update = runner.ensure_runner_queue_value
@@ -395,7 +395,7 @@ describe Ci::Runner do
   end
 
   describe '#destroy' do
-    let(:runner) { create(:ci_runner) }
+    let(:runner) { build_stubbed(:ci_runner) }
 
     context 'when there is a tick in the queue' do
       let!(:queue_key) { runner.send(:runner_queue_key) }
@@ -414,9 +414,9 @@ describe Ci::Runner do
   end
 
   describe '.assignable_for' do
-    let(:runner) { create(:ci_runner) }
-    let(:project) { create(:project) }
-    let(:another_project) { create(:project) }
+    let(:runner) { build_stubbed(:ci_runner) }
+    let(:project) { build_stubbed(:project) }
+    let(:another_project) { build_stubbed(:project) }
 
     before do
       project.runners << runner
@@ -475,9 +475,9 @@ describe Ci::Runner do
 
   describe "belongs_to_one_project?" do
     it "returns false if there are two projects runner assigned to" do
-      runner = FactoryGirl.create(:ci_runner)
-      project = FactoryGirl.create(:project)
-      project1 = FactoryGirl.create(:project)
+      runner = FactoryGirl.build_stubbed(:ci_runner)
+      project = FactoryGirl.build_stubbed(:project)
+      project1 = FactoryGirl.build_stubbed(:project)
       project.runners << runner
       project1.runners << runner
 
@@ -485,8 +485,8 @@ describe Ci::Runner do
     end
 
     it "returns true" do
-      runner = FactoryGirl.create(:ci_runner)
-      project = FactoryGirl.create(:project)
+      runner = FactoryGirl.build_stubbed(:ci_runner)
+      project = FactoryGirl.build_stubbed(:project)
       project.runners << runner
 
       expect(runner.belongs_to_one_project?).to be_truthy
@@ -495,18 +495,18 @@ describe Ci::Runner do
 
   describe '#has_tags?' do
     context 'when runner has tags' do
-      subject { create(:ci_runner, tag_list: ['tag']) }
+      subject { build_stubbed(:ci_runner, tag_list: ['tag']) }
       it { is_expected.to have_tags }
     end
 
     context 'when runner does not have tags' do
-      subject { create(:ci_runner, tag_list: []) }
+      subject { build_stubbed(:ci_runner, tag_list: []) }
       it { is_expected.not_to have_tags }
     end
   end
 
   describe '.search' do
-    let(:runner) { create(:ci_runner, token: '123abc') }
+    let(:runner) { build_stubbed(:ci_runner, token: '123abc') }
 
     it 'returns runners with a matching token' do
       expect(described_class.search(runner.token)).to eq([runner])

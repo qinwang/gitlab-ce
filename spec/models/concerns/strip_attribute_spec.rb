@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe StripAttribute do
-  let(:milestone) { create(:milestone) }
+  let(:milestone) { build_stubbed(:milestone) }
 
   describe ".strip_attributes" do
     it { expect(Milestone).to respond_to(:strip_attributes) }

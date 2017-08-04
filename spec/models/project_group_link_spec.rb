@@ -7,10 +7,10 @@ describe ProjectGroupLink do
   end
 
   describe "Validation" do
-    let(:parent_group) { create(:group) }
-    let(:group) { create(:group, parent: parent_group) }
-    let(:project) { create(:project, group: group) }
-    let!(:project_group_link) { create(:project_group_link, project: project) }
+    let(:parent_group) { build_stubbed(:group) }
+    let(:group) { build_stubbed(:group, parent: parent_group) }
+    let(:project) { build_stubbed(:project, group: group) }
+    let!(:project_group_link) { build_stubbed(:project_group_link, project: project) }
 
     it { is_expected.to validate_presence_of(:project_id) }
     it { is_expected.to validate_uniqueness_of(:group_id).scoped_to(:project_id).with_message(/already shared/) }
@@ -32,9 +32,9 @@ describe ProjectGroupLink do
 
   describe "destroying a record", truncate: true do
     it "refreshes group users' authorized projects" do
-      project     = create(:project, :private)
-      group       = create(:group)
-      reporter    = create(:user)
+      project     = build_stubbed(:project, :private)
+      group       = build_stubbed(:group)
+      reporter    = build_stubbed(:user)
       group_users = group.users
 
       group.add_reporter(reporter)

@@ -30,7 +30,7 @@ describe Member do
       end
 
       it "requires a unique invite email scoped to this source" do
-        create(:project_member, source: member.source, invite_email: member.invite_email)
+        build_stubbed(:project_member, source: member.source, invite_email: member.invite_email)
 
         expect(member).not_to be_valid
       end
@@ -57,15 +57,15 @@ describe Member do
 
   describe 'Scopes & finders' do
     before do
-      project = create(:project, :public, :access_requestable)
-      group = create(:group)
-      @owner_user = create(:user).tap { |u| group.add_owner(u) }
+      project = build_stubbed(:project, :public, :access_requestable)
+      group = build_stubbed(:group)
+      @owner_user = build_stubbed(:user).tap { |u| group.add_owner(u) }
       @owner = group.members.find_by(user_id: @owner_user.id)
 
-      @master_user = create(:user).tap { |u| project.team << [u, :master] }
+      @master_user = build_stubbed(:user).tap { |u| project.team << [u, :master] }
       @master = project.members.find_by(user_id: @master_user.id)
 
-      @blocked_user = create(:user).tap do |u|
+      @blocked_user = build_stubbed(:user).tap do |u|
         project.team << [u, :master]
         project.team << [u, :developer]
 
@@ -74,22 +74,22 @@ describe Member do
       @blocked_master = project.members.find_by(user_id: @blocked_user.id, access_level: Gitlab::Access::MASTER)
       @blocked_developer = project.members.find_by(user_id: @blocked_user.id, access_level: Gitlab::Access::DEVELOPER)
 
-      @invited_member = create(:project_member, :developer,
+      @invited_member = build_stubbed(:project_member, :developer,
                               project: project,
                               invite_token: '1234',
                               invite_email: 'toto1@example.com')
 
       accepted_invite_user = build(:user, state: :active)
-      @accepted_invite_member = create(:project_member, :developer,
+      @accepted_invite_member = build_stubbed(:project_member, :developer,
                                       project: project,
                                       invite_token: '1234',
                                       invite_email: 'toto2@example.com')
                                       .tap { |u| u.accept_invite!(accepted_invite_user) }
 
-      requested_user = create(:user).tap { |u| project.request_access(u) }
+      requested_user = build_stubbed(:user).tap { |u| project.request_access(u) }
       @requested_member = project.requesters.find_by(user_id: requested_user.id)
 
-      accepted_request_user = create(:user).tap { |u| project.request_access(u) }
+      accepted_request_user = build_stubbed(:user).tap { |u| project.request_access(u) }
       @accepted_request_member = project.requesters.find_by(user_id: accepted_request_user.id).tap { |m| m.accept_request }
     end
 
@@ -183,8 +183,8 @@ describe Member do
     %w[project group].each do |source_type|
       context "when source is a #{source_type}" do
         let!(:source) { create(source_type, :public, :access_requestable) }
-        let!(:user) { create(:user) }
-        let!(:admin) { create(:admin) }
+        let!(:user) { build_stubbed(:user) }
+        let!(:admin) { build_stubbed(:admin) }
 
         it 'returns a <Source>Member object' do
           member = described_class.add_user(source, user, :master)
@@ -390,9 +390,9 @@ describe Member do
     %w[project group].each do |source_type|
       context "when source is a #{source_type}" do
         let!(:source) { create(source_type, :public, :access_requestable) }
-        let!(:admin) { create(:admin) }
-        let(:user1) { create(:user) }
-        let(:user2) { create(:user) }
+        let!(:admin) { build_stubbed(:admin) }
+        let(:user1) { build_stubbed(:user) }
+        let(:user2) { build_stubbed(:user) }
 
         it 'returns a <Source>Member objects' do
           members = described_class.add_users(source, [user1, user2], :master)
@@ -423,7 +423,7 @@ describe Member do
   end
 
   describe '#accept_request' do
-    let(:member) { create(:project_member, requested_at: Time.now.utc) }
+    let(:member) { build_stubbed(:project_member, requested_at: Time.now.utc) }
 
     it { expect(member.accept_request).to be_truthy }
 
@@ -441,28 +441,28 @@ describe Member do
   end
 
   describe '#invite?' do
-    subject { create(:project_member, invite_email: "user@example.com", user: nil) }
+    subject { build_stubbed(:project_member, invite_email: "user@example.com", user: nil) }
 
     it { is_expected.to be_invite }
   end
 
   describe '#request?' do
-    subject { create(:project_member, requested_at: Time.now.utc) }
+    subject { build_stubbed(:project_member, requested_at: Time.now.utc) }
 
     it { is_expected.to be_request }
   end
 
   describe '#pending?' do
-    let(:invited_member) { create(:project_member, invite_email: "user@example.com", user: nil) }
-    let(:requester) { create(:project_member, requested_at: Time.now.utc) }
+    let(:invited_member) { build_stubbed(:project_member, invite_email: "user@example.com", user: nil) }
+    let(:requester) { build_stubbed(:project_member, requested_at: Time.now.utc) }
 
     it { expect(invited_member).to be_invite }
     it { expect(requester).to be_pending }
   end
 
   describe "#accept_invite!" do
-    let!(:member) { create(:project_member, invite_email: "user@example.com", user: nil) }
-    let(:user) { create(:user) }
+    let!(:member) { build_stubbed(:project_member, invite_email: "user@example.com", user: nil) }
+    let(:user) { build_stubbed(:user) }
 
     it "resets the invite token" do
       member.accept_invite!(user)
@@ -500,7 +500,7 @@ describe Member do
   end
 
   describe "#decline_invite!" do
-    let!(:member) { create(:project_member, invite_email: "user@example.com", user: nil) }
+    let!(:member) { build_stubbed(:project_member, invite_email: "user@example.com", user: nil) }
 
     it "destroys the member" do
       member.decline_invite!
@@ -516,7 +516,7 @@ describe Member do
   end
 
   describe "#generate_invite_token" do
-    let!(:member) { create(:project_member, invite_email: "user@example.com", user: nil) }
+    let!(:member) { build_stubbed(:project_member, invite_email: "user@example.com", user: nil) }
 
     it "sets the invite token" do
       expect { member.generate_invite_token }.to change { member.invite_token}
@@ -525,8 +525,8 @@ describe Member do
 
   describe "destroying a record", truncate: true do
     it "refreshes user's authorized projects" do
-      project = create(:project, :private)
-      user    = create(:user)
+      project = build_stubbed(:project, :private)
+      user    = build_stubbed(:user)
       member  = project.team << [user, :reporter]
 
       member.destroy

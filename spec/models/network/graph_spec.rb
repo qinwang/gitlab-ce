@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Network::Graph do
-  let(:project) { create(:project, :repository) }
-  let!(:note_on_commit) { create(:note_on_commit, project: project) }
+  let(:project) { build_stubbed(:project, :repository) }
+  let!(:note_on_commit) { build_stubbed(:note_on_commit, project: project) }
 
   it '#initialize' do
     graph = described_class.new(project, 'refs/heads/master', project.repository.commit, nil)

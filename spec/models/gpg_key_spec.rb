@@ -141,11 +141,11 @@ describe GpgKey do
   end
 
   describe 'notification', :mailer do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     it 'sends a notification' do
       perform_enqueued_jobs do
-        create(:gpg_key, user: user)
+        build_stubbed(:gpg_key, user: user)
       end
 
       should_email(user)

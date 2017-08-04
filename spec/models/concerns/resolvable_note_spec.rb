@@ -1,17 +1,17 @@
 require 'spec_helper'
 
 describe Note, ResolvableNote do
-  let(:project) { create(:project, :repository) }
-  let(:merge_request) { create(:merge_request, source_project: project) }
-  subject { create(:discussion_note_on_merge_request, noteable: merge_request, project: project) }
+  let(:project) { build_stubbed(:project, :repository) }
+  let(:merge_request) { build_stubbed(:merge_request, source_project: project) }
+  subject { build_stubbed(:discussion_note_on_merge_request, noteable: merge_request, project: project) }
 
   context 'resolvability scopes' do
-    let!(:note1) { create(:note, project: project) }
-    let!(:note2) { create(:diff_note_on_commit, project: project) }
-    let!(:note3) { create(:diff_note_on_merge_request, :resolved, noteable: merge_request, project: project) }
-    let!(:note4) { create(:discussion_note_on_merge_request, noteable: merge_request, project: project) }
-    let!(:note5) { create(:discussion_note_on_issue, project: project) }
-    let!(:note6) { create(:discussion_note_on_merge_request, :system, noteable: merge_request, project: project) }
+    let!(:note1) { build_stubbed(:note, project: project) }
+    let!(:note2) { build_stubbed(:diff_note_on_commit, project: project) }
+    let!(:note3) { build_stubbed(:diff_note_on_merge_request, :resolved, noteable: merge_request, project: project) }
+    let!(:note4) { build_stubbed(:discussion_note_on_merge_request, noteable: merge_request, project: project) }
+    let!(:note5) { build_stubbed(:discussion_note_on_issue, project: project) }
+    let!(:note6) { build_stubbed(:discussion_note_on_merge_request, :system, noteable: merge_request, project: project) }
 
     describe '.potentially_resolvable' do
       it 'includes diff and discussion notes on merge requests' do
@@ -39,10 +39,10 @@ describe Note, ResolvableNote do
   end
 
   describe ".resolve!" do
-    let(:current_user) { create(:user) }
-    let!(:commit_note) { create(:diff_note_on_commit, project: project) }
-    let!(:resolved_note) { create(:discussion_note_on_merge_request, :resolved, noteable: merge_request, project: project) }
-    let!(:unresolved_note) { create(:discussion_note_on_merge_request, noteable: merge_request, project: project) }
+    let(:current_user) { build_stubbed(:user) }
+    let!(:commit_note) { build_stubbed(:diff_note_on_commit, project: project) }
+    let!(:resolved_note) { build_stubbed(:discussion_note_on_merge_request, :resolved, noteable: merge_request, project: project) }
+    let!(:unresolved_note) { build_stubbed(:discussion_note_on_merge_request, noteable: merge_request, project: project) }
 
     before do
       described_class.resolve!(current_user)
@@ -61,7 +61,7 @@ describe Note, ResolvableNote do
   end
 
   describe ".unresolve!" do
-    let!(:resolved_note) { create(:discussion_note_on_merge_request, :resolved, noteable: merge_request, project: project) }
+    let!(:resolved_note) { build_stubbed(:discussion_note_on_merge_request, :resolved, noteable: merge_request, project: project) }
 
     before do
       described_class.unresolve!
@@ -148,7 +148,7 @@ describe Note, ResolvableNote do
   end
 
   describe "#resolved?" do
-    let(:current_user) { create(:user) }
+    let(:current_user) { build_stubbed(:user) }
 
     context 'when not resolvable' do
       before do
@@ -182,7 +182,7 @@ describe Note, ResolvableNote do
   end
 
   describe "#resolve!" do
-    let(:current_user) { create(:user) }
+    let(:current_user) { build_stubbed(:user) }
 
     context "when not resolvable" do
       before do
@@ -218,7 +218,7 @@ describe Note, ResolvableNote do
       end
 
       context "when already resolved" do
-        let(:user) { create(:user) }
+        let(:user) { build_stubbed(:user) }
 
         before do
           subject.resolve!(user)
@@ -290,7 +290,7 @@ describe Note, ResolvableNote do
       end
 
       context "when resolved" do
-        let(:user) { create(:user) }
+        let(:user) { build_stubbed(:user) }
 
         before do
           subject.resolve!(user)

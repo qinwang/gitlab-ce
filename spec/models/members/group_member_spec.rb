@@ -15,7 +15,7 @@ describe GroupMember do
 
   describe '.add_users' do
     it 'adds the given users to the given group' do
-      group = create(:group)
+      group = build_stubbed(:group)
       users = create_list(:user, 2)
 
       described_class.add_users(
@@ -61,7 +61,7 @@ describe GroupMember do
 
     describe '#after_accept_request' do
       it 'calls NotificationService.accept_group_access_request' do
-        member = create(:group_member, user: build(:user), requested_at: Time.now)
+        member = build_stubbed(:group_member, user: build(:user), requested_at: Time.now)
 
         expect_any_instance_of(NotificationService).to receive(:new_group_member)
 
@@ -70,7 +70,7 @@ describe GroupMember do
     end
 
     describe '#real_source_type' do
-      subject { create(:group_member).real_source_type }
+      subject { build_stubbed(:group_member).real_source_type }
 
       it { is_expected.to eq 'Group' }
     end

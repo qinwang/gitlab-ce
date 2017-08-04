@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Group do
-  let!(:group) { create(:group, :access_requestable) }
+  let!(:group) { build_stubbed(:group, :access_requestable) }
 
   describe 'associations' do
     it { is_expected.to have_many :projects }
@@ -19,8 +19,8 @@ describe Group do
     it { is_expected.to have_one(:chat_team) }
 
     describe '#members & #requesters' do
-      let(:requester) { create(:user) }
-      let(:developer) { create(:user) }
+      let(:requester) { build_stubbed(:user) }
+      let(:developer) { build_stubbed(:user) }
       before do
         group.request_access(requester)
         group.add_developer(developer)
@@ -54,19 +54,19 @@ describe Group do
       end
 
       it 'allows root paths when the group has a parent' do
-        group = build(:group, path: 'api', parent: create(:group))
+        group = build(:group, path: 'api', parent: build_stubbed(:group))
 
         expect(group).to be_valid
       end
 
       it 'rejects any wildcard paths when not a top level group' do
-        group = build(:group, path: 'tree', parent: create(:group))
+        group = build(:group, path: 'tree', parent: build_stubbed(:group))
 
         expect(group).not_to be_valid
       end
 
       it 'rejects reserved group paths' do
-        group = build(:group, path: 'activity', parent: create(:group))
+        group = build(:group, path: 'activity', parent: build_stubbed(:group))
 
         expect(group).not_to be_valid
       end
@@ -151,8 +151,8 @@ describe Group do
   end
 
   describe '.visible_to_user' do
-    let!(:group) { create(:group) }
-    let!(:user)  { create(:user) }
+    let!(:group) { build_stubbed(:group) }
+    let!(:user)  { build_stubbed(:user) }
 
     subject { described_class.visible_to_user(user) }
 
@@ -170,8 +170,8 @@ describe Group do
   end
 
   describe 'scopes' do
-    let!(:private_group)  { create(:group, :private)  }
-    let!(:internal_group) { create(:group, :internal) }
+    let!(:private_group)  { build_stubbed(:group, :private)  }
+    let!(:internal_group) { build_stubbed(:group, :internal) }
 
     describe 'public_only' do
       subject { described_class.public_only.to_a }
@@ -207,7 +207,7 @@ describe Group do
   end
 
   describe '#add_user' do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     before do
       group.add_user(user, GroupMember::MASTER)
@@ -217,7 +217,7 @@ describe Group do
   end
 
   describe '#add_users' do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     before do
       group.add_users([user.id], GroupMember::GUEST)
@@ -232,7 +232,7 @@ describe Group do
   end
 
   describe '#avatar_type' do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     before do
       group.add_user(user, GroupMember::MASTER)
@@ -250,8 +250,8 @@ describe Group do
   end
 
   describe '#avatar_url' do
-    let!(:group) { create(:group, :access_requestable, :with_avatar) }
-    let(:user) { create(:user) }
+    let!(:group) { build_stubbed(:group, :access_requestable, :with_avatar) }
+    let(:user) { build_stubbed(:user) }
     let(:gitlab_host) { "http://#{Gitlab.config.gitlab.host}" }
     let(:avatar_path) { "/uploads/-/system/group/avatar/#{group.id}/dk.png" }
 
@@ -300,7 +300,7 @@ describe Group do
   describe '#has_owner?' do
     before do
       @members = setup_group_members(group)
-      create(:group_member, :invited, :owner, group: group)
+      build_stubbed(:group_member, :invited, :owner, group: group)
     end
 
     it { expect(group.has_owner?(@members[:owner])).to be_truthy }
@@ -315,7 +315,7 @@ describe Group do
   describe '#has_master?' do
     before do
       @members = setup_group_members(group)
-      create(:group_member, :invited, :master, group: group)
+      build_stubbed(:group_member, :invited, :master, group: group)
     end
 
     it { expect(group.has_master?(@members[:owner])).to be_falsey }
@@ -374,8 +374,8 @@ describe Group do
   end
 
   describe '#owners' do
-    let(:owner) { create(:user) }
-    let(:developer) { create(:user) }
+    let(:owner) { build_stubbed(:user) }
+    let(:developer) { build_stubbed(:user) }
 
     it 'returns the owners of a Group' do
       group.add_owner(owner)
@@ -387,12 +387,12 @@ describe Group do
 
   def setup_group_members(group)
     members = {
-      owner: create(:user),
-      master: create(:user),
-      developer: create(:user),
-      reporter: create(:user),
-      guest: create(:user),
-      requester: create(:user)
+      owner: build_stubbed(:user),
+      master: build_stubbed(:user),
+      developer: build_stubbed(:user),
+      reporter: build_stubbed(:user),
+      guest: build_stubbed(:user),
+      requester: build_stubbed(:user)
     }
 
     group.add_user(members[:owner], GroupMember::OWNER)
@@ -411,7 +411,7 @@ describe Group do
     end
 
     context 'nested group' do
-      let(:nested_group) { create(:group, :nested) }
+      let(:nested_group) { build_stubbed(:group, :nested) }
 
       it { expect(nested_group.web_url).to include("groups/#{nested_group.full_path}") }
     end
@@ -425,9 +425,9 @@ describe Group do
   end
 
   describe '#members_with_parents', :nested_groups do
-    let!(:group) { create(:group, :nested) }
-    let!(:master) { group.parent.add_user(create(:user), GroupMember::MASTER) }
-    let!(:developer) { group.add_user(create(:user), GroupMember::DEVELOPER) }
+    let!(:group) { build_stubbed(:group, :nested) }
+    let!(:master) { group.parent.add_user(build_stubbed(:user), GroupMember::MASTER) }
+    let!(:developer) { group.add_user(build_stubbed(:user), GroupMember::DEVELOPER) }
 
     it 'returns parents members' do
       expect(group.members_with_parents).to include(developer)
@@ -437,8 +437,8 @@ describe Group do
 
   describe '#user_ids_for_project_authorizations' do
     it 'returns the user IDs for which to refresh authorizations' do
-      master = create(:user)
-      developer = create(:user)
+      master = build_stubbed(:user)
+      developer = build_stubbed(:user)
 
       group.add_user(master, GroupMember::MASTER)
       group.add_user(developer, GroupMember::DEVELOPER)
@@ -449,7 +449,7 @@ describe Group do
   end
 
   describe '#update_two_factor_requirement' do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     before do
       group.add_user(user, GroupMember::OWNER)
@@ -474,7 +474,7 @@ describe Group do
     end
 
     it 'calls #update_two_factor_requirement on each group member' do
-      other_user = create(:user)
+      other_user = build_stubbed(:user)
       group.add_user(other_user, GroupMember::OWNER)
 
       calls = 0
@@ -489,14 +489,14 @@ describe Group do
   end
 
   describe '#secret_variables_for' do
-    let(:project) { create(:project, group: group) }
+    let(:project) { build_stubbed(:project, group: group) }
 
     let!(:secret_variable) do
-      create(:ci_group_variable, value: 'secret', group: group)
+      build_stubbed(:ci_group_variable, value: 'secret', group: group)
     end
 
     let!(:protected_variable) do
-      create(:ci_group_variable, :protected, value: 'protected', group: group)
+      build_stubbed(:ci_group_variable, :protected, value: 'protected', group: group)
     end
 
     subject { group.secret_variables_for('ref', project) }
@@ -520,7 +520,7 @@ describe Group do
 
     context 'when the ref is a protected branch' do
       before do
-        create(:protected_branch, name: 'ref', project: project)
+        build_stubbed(:protected_branch, name: 'ref', project: project)
       end
 
       it_behaves_like 'ref is protected'
@@ -528,19 +528,19 @@ describe Group do
 
     context 'when the ref is a protected tag' do
       before do
-        create(:protected_tag, name: 'ref', project: project)
+        build_stubbed(:protected_tag, name: 'ref', project: project)
       end
 
       it_behaves_like 'ref is protected'
     end
 
     context 'when group has children', :postgresql do
-      let(:group_child)      { create(:group, parent: group) }
-      let(:group_child_2)    { create(:group, parent: group_child) }
-      let(:group_child_3)    { create(:group, parent: group_child_2) }
-      let(:variable_child)   { create(:ci_group_variable, group: group_child) }
-      let(:variable_child_2) { create(:ci_group_variable, group: group_child_2) }
-      let(:variable_child_3) { create(:ci_group_variable, group: group_child_3) }
+      let(:group_child)      { build_stubbed(:group, parent: group) }
+      let(:group_child_2)    { build_stubbed(:group, parent: group_child) }
+      let(:group_child_3)    { build_stubbed(:group, parent: group_child_2) }
+      let(:variable_child)   { build_stubbed(:ci_group_variable, group: group_child) }
+      let(:variable_child_2) { build_stubbed(:ci_group_variable, group: group_child_2) }
+      let(:variable_child_3) { build_stubbed(:ci_group_variable, group: group_child_3) }
 
       it 'returns all variables belong to the group and parent groups' do
         expected_array1 = [protected_variable, secret_variable]

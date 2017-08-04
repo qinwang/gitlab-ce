@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Awardable do
-  let!(:issue)        { create(:issue) }
-  let!(:award_emoji)  { create(:award_emoji, :downvote, awardable: issue) }
+  let!(:issue)        { build_stubbed(:issue) }
+  let!(:award_emoji)  { build_stubbed(:award_emoji, :downvote, awardable: issue) }
 
   describe "Associations" do
     subject { build(:issue) }
@@ -11,8 +11,8 @@ describe Awardable do
   end
 
   describe "ClassMethods" do
-    let!(:issue2) { create(:issue) }
-    let!(:award_emoji2) { create(:award_emoji, awardable: issue2) }
+    let!(:issue2) { build_stubbed(:issue) }
+    let!(:award_emoji2) { build_stubbed(:award_emoji, awardable: issue2) }
 
     describe "orders" do
       it "orders on upvotes" do
@@ -57,7 +57,7 @@ describe Awardable do
   end
 
   describe 'querying award_emoji on an Awardable' do
-    let(:issue) { create(:issue) }
+    let(:issue) { build_stubbed(:issue) }
 
     it 'sorts in ascending fashion' do
       create_list(:award_emoji, 3, awardable: issue)

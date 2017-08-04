@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe ChatTeam do
-  subject { create(:chat_team) }
+  subject { build_stubbed(:chat_team) }
 
   # Associations
   it { is_expected.to belong_to(:namespace) }

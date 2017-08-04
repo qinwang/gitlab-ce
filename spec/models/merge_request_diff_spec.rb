@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe MergeRequestDiff do
   describe 'create new record' do
-    subject { create(:merge_request).merge_request_diff }
+    subject { build_stubbed(:merge_request).merge_request_diff }
 
     it { expect(subject).to be_valid }
     it { expect(subject).to be_persisted }
@@ -14,7 +14,7 @@ describe MergeRequestDiff do
   end
 
   describe '#latest' do
-    let!(:mr) { create(:merge_request, :with_diffs) }
+    let!(:mr) { build_stubbed(:merge_request, :with_diffs) }
     let!(:first_diff) { mr.merge_request_diff }
     let!(:last_diff) { mr.create_merge_request_diff }
 
@@ -23,7 +23,7 @@ describe MergeRequestDiff do
   end
 
   describe '#diffs' do
-    let(:mr) { create(:merge_request, :with_diffs) }
+    let(:mr) { build_stubbed(:merge_request, :with_diffs) }
     let(:mr_diff) { mr.merge_request_diff }
 
     context 'when the :ignore_whitespace_change option is set' do
@@ -83,7 +83,7 @@ describe MergeRequestDiff do
 
   describe '#save_diffs' do
     it 'saves collected state' do
-      mr_diff = create(:merge_request).merge_request_diff
+      mr_diff = build_stubbed(:merge_request).merge_request_diff
 
       expect(mr_diff.collected?).to be_truthy
     end
@@ -92,7 +92,7 @@ describe MergeRequestDiff do
       allow(Commit).to receive(:max_diff_options)
         .and_return(max_lines: 0, max_files: 0)
 
-      mr_diff = create(:merge_request).merge_request_diff
+      mr_diff = build_stubbed(:merge_request).merge_request_diff
 
       expect(mr_diff.overflow?).to be_truthy
     end
@@ -101,14 +101,14 @@ describe MergeRequestDiff do
       allow_any_instance_of(described_class).to receive_message_chain(:compare, :commits)
         .and_return([])
 
-      mr_diff = create(:merge_request).merge_request_diff
+      mr_diff = build_stubbed(:merge_request).merge_request_diff
 
       expect(mr_diff.empty?).to be_truthy
     end
 
     it 'saves binary diffs correctly' do
       path = 'files/images/icn-time-tracking.pdf'
-      mr_diff = create(:merge_request, source_branch: 'add-pdf-text-binary', target_branch: 'master').merge_request_diff
+      mr_diff = build_stubbed(:merge_request, source_branch: 'add-pdf-text-binary', target_branch: 'master').merge_request_diff
       diff_file = mr_diff.merge_request_diff_files.find_by(new_path: path)
 
       expect(diff_file).to be_binary
@@ -128,7 +128,7 @@ describe MergeRequestDiff do
   end
 
   describe '#compare_with' do
-    subject { create(:merge_request, source_branch: 'fix').merge_request_diff }
+    subject { build_stubbed(:merge_request, source_branch: 'fix').merge_request_diff }
 
     it 'delegates compare to the service' do
       expect(CompareService).to receive(:new).and_call_original

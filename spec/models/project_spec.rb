@@ -83,9 +83,9 @@ describe Project do
     end
 
     describe '#members & #requesters' do
-      let(:project) { create(:project, :public, :access_requestable) }
-      let(:requester) { create(:user) }
-      let(:developer) { create(:user) }
+      let(:project) { build_stubbed(:project, :public, :access_requestable) }
+      let(:requester) { build_stubbed(:user) }
+      let(:developer) { build_stubbed(:user) }
       before do
         project.request_access(requester)
         project.team << [developer, :developer]
@@ -118,7 +118,7 @@ describe Project do
   end
 
   describe 'validation' do
-    let!(:project) { create(:project) }
+    let!(:project) { build_stubbed(:project) }
 
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_uniqueness_of(:name).scoped_to(:namespace_id) }
@@ -159,7 +159,7 @@ describe Project do
 
       context "when the new wiki path has been used by the path of other Project" do
         it 'has an error on the name attribute' do
-          project_with_wiki_suffix = create(:project, path: 'foo.wiki')
+          project_with_wiki_suffix = build_stubbed(:project, path: 'foo.wiki')
           new_project = build_stubbed(:project, namespace_id: project_with_wiki_suffix.namespace_id, path: 'foo')
 
           expect(new_project).not_to be_valid
@@ -228,7 +228,7 @@ describe Project do
 
     describe 'project pending deletion' do
       let!(:project_pending_deletion) do
-        create(:project,
+        build_stubbed(:project,
                pending_delete: true)
       end
       let(:new_project) do
@@ -260,14 +260,14 @@ describe Project do
       end
 
       it 'rejects nested paths' do
-        parent = create(:group, :nested, path: 'environments')
+        parent = build_stubbed(:group, :nested, path: 'environments')
         project = build(:project, path: 'folders', namespace: parent)
 
         expect(project).not_to be_valid
       end
 
       it 'allows a reserved group name' do
-        parent = create(:group)
+        parent = build_stubbed(:group)
         project = build(:project, path: 'avatar', namespace: parent)
 
         expect(project).to be_valid
@@ -308,10 +308,10 @@ describe Project do
   end
 
   describe '#to_reference' do
-    let(:owner)     { create(:user, name: 'Gitlab') }
-    let(:namespace) { create(:namespace, path: 'sample-namespace', owner: owner) }
-    let(:project)   { create(:project, path: 'sample-project', namespace: namespace) }
-    let(:group)     { create(:group, name: 'Group', path: 'sample-group', owner: owner) }
+    let(:owner)     { build_stubbed(:user, name: 'Gitlab') }
+    let(:namespace) { build_stubbed(:namespace, path: 'sample-namespace', owner: owner) }
+    let(:project)   { build_stubbed(:project, path: 'sample-project', namespace: namespace) }
+    let(:group)     { build_stubbed(:group, name: 'Group', path: 'sample-group', owner: owner) }
 
     context 'when nil argument' do
       it 'returns nil' do
@@ -334,7 +334,7 @@ describe Project do
     end
 
     context 'when cross namespace project argument' do
-      let(:another_namespace_project) { create(:project, name: 'another-project') }
+      let(:another_namespace_project) { build_stubbed(:project, name: 'another-project') }
 
       it 'returns complete path to the project' do
         expect(project.to_reference(another_namespace_project)).to eq 'sample-namespace/sample-project'
@@ -342,7 +342,7 @@ describe Project do
     end
 
     context 'when same namespace / cross-project argument' do
-      let(:another_project) { create(:project, namespace: namespace) }
+      let(:another_project) { build_stubbed(:project, namespace: namespace) }
 
       it 'returns path to the project' do
         expect(project.to_reference(another_project)).to eq 'sample-project'
@@ -350,8 +350,8 @@ describe Project do
     end
 
     context 'when different namespace / cross-project argument' do
-      let(:another_namespace) { create(:namespace, path: 'another-namespace', owner: owner) }
-      let(:another_project)   { create(:project, path: 'another-project', namespace: another_namespace) }
+      let(:another_namespace) { build_stubbed(:namespace, path: 'another-namespace', owner: owner) }
+      let(:another_project)   { build_stubbed(:project, path: 'another-project', namespace: another_namespace) }
 
       it 'returns full path to the project' do
         expect(project.to_reference(another_project)).to eq 'sample-namespace/sample-project'
@@ -374,9 +374,9 @@ describe Project do
   end
 
   describe '#to_human_reference' do
-    let(:owner) { create(:user, name: 'Gitlab') }
-    let(:namespace) { create(:namespace, name: 'Sample namespace', owner: owner) }
-    let(:project) { create(:project, name: 'Sample project', namespace: namespace) }
+    let(:owner) { build_stubbed(:user, name: 'Gitlab') }
+    let(:namespace) { build_stubbed(:namespace, name: 'Sample namespace', owner: owner) }
+    let(:project) { build_stubbed(:project, name: 'Sample project', namespace: namespace) }
 
     context 'when nil argument' do
       it 'returns nil' do
@@ -391,7 +391,7 @@ describe Project do
     end
 
     context 'when cross namespace project argument' do
-      let(:another_namespace_project) { create(:project, name: 'another-project') }
+      let(:another_namespace_project) { build_stubbed(:project, name: 'another-project') }
 
       it 'returns complete name with namespace of the project' do
         expect(project.to_human_reference(another_namespace_project)).to eq 'Gitlab / Sample project'
@@ -399,7 +399,7 @@ describe Project do
     end
 
     context 'when same namespace / cross-project argument' do
-      let(:another_project) { create(:project, namespace: namespace) }
+      let(:another_project) { build_stubbed(:project, namespace: namespace) }
 
       it 'returns name of the project' do
         expect(project.to_human_reference(another_project)).to eq 'Sample project'
@@ -408,7 +408,7 @@ describe Project do
   end
 
   describe '#repository_storage_path' do
-    let(:project) { create(:project, repository_storage: 'custom') }
+    let(:project) { build_stubbed(:project, repository_storage: 'custom') }
 
     before do
       FileUtils.mkdir('tmp/tests/custom_repositories')
@@ -431,7 +431,7 @@ describe Project do
   end
 
   describe "#web_url" do
-    let(:project) { create(:project, path: "somewhere") }
+    let(:project) { build_stubbed(:project, path: "somewhere") }
 
     it 'returns the full web URL for this repo' do
       expect(project.web_url).to eq("#{Gitlab.config.gitlab.url}/#{project.namespace.full_path}/somewhere")
@@ -439,8 +439,8 @@ describe Project do
   end
 
   describe "#new_issue_address" do
-    let(:project) { create(:project, path: "somewhere") }
-    let(:user) { create(:user) }
+    let(:project) { build_stubbed(:project, path: "somewhere") }
+    let(:user) { build_stubbed(:user) }
 
     context 'incoming email enabled' do
       before do
@@ -468,11 +468,11 @@ describe Project do
   describe 'last_activity methods' do
     let(:timestamp) { 2.hours.ago }
     # last_activity_at gets set to created_at upon creation
-    let(:project) { create(:project, created_at: timestamp, updated_at: timestamp) }
+    let(:project) { build_stubbed(:project, created_at: timestamp, updated_at: timestamp) }
 
     describe 'last_activity' do
       it 'alias last_activity to last_event' do
-        last_event = create(:event, :closed, project: project)
+        last_event = build_stubbed(:event, :closed, project: project)
 
         expect(project.last_activity).to eq(last_event)
       end
@@ -480,7 +480,7 @@ describe Project do
 
     describe 'last_activity_date' do
       it 'returns the creation date of the project\'s last event if present' do
-        new_event = create(:event, :closed, project: project, created_at: Time.now)
+        new_event = build_stubbed(:event, :closed, project: project, created_at: Time.now)
 
         project.reload
         expect(project.last_activity_at.to_i).to eq(new_event.created_at.to_i)
@@ -493,9 +493,9 @@ describe Project do
   end
 
   describe '#get_issue' do
-    let(:project) { create(:project) }
-    let!(:issue)  { create(:issue, project: project) }
-    let(:user)    { create(:user) }
+    let(:project) { build_stubbed(:project) }
+    let!(:issue)  { build_stubbed(:issue, project: project) }
+    let(:user)    { build_stubbed(:user) }
 
     before do
       project.team << [user, :developer]
@@ -515,13 +515,13 @@ describe Project do
       end
 
       it "returns nil when user doesn't have access" do
-        user = create(:user)
+        user = build_stubbed(:user)
         expect(project.get_issue(issue.iid, user)).to eq nil
       end
     end
 
     context 'with external issues tracker' do
-      let!(:internal_issue) { create(:issue, project: project) }
+      let!(:internal_issue) { build_stubbed(:issue, project: project) }
       before do
         allow(project).to receive(:external_issue_tracker).and_return(true)
       end
@@ -568,7 +568,7 @@ describe Project do
   end
 
   describe '#issue_exists?' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     it 'is truthy when issue exists' do
       expect(project).to receive(:get_issue).and_return(double)
@@ -585,7 +585,7 @@ describe Project do
     context 'with namespace' do
       before do
         @group = create :group, name: 'gitlab'
-        @project = create(:project, name: 'gitlabhq', namespace: @group)
+        @project = build_stubbed(:project, name: 'gitlabhq', namespace: @group)
       end
 
       it { expect(@project.to_param).to eq('gitlabhq') }
@@ -593,7 +593,7 @@ describe Project do
 
     context 'with invalid path' do
       it 'returns previous path to keep project suitable for use in URLs when persisted' do
-        project = create(:project, path: 'gitlab')
+        project = build_stubbed(:project, path: 'gitlab')
         project.path = 'foo&bar'
 
         expect(project).not_to be_valid
@@ -611,7 +611,7 @@ describe Project do
   end
 
   describe '#repository' do
-    let(:project) { create(:project, :repository) }
+    let(:project) { build_stubbed(:project, :repository) }
 
     it 'returns valid repo' do
       expect(project.repository).to be_kind_of(Repository)
@@ -627,15 +627,15 @@ describe Project do
 
     it "is false if used other tracker" do
       # NOTE: The current nature of this factory requires persistence
-      project = create(:redmine_project)
+      project = build_stubbed(:redmine_project)
 
       expect(project.default_issues_tracker?).to be_falsey
     end
   end
 
   describe '#external_issue_tracker' do
-    let(:project) { create(:project) }
-    let(:ext_project) { create(:redmine_project) }
+    let(:project) { build_stubbed(:project) }
+    let(:ext_project) { build_stubbed(:redmine_project) }
 
     context 'on existing projects with no value for has_external_issue_tracker' do
       before do
@@ -669,7 +669,7 @@ describe Project do
   end
 
   describe '#cache_has_external_issue_tracker' do
-    let(:project) { create(:project, has_external_issue_tracker: nil) }
+    let(:project) { build_stubbed(:project, has_external_issue_tracker: nil) }
 
     it 'stores true if there is any external_issue_tracker' do
       services = double(:service, external_issue_trackers: [RedmineService.new])
@@ -691,9 +691,9 @@ describe Project do
   end
 
   describe '#has_wiki?' do
-    let(:no_wiki_project)       { create(:project, :wiki_disabled, has_external_wiki: false) }
-    let(:wiki_enabled_project)  { create(:project) }
-    let(:external_wiki_project) { create(:project, has_external_wiki: true) }
+    let(:no_wiki_project)       { build_stubbed(:project, :wiki_disabled, has_external_wiki: false) }
+    let(:wiki_enabled_project)  { build_stubbed(:project) }
+    let(:external_wiki_project) { build_stubbed(:project, has_external_wiki: true) }
 
     it 'returns true if project is wiki enabled or has external wiki' do
       expect(wiki_enabled_project).to have_wiki
@@ -703,11 +703,11 @@ describe Project do
   end
 
   describe '#external_wiki' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     context 'with an active external wiki' do
       before do
-        create(:service, project: project, type: 'ExternalWikiService', active: true)
+        build_stubbed(:service, project: project, type: 'ExternalWikiService', active: true)
         project.external_wiki
       end
 
@@ -726,7 +726,7 @@ describe Project do
 
     context 'with an inactive external wiki' do
       before do
-        create(:service, project: project, type: 'ExternalWikiService', active: false)
+        build_stubbed(:service, project: project, type: 'ExternalWikiService', active: false)
       end
 
       it 'sets :has_external_wiki as false' do
@@ -746,7 +746,7 @@ describe Project do
       it 'sets :has_external_wiki as true if an external wiki service is created later' do
         expect(project.has_external_wiki).to be(false)
 
-        create(:service, project: project, type: 'ExternalWikiService', active: true)
+        build_stubbed(:service, project: project, type: 'ExternalWikiService', active: true)
 
         expect(project.has_external_wiki).to be(true)
       end
@@ -757,7 +757,7 @@ describe Project do
     it 'counts stars from multiple users' do
       user1 = create :user
       user2 = create :user
-      project = create(:project, :public)
+      project = build_stubbed(:project, :public)
 
       expect(project.star_count).to eq(0)
 
@@ -779,8 +779,8 @@ describe Project do
 
     it 'counts stars on the right project' do
       user = create :user
-      project1 = create(:project, :public)
-      project2 = create(:project, :public)
+      project1 = build_stubbed(:project, :public)
+      project2 = build_stubbed(:project, :public)
 
       expect(project1.star_count).to eq(0)
       expect(project2.star_count).to eq(0)
@@ -812,7 +812,7 @@ describe Project do
   end
 
   describe '#avatar_type' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     it 'is true if avatar is image' do
       project.update_attribute(:avatar, 'uploads/avatar.png')
@@ -828,10 +828,10 @@ describe Project do
   describe '#avatar_url' do
     subject { project.avatar_url }
 
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     context 'when avatar file is uploaded' do
-      let(:project) { create(:project, :with_avatar) }
+      let(:project) { build_stubbed(:project, :with_avatar) }
       let(:avatar_path) { "/uploads/-/system/project/avatar/#{project.id}/dk.png" }
       let(:gitlab_host) { "http://#{Gitlab.config.gitlab.host}" }
 
@@ -856,14 +856,14 @@ describe Project do
     end
 
     context 'when git repo is empty' do
-      let(:project) { create(:project) }
+      let(:project) { build_stubbed(:project) }
 
       it { is_expected.to eq nil }
     end
   end
 
   describe '#pipeline_for' do
-    let(:project) { create(:project, :repository) }
+    let(:project) { build_stubbed(:project, :repository) }
     let!(:pipeline) { create_pipeline }
 
     shared_examples 'giving the correct pipeline' do
@@ -889,7 +889,7 @@ describe Project do
     end
 
     def create_pipeline
-      create(:ci_pipeline,
+      build_stubbed(:ci_pipeline,
              project: project,
              ref: 'master',
              sha: project.commit('master').sha)
@@ -897,7 +897,7 @@ describe Project do
   end
 
   describe '#builds_enabled' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     subject { project.builds_enabled }
 
@@ -908,7 +908,7 @@ describe Project do
     subject { described_class.with_shared_runners }
 
     context 'when shared runners are enabled for project' do
-      let!(:project) { create(:project, shared_runners_enabled: true) }
+      let!(:project) { build_stubbed(:project, shared_runners_enabled: true) }
 
       it "returns a project" do
         is_expected.to eq([project])
@@ -916,7 +916,7 @@ describe Project do
     end
 
     context 'when shared runners are disabled for project' do
-      let!(:project) { create(:project, shared_runners_enabled: false) }
+      let!(:project) { build_stubbed(:project, shared_runners_enabled: false) }
 
       it "returns an empty array" do
         is_expected.to be_empty
@@ -925,9 +925,9 @@ describe Project do
   end
 
   describe '.cached_count', :use_clean_rails_memory_store_caching do
-    let(:group)     { create(:group, :public) }
-    let!(:project1) { create(:project, :public, group: group) }
-    let!(:project2) { create(:project, :public, group: group) }
+    let(:group)     { build_stubbed(:group, :public) }
+    let!(:project1) { build_stubbed(:project, :public, group: group) }
+    let!(:project2) { build_stubbed(:project, :public, group: group) }
 
     it 'returns total project count' do
       expect(described_class).to receive(:count).once.and_call_original
@@ -939,16 +939,16 @@ describe Project do
   end
 
   describe '.trending' do
-    let(:group)    { create(:group, :public) }
-    let(:project1) { create(:project, :public, group: group) }
-    let(:project2) { create(:project, :public, group: group) }
+    let(:group)    { build_stubbed(:group, :public) }
+    let(:project1) { build_stubbed(:project, :public, group: group) }
+    let(:project2) { build_stubbed(:project, :public, group: group) }
 
     before do
       2.times do
-        create(:note_on_commit, project: project1)
+        build_stubbed(:note_on_commit, project: project1)
       end
 
-      create(:note_on_commit, project: project2)
+      build_stubbed(:note_on_commit, project: project2)
 
       TrendingProject.refresh!
     end
@@ -961,7 +961,7 @@ describe Project do
 
     it 'does not take system notes into account' do
       10.times do
-        create(:note_on_commit, project: project2, system: true)
+        build_stubbed(:note_on_commit, project: project2, system: true)
       end
 
       expect(described_class.trending.to_a).to eq([project1, project2])
@@ -970,11 +970,11 @@ describe Project do
 
   describe '.starred_by' do
     it 'returns only projects starred by the given user' do
-      user1 = create(:user)
-      user2 = create(:user)
-      project1 = create(:project)
-      project2 = create(:project)
-      create(:project)
+      user1 = build_stubbed(:user)
+      user2 = build_stubbed(:user)
+      project1 = build_stubbed(:project)
+      project2 = build_stubbed(:project)
+      build_stubbed(:project)
       user1.toggle_star(project1)
       user2.toggle_star(project2)
 
@@ -983,8 +983,8 @@ describe Project do
   end
 
   describe '.visible_to_user' do
-    let!(:project) { create(:project, :private) }
-    let!(:user)    { create(:user) }
+    let!(:project) { build_stubbed(:project, :private) }
+    let!(:user)    { build_stubbed(:user) }
 
     subject { described_class.visible_to_user(user) }
 
@@ -1002,7 +1002,7 @@ describe Project do
   end
 
   context 'repository storage by default' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     before do
       storages = {
@@ -1020,7 +1020,7 @@ describe Project do
   end
 
   context 'shared runners by default' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     subject { project.shared_runners_enabled }
 
@@ -1042,9 +1042,9 @@ describe Project do
   end
 
   describe '#any_runners' do
-    let(:project) { create(:project, shared_runners_enabled: shared_runners_enabled) }
-    let(:specific_runner) { create(:ci_runner) }
-    let(:shared_runner) { create(:ci_runner, :shared) }
+    let(:project) { build_stubbed(:project, shared_runners_enabled: shared_runners_enabled) }
+    let(:specific_runner) { build_stubbed(:ci_runner) }
+    let(:shared_runner) { build_stubbed(:ci_runner, :shared) }
 
     context 'for shared runners disabled' do
       let(:shared_runners_enabled) { false }
@@ -1085,12 +1085,12 @@ describe Project do
   end
 
   describe '#shared_runners' do
-    let!(:runner) { create(:ci_runner, :shared) }
+    let!(:runner) { build_stubbed(:ci_runner, :shared) }
 
     subject { project.shared_runners }
 
     context 'when shared runners are enabled for project' do
-      let!(:project) { create(:project, shared_runners_enabled: true) }
+      let!(:project) { build_stubbed(:project, shared_runners_enabled: true) }
 
       it "returns a list of shared runners" do
         is_expected.to eq([runner])
@@ -1098,7 +1098,7 @@ describe Project do
     end
 
     context 'when shared runners are disabled for project' do
-      let!(:project) { create(:project, shared_runners_enabled: false) }
+      let!(:project) { build_stubbed(:project, shared_runners_enabled: false) }
 
       it "returns a empty list" do
         is_expected.to be_empty
@@ -1107,7 +1107,7 @@ describe Project do
   end
 
   describe '#visibility_level_allowed?' do
-    let(:project) { create(:project, :internal) }
+    let(:project) { build_stubbed(:project, :internal) }
 
     context 'when checking on non-forked project' do
       it { expect(project.visibility_level_allowed?(Gitlab::VisibilityLevel::PRIVATE)).to be_truthy }
@@ -1116,8 +1116,8 @@ describe Project do
     end
 
     context 'when checking on forked project' do
-      let(:project)        { create(:project, :internal) }
-      let(:forked_project) { create(:project, forked_from_project: project) }
+      let(:project)        { build_stubbed(:project, :internal) }
+      let(:forked_project) { build_stubbed(:project, forked_from_project: project) }
 
       it { expect(forked_project.visibility_level_allowed?(Gitlab::VisibilityLevel::PRIVATE)).to be_truthy }
       it { expect(forked_project.visibility_level_allowed?(Gitlab::VisibilityLevel::INTERNAL)).to be_truthy }
@@ -1171,7 +1171,7 @@ describe Project do
   end
 
   describe '.search' do
-    let(:project) { create(:project, description: 'kitten mittens') }
+    let(:project) { build_stubbed(:project, description: 'kitten mittens') }
 
     it 'returns projects with a matching name' do
       expect(described_class.search(project.name)).to eq([project])
@@ -1228,7 +1228,7 @@ describe Project do
     end
 
     describe 'with pending_delete project' do
-      let(:pending_delete_project) { create(:project, pending_delete: true) }
+      let(:pending_delete_project) { build_stubbed(:project, pending_delete: true) }
 
       it 'shows pending deletion project' do
         search_result = described_class.search(pending_delete_project.name)
@@ -1239,7 +1239,7 @@ describe Project do
   end
 
   describe '#expire_caches_before_rename' do
-    let(:project) { create(:project, :repository) }
+    let(:project) { build_stubbed(:project, :repository) }
     let(:repo)    { double(:repo, exists?: true) }
     let(:wiki)    { double(:wiki, exists?: true) }
 
@@ -1260,7 +1260,7 @@ describe Project do
   end
 
   describe '.search_by_title' do
-    let(:project) { create(:project, name: 'kittens') }
+    let(:project) { build_stubbed(:project, name: 'kittens') }
 
     it 'returns projects with a matching name' do
       expect(described_class.search_by_title(project.name)).to eq([project])
@@ -1276,8 +1276,8 @@ describe Project do
   end
 
   context 'when checking projects from groups' do
-    let(:private_group)    { create(:group, visibility_level: 0)  }
-    let(:internal_group)   { create(:group, visibility_level: 10) }
+    let(:private_group)    { build_stubbed(:group, visibility_level: 0)  }
+    let(:internal_group)   { build_stubbed(:group, visibility_level: 10) }
 
     let(:private_project)  { create :project, :private, group: private_group }
     let(:internal_project) { create :project, :internal, group: internal_group }
@@ -1292,7 +1292,7 @@ describe Project do
   end
 
   describe '#create_repository' do
-    let(:project) { create(:project, :repository) }
+    let(:project) { build_stubbed(:project, :repository) }
     let(:shell) { Gitlab::Shell.new }
 
     before do
@@ -1333,7 +1333,7 @@ describe Project do
   end
 
   describe '#ensure_repository' do
-    let(:project) { create(:project, :repository) }
+    let(:project) { build_stubbed(:project, :repository) }
     let(:shell) { Gitlab::Shell.new }
 
     before do
@@ -1377,8 +1377,8 @@ describe Project do
   end
 
   describe '#user_can_push_to_empty_repo?' do
-    let(:project) { create(:project) }
-    let(:user)    { create(:user) }
+    let(:project) { build_stubbed(:project) }
+    let(:user)    { build_stubbed(:user) }
 
     it 'returns false when default_branch_protection is in full protection and user is developer' do
       project.team << [user, :developer]
@@ -1416,7 +1416,7 @@ describe Project do
   end
 
   describe '#container_registry_url' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     subject { project.container_registry_url }
 
@@ -1443,7 +1443,7 @@ describe Project do
   end
 
   describe '#has_container_registry_tags?' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     context 'when container registry is enabled' do
       before do
@@ -1452,7 +1452,7 @@ describe Project do
 
       context 'when tags are present for multi-level registries' do
         before do
-          create(:container_repository, project: project, name: 'image')
+          build_stubbed(:container_repository, project: project, name: 'image')
 
           stub_container_registry_tags(repository: /image/,
                                        tags: %w[latest rc1])
@@ -1507,7 +1507,7 @@ describe Project do
   end
 
   describe '#ci_config_path=' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     it 'sets nil' do
       project.update!(ci_config_path: nil)
@@ -1529,7 +1529,7 @@ describe Project do
   end
 
   describe 'Project import job' do
-    let(:project) { create(:project, import_url: generate(:url)) }
+    let(:project) { build_stubbed(:project, import_url: generate(:url)) }
 
     before do
       allow_any_instance_of(Gitlab::Shell).to receive(:import_repository)
@@ -1572,7 +1572,7 @@ describe Project do
       end
 
       it 'performs housekeeping when an import of a fresh project is completed' do
-        project = create(:project_empty_repo, :import_started, import_type: :github)
+        project = build_stubbed(:project_empty_repo, :import_started, import_type: :github)
 
         project.import_finish
 
@@ -1581,7 +1581,7 @@ describe Project do
       end
 
       it 'does not perform housekeeping when project repository does not exist' do
-        project = create(:project, :import_started, import_type: :github)
+        project = build_stubbed(:project, :import_started, import_type: :github)
 
         project.import_finish
 
@@ -1589,7 +1589,7 @@ describe Project do
       end
 
       it 'does not perform housekeeping when project does not have a valid import type' do
-        project = create(:project, :import_started, import_type: nil)
+        project = build_stubbed(:project, :import_started, import_type: nil)
 
         project.import_finish
 
@@ -1600,20 +1600,20 @@ describe Project do
 
   describe '#latest_successful_builds_for' do
     def create_pipeline(status = 'success')
-      create(:ci_pipeline, project: project,
+      build_stubbed(:ci_pipeline, project: project,
                            sha: project.commit.sha,
                            ref: project.default_branch,
                            status: status)
     end
 
     def create_build(new_pipeline = pipeline, name = 'test')
-      create(:ci_build, :success, :artifacts,
+      build_stubbed(:ci_build, :success, :artifacts,
              pipeline: new_pipeline,
              status: new_pipeline.status,
              name: name)
     end
 
-    let(:project) { create(:project, :repository) }
+    let(:project) { build_stubbed(:project, :repository) }
     let(:pipeline) { create_pipeline }
 
     context 'with many builds' do
@@ -1681,7 +1681,7 @@ describe Project do
     let(:import_jid) { '123' }
 
     context 'forked' do
-      let(:forked_project_link) { create(:forked_project_link, :forked_to_empty_project) }
+      let(:forked_project_link) { build_stubbed(:forked_project_link, :forked_to_empty_project) }
       let(:forked_from_project) { forked_project_link.forked_from_project }
       let(:project) { forked_project_link.forked_to_project }
 
@@ -1698,7 +1698,7 @@ describe Project do
 
     context 'not forked' do
       it 'schedules a RepositoryImportWorker job' do
-        project = create(:project, import_url: generate(:url))
+        project = build_stubbed(:project, import_url: generate(:url))
 
         expect(RepositoryImportWorker).to receive(:perform_async).with(project.id).and_return(import_jid)
         expect(project.add_import_job).to eq(import_jid)
@@ -1719,7 +1719,7 @@ describe Project do
   end
 
   describe '#lfs_enabled?' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     shared_examples 'project overrides group' do
       it 'returns true when enabled in project' do
@@ -1781,7 +1781,7 @@ describe Project do
   end
 
   describe '#change_head' do
-    let(:project) { create(:project, :repository) }
+    let(:project) { build_stubbed(:project, :repository) }
 
     it 'returns error if branch does not exist' do
       expect(project.change_head('unexisted-branch')).to be false
@@ -1814,7 +1814,7 @@ describe Project do
   end
 
   describe '#pushes_since_gc' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     after do
       project.reset_pushes_since_gc
@@ -1836,7 +1836,7 @@ describe Project do
   end
 
   describe '#increment_pushes_since_gc' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     after do
       project.reset_pushes_since_gc
@@ -1850,7 +1850,7 @@ describe Project do
   end
 
   describe '#reset_pushes_since_gc' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     after do
       project.reset_pushes_since_gc
@@ -1867,7 +1867,7 @@ describe Project do
 
   describe '#deployment_variables' do
     context 'when project has no deployment service' do
-      let(:project) { create(:project) }
+      let(:project) { build_stubbed(:project) }
 
       it 'returns an empty array' do
         expect(project.deployment_variables).to eq []
@@ -1875,7 +1875,7 @@ describe Project do
     end
 
     context 'when project has a deployment service' do
-      let(:project) { create(:kubernetes_project) }
+      let(:project) { build_stubbed(:kubernetes_project) }
 
       it 'returns variables from this service' do
         expect(project.deployment_variables).to include(
@@ -1886,14 +1886,14 @@ describe Project do
   end
 
   describe '#secret_variables_for' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     let!(:secret_variable) do
-      create(:ci_variable, value: 'secret', project: project)
+      build_stubbed(:ci_variable, value: 'secret', project: project)
     end
 
     let!(:protected_variable) do
-      create(:ci_variable, :protected, value: 'protected', project: project)
+      build_stubbed(:ci_variable, :protected, value: 'protected', project: project)
     end
 
     subject { project.secret_variables_for(ref: 'ref') }
@@ -1917,7 +1917,7 @@ describe Project do
 
     context 'when the ref is a protected branch' do
       before do
-        create(:protected_branch, name: 'ref', project: project)
+        build_stubbed(:protected_branch, name: 'ref', project: project)
       end
 
       it_behaves_like 'ref is protected'
@@ -1925,7 +1925,7 @@ describe Project do
 
     context 'when the ref is a protected tag' do
       before do
-        create(:protected_tag, name: 'ref', project: project)
+        build_stubbed(:protected_tag, name: 'ref', project: project)
       end
 
       it_behaves_like 'ref is protected'
@@ -1933,7 +1933,7 @@ describe Project do
   end
 
   describe '#protected_for?' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     subject { project.protected_for?('ref') }
 
@@ -1950,7 +1950,7 @@ describe Project do
 
     context 'when the ref is a protected branch' do
       before do
-        create(:protected_branch, name: 'ref', project: project)
+        build_stubbed(:protected_branch, name: 'ref', project: project)
       end
 
       it 'returns true' do
@@ -1960,7 +1960,7 @@ describe Project do
 
     context 'when the ref is a protected tag' do
       before do
-        create(:protected_tag, name: 'ref', project: project)
+        build_stubbed(:protected_tag, name: 'ref', project: project)
       end
 
       it 'returns true' do
@@ -1970,7 +1970,7 @@ describe Project do
   end
 
   describe '#update_project_statistics' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     it "is called after creation" do
       expect(project.statistics).to be_a ProjectStatistics
@@ -1982,7 +1982,7 @@ describe Project do
     end
 
     it "updates the namespace_id when changed" do
-      namespace = create(:namespace)
+      namespace = build_stubbed(:namespace)
       project.update(namespace: namespace)
 
       expect(project.statistics.namespace_id).to eq namespace.id
@@ -1990,9 +1990,9 @@ describe Project do
   end
 
   describe 'inside_path' do
-    let!(:project1) { create(:project, namespace: create(:namespace, path: 'name_pace')) }
-    let!(:project2) { create(:project) }
-    let!(:project3) { create(:project, namespace: create(:namespace, path: 'namespace')) }
+    let!(:project1) { build_stubbed(:project, namespace: build_stubbed(:namespace, path: 'name_pace')) }
+    let!(:project2) { build_stubbed(:project) }
+    let!(:project3) { build_stubbed(:project, namespace: build_stubbed(:namespace, path: 'namespace')) }
     let!(:path) { project1.namespace.full_path }
 
     it 'returns correct project' do
@@ -2001,7 +2001,7 @@ describe Project do
   end
 
   describe '#route_map_for' do
-    let(:project) { create(:project, :repository) }
+    let(:project) { build_stubbed(:project, :repository) }
     let(:route_map) do
       <<-MAP.strip_heredoc
       - source: /source/(.*)/
@@ -2038,7 +2038,7 @@ describe Project do
   end
 
   describe '#public_path_for_source_path' do
-    let(:project) { create(:project, :repository) }
+    let(:project) { build_stubbed(:project, :repository) }
     let(:route_map) do
       Gitlab::RouteMap.new(<<-MAP.strip_heredoc)
         - source: /source/(.*)/
@@ -2077,13 +2077,13 @@ describe Project do
   end
 
   describe '#parent' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     it { expect(project.parent).to eq(project.namespace) }
   end
 
   describe '#parent_changed?' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     before do
       project.namespace_id = 7
@@ -2152,7 +2152,7 @@ describe Project do
   end
 
   describe '#pipeline_status' do
-    let(:project) { create(:project, :repository) }
+    let(:project) { build_stubbed(:project, :repository) }
     it 'builds a pipeline status' do
       expect(project.pipeline_status).to be_a(Gitlab::Cache::Ci::ProjectPipelineStatus)
     end
@@ -2163,18 +2163,18 @@ describe Project do
   end
 
   describe '#append_or_update_attribute' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     it 'shows full error updating an invalid MR' do
       error_message = 'Failed to replace merge_requests because one or more of the new records could not be saved.'\
                       ' Validate fork Source project is not a fork of the target project'
 
-      expect { project.append_or_update_attribute(:merge_requests, [create(:merge_request)]) }
+      expect { project.append_or_update_attribute(:merge_requests, [build_stubbed(:merge_request)]) }
         .to raise_error(ActiveRecord::RecordNotSaved, error_message)
     end
 
     it 'updates the project succesfully' do
-      merge_request = create(:merge_request, target_project: project, source_project: project)
+      merge_request = build_stubbed(:merge_request, target_project: project, source_project: project)
 
       expect { project.append_or_update_attribute(:merge_requests, [merge_request]) }
         .not_to raise_error
@@ -2183,20 +2183,20 @@ describe Project do
 
   describe '#last_repository_updated_at' do
     it 'sets to created_at upon creation' do
-      project = create(:project, created_at: 2.hours.ago)
+      project = build_stubbed(:project, created_at: 2.hours.ago)
 
       expect(project.last_repository_updated_at.to_i).to eq(project.created_at.to_i)
     end
   end
 
   describe '.public_or_visible_to_user' do
-    let!(:user) { create(:user) }
+    let!(:user) { build_stubbed(:user) }
 
     let!(:private_project) do
-      create(:project, :private, creator: user, namespace: user.namespace)
+      build_stubbed(:project, :private, creator: user, namespace: user.namespace)
     end
 
-    let!(:public_project) { create(:project, :public) }
+    let!(:public_project) { build_stubbed(:project, :public) }
 
     context 'with a user' do
       let(:projects) do
@@ -2244,11 +2244,11 @@ describe Project do
   end
 
   describe '#remove_private_deploy_keys' do
-    let!(:project) { create(:project) }
+    let!(:project) { build_stubbed(:project) }
 
     context 'for a private deploy key' do
-      let!(:key) { create(:deploy_key, public: false) }
-      let!(:deploy_keys_project) { create(:deploy_keys_project, deploy_key: key, project: project) }
+      let!(:key) { build_stubbed(:deploy_key, public: false) }
+      let!(:deploy_keys_project) { build_stubbed(:deploy_keys_project, deploy_key: key, project: project) }
 
       context 'when the key is not linked to another project' do
         it 'removes the key' do
@@ -2260,8 +2260,8 @@ describe Project do
 
       context 'when the key is linked to another project' do
         before do
-          another_project = create(:project)
-          create(:deploy_keys_project, deploy_key: key, project: another_project)
+          another_project = build_stubbed(:project)
+          build_stubbed(:deploy_keys_project, deploy_key: key, project: another_project)
         end
 
         it 'does not remove the key' do
@@ -2273,8 +2273,8 @@ describe Project do
     end
 
     context 'for a public deploy key' do
-      let!(:key) { create(:deploy_key, public: true) }
-      let!(:deploy_keys_project) { create(:deploy_keys_project, deploy_key: key, project: project) }
+      let!(:key) { build_stubbed(:deploy_key, public: true) }
+      let!(:deploy_keys_project) { build_stubbed(:deploy_keys_project, deploy_key: key, project: project) }
 
       it 'does not remove the key' do
         project.remove_private_deploy_keys

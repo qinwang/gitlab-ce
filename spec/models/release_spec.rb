@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Release do
-  let(:release) { create(:release) }
+  let(:release) { build_stubbed(:release) }
 
   it { expect(release).to be_valid }
 

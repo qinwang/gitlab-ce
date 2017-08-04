@@ -14,7 +14,7 @@ describe Ci::Variable do
 
     context 'when variable is protected' do
       before do
-        create(:ci_variable, :protected)
+        build_stubbed(:ci_variable, :protected)
       end
 
       it 'returns nothing' do
@@ -23,7 +23,7 @@ describe Ci::Variable do
     end
 
     context 'when variable is not protected' do
-      let(:variable) { create(:ci_variable, protected: false) }
+      let(:variable) { build_stubbed(:ci_variable, protected: false) }
 
       it 'returns the variable' do
         is_expected.to contain_exactly(variable)

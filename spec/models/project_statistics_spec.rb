@@ -117,10 +117,10 @@ describe ProjectStatistics do
   end
 
   describe '#update_lfs_objects_size' do
-    let!(:lfs_object1) { create(:lfs_object, size: 23.megabytes) }
-    let!(:lfs_object2) { create(:lfs_object, size: 34.megabytes) }
-    let!(:lfs_objects_project1) { create(:lfs_objects_project, project: project, lfs_object: lfs_object1) }
-    let!(:lfs_objects_project2) { create(:lfs_objects_project, project: project, lfs_object: lfs_object2) }
+    let!(:lfs_object1) { build_stubbed(:lfs_object, size: 23.megabytes) }
+    let!(:lfs_object2) { build_stubbed(:lfs_object, size: 34.megabytes) }
+    let!(:lfs_objects_project1) { build_stubbed(:lfs_objects_project, project: project, lfs_object: lfs_object1) }
+    let!(:lfs_objects_project2) { build_stubbed(:lfs_objects_project, project: project, lfs_object: lfs_object2) }
 
     before do
       statistics.update_lfs_objects_size
@@ -132,9 +132,9 @@ describe ProjectStatistics do
   end
 
   describe '#update_build_artifacts_size' do
-    let!(:pipeline) { create(:ci_pipeline, project: project) }
-    let!(:build1) { create(:ci_build, pipeline: pipeline, artifacts_size: 45.megabytes) }
-    let!(:build2) { create(:ci_build, pipeline: pipeline, artifacts_size: 56.megabytes) }
+    let!(:pipeline) { build_stubbed(:ci_pipeline, project: project) }
+    let!(:build1) { build_stubbed(:ci_build, pipeline: pipeline, artifacts_size: 45.megabytes) }
+    let!(:build2) { build_stubbed(:ci_build, pipeline: pipeline, artifacts_size: 56.megabytes) }
 
     before do
       statistics.update_build_artifacts_size

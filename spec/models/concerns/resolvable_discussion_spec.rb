@@ -3,11 +3,11 @@ require 'spec_helper'
 describe Discussion, ResolvableDiscussion do
   subject { described_class.new([first_note, second_note, third_note]) }
 
-  let(:first_note) { create(:discussion_note_on_merge_request) }
+  let(:first_note) { build_stubbed(:discussion_note_on_merge_request) }
   let(:merge_request) { first_note.noteable }
   let(:project) { first_note.project }
-  let(:second_note) { create(:discussion_note_on_merge_request, noteable: merge_request, project: project, in_reply_to: first_note) }
-  let(:third_note) { create(:discussion_note_on_merge_request, noteable: merge_request, project: project) }
+  let(:second_note) { build_stubbed(:discussion_note_on_merge_request, noteable: merge_request, project: project, in_reply_to: first_note) }
+  let(:third_note) { build_stubbed(:discussion_note_on_merge_request, noteable: merge_request, project: project) }
 
   describe "#resolvable?" do
     context "when potentially resolvable" do
@@ -152,7 +152,7 @@ describe Discussion, ResolvableDiscussion do
   end
 
   describe "#can_resolve?" do
-    let(:current_user) { create(:user) }
+    let(:current_user) { build_stubbed(:user) }
 
     context "when not resolvable" do
       before do
@@ -208,7 +208,7 @@ describe Discussion, ResolvableDiscussion do
   end
 
   describe "#resolve!" do
-    let(:current_user) { create(:user) }
+    let(:current_user) { build_stubbed(:user) }
 
     context "when not resolvable" do
       before do
@@ -239,8 +239,8 @@ describe Discussion, ResolvableDiscussion do
     end
 
     context "when resolvable" do
-      let(:user) { create(:user) }
-      let(:second_note) { create(:diff_note_on_commit) } # unresolvable
+      let(:user) { build_stubbed(:user) }
+      let(:second_note) { build_stubbed(:diff_note_on_commit) } # unresolvable
 
       before do
         allow(subject).to receive(:resolvable?).and_return(true)
@@ -431,7 +431,7 @@ describe Discussion, ResolvableDiscussion do
     end
 
     context "when resolvable" do
-      let(:user) { create(:user) }
+      let(:user) { build_stubbed(:user) }
 
       before do
         allow(subject).to receive(:resolvable?).and_return(true)
@@ -533,7 +533,7 @@ describe Discussion, ResolvableDiscussion do
   end
 
   describe "#last_resolved_note" do
-    let(:current_user) { create(:user) }
+    let(:current_user) { build_stubbed(:user) }
 
     before do
       first_note.resolve!(current_user)

@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Timelog do
   subject { build(:timelog) }
-  let(:issue) { create(:issue) }
-  let(:merge_request) { create(:merge_request) }
+  let(:issue) { build_stubbed(:issue) }
+  let(:merge_request) { build_stubbed(:merge_request) }
 
   it { is_expected.to be_valid }
 

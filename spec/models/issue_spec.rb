@@ -16,7 +16,7 @@ describe Issue do
     it { is_expected.to include_module(Taskable) }
   end
 
-  subject { create(:issue) }
+  subject { build_stubbed(:issue) }
 
   describe "act_as_paranoid" do
     it { is_expected.to have_db_column(:deleted_at) }
@@ -25,12 +25,12 @@ describe Issue do
 
   describe '#order_by_position_and_priority' do
     let(:project) { create :project }
-    let(:p1) { create(:label, title: 'P1', project: project, priority: 1) }
-    let(:p2) { create(:label, title: 'P2', project: project, priority: 2) }
-    let!(:issue1) { create(:labeled_issue, project: project, labels: [p1]) }
-    let!(:issue2) { create(:labeled_issue, project: project, labels: [p2]) }
-    let!(:issue3) { create(:issue, project: project, relative_position: 100) }
-    let!(:issue4) { create(:issue, project: project, relative_position: 200) }
+    let(:p1) { build_stubbed(:label, title: 'P1', project: project, priority: 1) }
+    let(:p2) { build_stubbed(:label, title: 'P2', project: project, priority: 2) }
+    let!(:issue1) { build_stubbed(:labeled_issue, project: project, labels: [p1]) }
+    let!(:issue2) { build_stubbed(:labeled_issue, project: project, labels: [p2]) }
+    let!(:issue3) { build_stubbed(:issue, project: project, relative_position: 100) }
+    let!(:issue4) { build_stubbed(:issue, project: project, relative_position: 200) }
 
     it 'returns ordered list' do
       expect(project.issues.order_by_position_and_priority)
@@ -58,7 +58,7 @@ describe Issue do
 
   describe '#closed_at' do
     it 'sets closed_at to Time.now when issue is closed' do
-      issue = create(:issue, state: 'opened')
+      issue = build_stubbed(:issue, state: 'opened')
 
       expect(issue.closed_at).to be_nil
 
@@ -72,7 +72,7 @@ describe Issue do
     let(:namespace) { build(:namespace, path: 'sample-namespace') }
     let(:project)   { build(:project, name: 'sample-project', namespace: namespace) }
     let(:issue)     { build(:issue, iid: 1, project: project) }
-    let(:group)     { create(:group, name: 'Group', path: 'sample-group') }
+    let(:group)     { build_stubbed(:group, name: 'Group', path: 'sample-group') }
 
     context 'when nil argument' do
       it 'returns issue id' do
@@ -95,7 +95,7 @@ describe Issue do
     end
 
     context 'when cross namespace project argument' do
-      let(:another_namespace_project) { create(:project, name: 'another-project') }
+      let(:another_namespace_project) { build_stubbed(:project, name: 'another-project') }
 
       it 'returns complete path to the issue' do
         expect(issue.to_reference(another_namespace_project)).to eq 'sample-namespace/sample-project#1'
@@ -108,7 +108,7 @@ describe Issue do
     end
 
     context 'when same namespace / cross-project argument' do
-      let(:another_project) { create(:project, namespace: namespace) }
+      let(:another_project) { build_stubbed(:project, namespace: namespace) }
 
       it 'returns path to the issue with the project name' do
         expect(issue.to_reference(another_project)).to eq 'sample-project#1'
@@ -116,8 +116,8 @@ describe Issue do
     end
 
     context 'when different namespace / cross-project argument' do
-      let(:another_namespace) { create(:namespace, path: 'another-namespace') }
-      let(:another_project)   { create(:project, path: 'another-project', namespace: another_namespace) }
+      let(:another_namespace) { build_stubbed(:namespace, path: 'another-namespace') }
+      let(:another_project)   { build_stubbed(:project, path: 'another-project', namespace: another_namespace) }
 
       it 'returns full path to the issue' do
         expect(issue.to_reference(another_project)).to eq 'sample-namespace/sample-project#1'
@@ -140,8 +140,8 @@ describe Issue do
   end
 
   describe '#assignee_or_author?' do
-    let(:user) { create(:user) }
-    let(:issue) { create(:issue) }
+    let(:user) { build_stubbed(:user) }
+    let(:issue) { build_stubbed(:issue) }
 
     it 'returns true for a user that is assigned to an issue' do
       issue.assignees << user
@@ -161,8 +161,8 @@ describe Issue do
   end
 
   describe '#closed_by_merge_requests' do
-    let(:project) { create(:project, :repository) }
-    let(:issue) { create(:issue, project: project)}
+    let(:project) { build_stubbed(:project, :repository) }
+    let(:issue) { build_stubbed(:issue, project: project)}
     let(:closed_issue) { build(:issue, :closed, project: project)}
 
     let(:mr) do
@@ -201,21 +201,21 @@ describe Issue do
 
   describe '#referenced_merge_requests' do
     it 'returns the referenced merge requests' do
-      project = create(:project, :public)
+      project = build_stubbed(:project, :public)
 
-      mr1 = create(:merge_request,
+      mr1 = build_stubbed(:merge_request,
                    source_project: project,
                    source_branch:  'master',
                    target_branch:  'feature')
 
-      mr2 = create(:merge_request,
+      mr2 = build_stubbed(:merge_request,
                    source_project: project,
                    source_branch:  'feature',
                    target_branch:  'master')
 
-      issue = create(:issue, description: mr1.to_reference, project: project)
+      issue = build_stubbed(:issue, description: mr1.to_reference, project: project)
 
-      create(:note_on_issue,
+      build_stubbed(:note_on_issue,
              noteable:   issue,
              note:       mr2.to_reference,
              project_id: project.id)
@@ -225,8 +225,8 @@ describe Issue do
   end
 
   describe '#can_move?' do
-    let(:user) { create(:user) }
-    let(:issue) { create(:issue) }
+    let(:user) { build_stubbed(:user) }
+    let(:issue) { build_stubbed(:issue) }
     subject { issue.can_move?(user) }
 
     context 'user is not a member of project issue belongs to' do
@@ -234,8 +234,8 @@ describe Issue do
     end
 
     context 'user is reporter in project issue belongs to' do
-      let(:project) { create(:project) }
-      let(:issue) { create(:issue, project: project) }
+      let(:project) { build_stubbed(:project) }
+      let(:issue) { build_stubbed(:issue, project: project) }
 
       before do
         project.team << [user, :reporter]
@@ -250,7 +250,7 @@ describe Issue do
 
       context 'checking destination project also' do
         subject { issue.can_move?(user, to_project) }
-        let(:to_project) { create(:project) }
+        let(:to_project) { build_stubbed(:project) }
 
         context 'destination project allowed' do
           before do
@@ -272,7 +272,7 @@ describe Issue do
   end
 
   describe '#moved?' do
-    let(:issue) { create(:issue) }
+    let(:issue) { build_stubbed(:issue) }
     subject { issue.moved? }
 
     context 'issue not moved' do
@@ -280,8 +280,8 @@ describe Issue do
     end
 
     context 'issue already moved' do
-      let(:moved_to_issue) { create(:issue) }
-      let(:issue) { create(:issue, moved_to: moved_to_issue) }
+      let(:moved_to_issue) { build_stubbed(:issue) }
+      let(:issue) { build_stubbed(:issue, moved_to: moved_to_issue) }
 
       it { is_expected.to eq true }
     end
@@ -294,7 +294,7 @@ describe Issue do
       allow(subject.project.repository).to receive(:branch_names)
                                             .and_return(["mpempe", "#{subject.iid}mepmep", subject.to_branch_name, "#{subject.iid}-branch"])
 
-      # Without this stub, the `create(:merge_request)` above fails because it can't find
+      # Without this stub, the `build_stubbed(:merge_request)` above fails because it can't find
       # the source branch. This seems like a reasonable compromise, in comparison with
       # setting up a full repo here.
       allow_any_instance_of(MergeRequest).to receive(:create_merge_request_diff)
@@ -305,7 +305,7 @@ describe Issue do
     end
 
     it "selects the right branches when there is a referenced merge request" do
-      merge_request = create(:merge_request, { description: "Closes ##{subject.iid}",
+      merge_request = build_stubbed(:merge_request, { description: "Closes ##{subject.iid}",
                                                source_project: subject.project,
                                                source_branch: "#{subject.iid}-branch" })
       merge_request.create_cross_references!(user)
@@ -322,7 +322,7 @@ describe Issue do
   end
 
   describe '#has_related_branch?' do
-    let(:issue) { create(:issue, title: "Blue Bell Knoll") }
+    let(:issue) { build_stubbed(:issue, title: "Blue Bell Knoll") }
     subject { issue.has_related_branch? }
 
     context 'branch found' do
@@ -343,7 +343,7 @@ describe Issue do
   end
 
   it_behaves_like 'an editable mentionable' do
-    subject { create(:issue, project: create(:project, :repository)) }
+    subject { build_stubbed(:issue, project: build_stubbed(:project, :repository)) }
 
     let(:backref_text) { "issue #{subject.to_reference}" }
     let(:set_mentionable_text) { ->(txt) { subject.description = txt } }
@@ -354,7 +354,7 @@ describe Issue do
   end
 
   describe "#to_branch_name" do
-    let(:issue) { create(:issue, title: 'testing-issue') }
+    let(:issue) { build_stubbed(:issue, title: 'testing-issue') }
 
     it 'starts with the issue iid' do
       expect(issue.to_branch_name).to match /\A#{issue.iid}-[A-Za-z\-]+\z/
@@ -365,22 +365,22 @@ describe Issue do
     end
 
     it "does not contain the issue title if confidential" do
-      issue = create(:issue, title: 'testing-issue', confidential: true)
+      issue = build_stubbed(:issue, title: 'testing-issue', confidential: true)
       expect(issue.to_branch_name).to match /confidential-issue\z/
     end
   end
 
   describe '#participants' do
     context 'using a public project' do
-      let(:project) { create(:project, :public) }
-      let(:issue) { create(:issue, project: project) }
+      let(:project) { build_stubbed(:project, :public) }
+      let(:issue) { build_stubbed(:issue, project: project) }
 
       let!(:note1) do
-        create(:note_on_issue, noteable: issue, project: project, note: 'a')
+        build_stubbed(:note_on_issue, noteable: issue, project: project, note: 'a')
       end
 
       let!(:note2) do
-        create(:note_on_issue, noteable: issue, project: project, note: 'b')
+        build_stubbed(:note_on_issue, noteable: issue, project: project, note: 'b')
       end
 
       it 'includes the issue author' do
@@ -394,11 +394,11 @@ describe Issue do
 
     context 'using a private project' do
       it 'does not include mentioned users that do not have access to the project' do
-        project = create(:project)
-        user = create(:user)
-        issue = create(:issue, project: project)
+        project = build_stubbed(:project)
+        user = build_stubbed(:user)
+        issue = build_stubbed(:issue, project: project)
 
-        create(:note_on_issue,
+        build_stubbed(:note_on_issue,
                noteable: issue,
                project: project,
                note: user.to_reference)
@@ -410,10 +410,10 @@ describe Issue do
 
   describe 'cached counts' do
     it 'updates when assignees change' do
-      user1 = create(:user)
-      user2 = create(:user)
-      project = create(:project)
-      issue = create(:issue, assignees: [user1], project: project)
+      user1 = build_stubbed(:user)
+      user2 = build_stubbed(:user)
+      project = build_stubbed(:project)
+      issue = build_stubbed(:issue, assignees: [user1], project: project)
       project.add_developer(user1)
       project.add_developer(user2)
 
@@ -446,7 +446,7 @@ describe Issue do
     end
 
     context 'with a user' do
-      let(:user) { create(:user) }
+      let(:user) { build_stubbed(:user) }
       let(:issue) { build(:issue) }
 
       it 'returns true when the issue is readable' do
@@ -479,10 +479,10 @@ describe Issue do
     end
 
     describe 'with a regular user that is not a team member' do
-      let(:user) { create(:user) }
+      let(:user) { build_stubbed(:user) }
 
       context 'using a public project' do
-        let(:project) { create(:project, :public) }
+        let(:project) { build_stubbed(:project, :public) }
 
         it 'returns true for a regular issue' do
           issue = build(:issue, project: project)
@@ -498,7 +498,7 @@ describe Issue do
       end
 
       context 'using an internal project' do
-        let(:project) { create(:project, :internal) }
+        let(:project) { build_stubbed(:project, :internal) }
 
         context 'using an internal user' do
           it 'returns true for a regular issue' do
@@ -534,7 +534,7 @@ describe Issue do
       end
 
       context 'using a private project' do
-        let(:project) { create(:project, :private) }
+        let(:project) { build_stubbed(:project, :private) }
 
         it 'returns false for a regular issue' do
           issue = build(:issue, project: project)
@@ -569,8 +569,8 @@ describe Issue do
     end
 
     context 'with a regular user that is a team member' do
-      let(:user) { create(:user) }
-      let(:project) { create(:project, :public) }
+      let(:user) { build_stubbed(:user) }
+      let(:project) { build_stubbed(:project, :public) }
 
       context 'using a public project' do
         before do
@@ -591,7 +591,7 @@ describe Issue do
       end
 
       context 'using an internal project' do
-        let(:project) { create(:project, :internal) }
+        let(:project) { build_stubbed(:project, :internal) }
 
         before do
           project.team << [user, Gitlab::Access::DEVELOPER]
@@ -611,7 +611,7 @@ describe Issue do
       end
 
       context 'using a private project' do
-        let(:project) { create(:project, :private) }
+        let(:project) { build_stubbed(:project, :private) }
 
         before do
           project.team << [user, Gitlab::Access::DEVELOPER]
@@ -632,8 +632,8 @@ describe Issue do
     end
 
     context 'with an admin user' do
-      let(:project) { create(:project) }
-      let(:user) { create(:admin) }
+      let(:project) { build_stubbed(:project) }
+      let(:user) { build_stubbed(:admin) }
 
       it 'returns true for a regular issue' do
         issue = build(:issue, project: project)
@@ -651,7 +651,7 @@ describe Issue do
 
   describe '#publicly_visible?' do
     context 'using a public project' do
-      let(:project) { create(:project, :public) }
+      let(:project) { build_stubbed(:project, :public) }
 
       it 'returns true for a regular issue' do
         issue = build(:issue, project: project)
@@ -667,7 +667,7 @@ describe Issue do
     end
 
     context 'using an internal project' do
-      let(:project) { create(:project, :internal) }
+      let(:project) { build_stubbed(:project, :internal) }
 
       it 'returns false for a regular issue' do
         issue = build(:issue, project: project)
@@ -683,7 +683,7 @@ describe Issue do
     end
 
     context 'using a private project' do
-      let(:project) { create(:project, :private) }
+      let(:project) { build_stubbed(:project, :private) }
 
       it 'returns false for a regular issue' do
         issue = build(:issue, project: project)

@@ -61,10 +61,10 @@ describe Snippet do
   end
 
   describe '#file_name' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     context 'file_name is nil' do
-      let(:snippet) { create(:snippet, project: project, file_name: nil) }
+      let(:snippet) { build_stubbed(:snippet, project: project, file_name: nil) }
 
       it 'returns an empty string' do
         expect(snippet.file_name).to eq ''
@@ -72,7 +72,7 @@ describe Snippet do
     end
 
     context 'file_name is not nil' do
-      let(:snippet) { create(:snippet, project: project, file_name: 'foo.txt') }
+      let(:snippet) { build_stubbed(:snippet, project: project, file_name: 'foo.txt') }
 
       it 'returns the file_name' do
         expect(snippet.file_name).to eq 'foo.txt'
@@ -81,14 +81,14 @@ describe Snippet do
   end
 
   describe "#content_html_invalidated?" do
-    let(:snippet) { create(:snippet, content: "md", content_html: "html", file_name: "foo.md") }
+    let(:snippet) { build_stubbed(:snippet, content: "md", content_html: "html", file_name: "foo.md") }
     it "invalidates the HTML cache of content when the filename changes" do
       expect { snippet.file_name = "foo.rb" }.to change { snippet.content_html_invalidated? }.from(false).to(true)
     end
   end
 
   describe '.search' do
-    let(:snippet) { create(:snippet) }
+    let(:snippet) { build_stubbed(:snippet) }
 
     it 'returns snippets with a matching title' do
       expect(described_class.search(snippet.title)).to eq([snippet])
@@ -116,7 +116,7 @@ describe Snippet do
   end
 
   describe '.search_code' do
-    let(:snippet) { create(:snippet, content: 'class Foo; end') }
+    let(:snippet) { build_stubbed(:snippet, content: 'class Foo; end') }
 
     it 'returns snippets with matching content' do
       expect(described_class.search_code(snippet.content)).to eq([snippet])
@@ -132,18 +132,18 @@ describe Snippet do
   end
 
   describe '#participants' do
-    let(:project) { create(:project, :public) }
-    let(:snippet) { create(:snippet, content: 'foo', project: project) }
+    let(:project) { build_stubbed(:project, :public) }
+    let(:snippet) { build_stubbed(:snippet, content: 'foo', project: project) }
 
     let!(:note1) do
-      create(:note_on_project_snippet,
+      build_stubbed(:note_on_project_snippet,
              noteable: snippet,
              project: project,
              note: 'a')
     end
 
     let!(:note2) do
-      create(:note_on_project_snippet,
+      build_stubbed(:note_on_project_snippet,
              noteable: snippet,
              project: project,
              note: 'b')
@@ -202,7 +202,7 @@ describe Snippet do
   end
 
   describe '#blob' do
-    let(:snippet) { create(:snippet) }
+    let(:snippet) { build_stubbed(:snippet) }
 
     it 'returns a blob representing the snippet data' do
       blob = snippet.blob

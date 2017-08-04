@@ -4,7 +4,7 @@ describe SentNotification do
   describe 'validation' do
     describe 'note validity' do
       context "when the project doesn't match the noteable's project" do
-        subject { build(:sent_notification, noteable: create(:issue)) }
+        subject { build(:sent_notification, noteable: build_stubbed(:issue)) }
 
         it "is invalid" do
           expect(subject).not_to be_valid
@@ -12,7 +12,7 @@ describe SentNotification do
       end
 
       context "when the project doesn't match the discussion project" do
-        let(:discussion_id) { create(:note).discussion_id }
+        let(:discussion_id) { build_stubbed(:note).discussion_id }
         subject { build(:sent_notification, in_reply_to_discussion_id: discussion_id) }
 
         it "is invalid" do
@@ -21,9 +21,9 @@ describe SentNotification do
       end
 
       context "when the noteable project and discussion project match" do
-        let(:project) { create(:project, :repository) }
-        let(:issue) { create(:issue, project: project) }
-        let(:discussion_id) { create(:note, project: project, noteable: issue).discussion_id }
+        let(:project) { build_stubbed(:project, :repository) }
+        let(:issue) { build_stubbed(:issue, project: project) }
+        let(:discussion_id) { build_stubbed(:note, project: project, noteable: issue).discussion_id }
         subject { build(:sent_notification, project: project, noteable: issue, in_reply_to_discussion_id: discussion_id) }
 
         it "is valid" do
@@ -34,8 +34,8 @@ describe SentNotification do
   end
 
   describe '.record' do
-    let(:user) { create(:user) }
-    let(:issue) { create(:issue) }
+    let(:user) { build_stubbed(:user) }
+    let(:issue) { build_stubbed(:issue) }
 
     it 'creates a new SentNotification' do
       expect { described_class.record(issue, user.id) }.to change { described_class.count }.by(1)
@@ -43,8 +43,8 @@ describe SentNotification do
   end
 
   describe '.record_note' do
-    let(:user) { create(:user) }
-    let(:note) { create(:diff_note_on_merge_request) }
+    let(:user) { build_stubbed(:user) }
+    let(:note) { build_stubbed(:diff_note_on_merge_request) }
 
     it 'creates a new SentNotification' do
       expect { described_class.record_note(note, user.id) }.to change { described_class.count }.by(1)
@@ -53,7 +53,7 @@ describe SentNotification do
 
   describe '#create_reply' do
     context 'for issue' do
-      let(:issue) { create(:issue) }
+      let(:issue) { build_stubbed(:issue) }
       subject { described_class.record(issue, issue.author.id) }
 
       it 'creates a comment on the issue' do
@@ -63,7 +63,7 @@ describe SentNotification do
     end
 
     context 'for issue comment' do
-      let(:note) { create(:note_on_issue) }
+      let(:note) { build_stubbed(:note_on_issue) }
       subject { described_class.record_note(note, note.author.id) }
 
       it 'creates a comment on the issue' do
@@ -74,7 +74,7 @@ describe SentNotification do
     end
 
     context 'for issue discussion' do
-      let(:note) { create(:discussion_note_on_issue) }
+      let(:note) { build_stubbed(:discussion_note_on_issue) }
       subject { described_class.record_note(note, note.author.id) }
 
       it 'creates a reply on the discussion' do
@@ -85,7 +85,7 @@ describe SentNotification do
     end
 
     context 'for merge request' do
-      let(:merge_request) { create(:merge_request) }
+      let(:merge_request) { build_stubbed(:merge_request) }
       subject { described_class.record(merge_request, merge_request.author.id) }
 
       it 'creates a comment on the merge_request' do
@@ -95,7 +95,7 @@ describe SentNotification do
     end
 
     context 'for merge request comment' do
-      let(:note) { create(:note_on_merge_request) }
+      let(:note) { build_stubbed(:note_on_merge_request) }
       subject { described_class.record_note(note, note.author.id) }
 
       it 'creates a comment on the merge request' do
@@ -106,7 +106,7 @@ describe SentNotification do
     end
 
     context 'for merge request diff discussion' do
-      let(:note) { create(:diff_note_on_merge_request) }
+      let(:note) { build_stubbed(:diff_note_on_merge_request) }
       subject { described_class.record_note(note, note.author.id) }
 
       it 'creates a reply on the discussion' do
@@ -117,7 +117,7 @@ describe SentNotification do
     end
 
     context 'for merge request non-diff discussion' do
-      let(:note) { create(:discussion_note_on_merge_request) }
+      let(:note) { build_stubbed(:discussion_note_on_merge_request) }
       subject { described_class.record_note(note, note.author.id) }
 
       it 'creates a reply on the discussion' do
@@ -128,7 +128,7 @@ describe SentNotification do
     end
 
     context 'for commit' do
-      let(:project) { create(:project, :repository) }
+      let(:project) { build_stubbed(:project, :repository) }
       let(:commit) { project.commit }
       subject { described_class.record(commit, project.creator.id) }
 
@@ -139,7 +139,7 @@ describe SentNotification do
     end
 
     context 'for commit comment' do
-      let(:note) { create(:note_on_commit) }
+      let(:note) { build_stubbed(:note_on_commit) }
       subject { described_class.record_note(note, note.author.id) }
 
       it 'creates a comment on the commit' do
@@ -150,7 +150,7 @@ describe SentNotification do
     end
 
     context 'for commit diff discussion' do
-      let(:note) { create(:diff_note_on_commit) }
+      let(:note) { build_stubbed(:diff_note_on_commit) }
       subject { described_class.record_note(note, note.author.id) }
 
       it 'creates a reply on the discussion' do
@@ -161,7 +161,7 @@ describe SentNotification do
     end
 
     context 'for commit non-diff discussion' do
-      let(:note) { create(:discussion_note_on_commit) }
+      let(:note) { build_stubbed(:discussion_note_on_commit) }
       subject { described_class.record_note(note, note.author.id) }
 
       it 'creates a reply on the discussion' do

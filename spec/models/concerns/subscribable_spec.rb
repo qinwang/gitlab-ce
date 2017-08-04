@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe Subscribable, 'Subscribable' do
-  let(:project)  { create(:project) }
-  let(:resource) { create(:issue, project: project) }
-  let(:user_1)   { create(:user) }
+  let(:project)  { build_stubbed(:project) }
+  let(:resource) { build_stubbed(:issue, project: project) }
+  let(:user_1)   { build_stubbed(:user) }
 
   describe '#subscribed?' do
     context 'without project' do
@@ -49,10 +49,10 @@ describe Subscribable, 'Subscribable' do
     end
 
     it 'returns the subscribed users' do
-      user_2 = create(:user)
+      user_2 = build_stubbed(:user)
       resource.subscriptions.create(user: user_1, subscribed: true)
       resource.subscriptions.create(user: user_2, project: project, subscribed: true)
-      resource.subscriptions.create(user: create(:user), project: project, subscribed: false)
+      resource.subscriptions.create(user: build_stubbed(:user), project: project, subscribed: false)
 
       expect(resource.subscribers(project)).to contain_exactly(user_1, user_2)
     end

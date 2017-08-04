@@ -98,8 +98,8 @@ describe ProtectedBranch do
   describe "#matching" do
     context "for direct matches" do
       it "returns a list of protected branches matching the given branch name" do
-        production = create(:protected_branch, name: "production")
-        staging = create(:protected_branch, name: "staging")
+        production = build_stubbed(:protected_branch, name: "production")
+        staging = build_stubbed(:protected_branch, name: "staging")
 
         expect(described_class.matching("production")).to include(production)
         expect(described_class.matching("production")).not_to include(staging)
@@ -117,8 +117,8 @@ describe ProtectedBranch do
 
     context "for wildcard matches" do
       it "returns a list of protected branches matching the given branch name" do
-        production = create(:protected_branch, name: "production/*")
-        staging = create(:protected_branch, name: "staging/*")
+        production = build_stubbed(:protected_branch, name: "production/*")
+        staging = build_stubbed(:protected_branch, name: "staging/*")
 
         expect(described_class.matching("production/some-branch")).to include(production)
         expect(described_class.matching("production/some-branch")).not_to include(staging)
@@ -137,16 +137,16 @@ describe ProtectedBranch do
 
   describe '#protected?' do
     context 'existing project' do
-      let(:project) { create(:project, :repository) }
+      let(:project) { build_stubbed(:project, :repository) }
 
       it 'returns true when the branch matches a protected branch via direct match' do
-        create(:protected_branch, project: project, name: "foo")
+        build_stubbed(:protected_branch, project: project, name: "foo")
 
         expect(described_class.protected?(project, 'foo')).to eq(true)
       end
 
       it 'returns true when the branch matches a protected branch via wildcard match' do
-        create(:protected_branch, project: project, name: "production/*")
+        build_stubbed(:protected_branch, project: project, name: "production/*")
 
         expect(described_class.protected?(project, 'production/some-branch')).to eq(true)
       end
@@ -156,14 +156,14 @@ describe ProtectedBranch do
       end
 
       it 'returns false when the branch does not match a protected branch via wildcard match' do
-        create(:protected_branch, project: project, name: "production/*")
+        build_stubbed(:protected_branch, project: project, name: "production/*")
 
         expect(described_class.protected?(project, 'staging/some-branch')).to eq(false)
       end
     end
 
     context "new project" do
-      let(:project) { create(:project) }
+      let(:project) { build_stubbed(:project) }
 
       it 'returns false when default_protected_branch is unprotected' do
         stub_application_setting(default_branch_protection: Gitlab::Access::PROTECTION_NONE)

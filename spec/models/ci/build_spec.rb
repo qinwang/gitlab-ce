@@ -1,13 +1,13 @@
 require 'spec_helper'
 
 describe Ci::Build do
-  let(:user) { create(:user) }
-  let(:project) { create(:project, :repository) }
-  let(:build) { create(:ci_build, pipeline: pipeline) }
+  let(:user) { build_stubbed(:user) }
+  let(:project) { build_stubbed(:project, :repository) }
+  let(:build) { build_stubbed(:ci_build, pipeline: pipeline) }
   let(:test_trace) { 'This is a test' }
 
   let(:pipeline) do
-    create(:ci_pipeline, project: project,
+    build_stubbed(:ci_pipeline, project: project,
                          sha: project.commit.id,
                          ref: project.default_branch,
                          status: 'success')
@@ -32,9 +32,9 @@ describe Ci::Build do
   end
 
   describe '.manual_actions' do
-    let!(:manual_but_created) { create(:ci_build, :manual, status: :created, pipeline: pipeline) }
-    let!(:manual_but_succeeded) { create(:ci_build, :manual, status: :success, pipeline: pipeline) }
-    let!(:manual_action) { create(:ci_build, :manual, pipeline: pipeline) }
+    let!(:manual_but_created) { build_stubbed(:ci_build, :manual, status: :created, pipeline: pipeline) }
+    let!(:manual_but_succeeded) { build_stubbed(:ci_build, :manual, status: :success, pipeline: pipeline) }
+    let!(:manual_action) { build_stubbed(:ci_build, :manual, pipeline: pipeline) }
 
     subject { described_class.manual_actions }
 
@@ -101,7 +101,7 @@ describe Ci::Build do
     end
 
     context 'when there are runners' do
-      let(:runner) { create(:ci_runner) }
+      let(:runner) { build_stubbed(:ci_runner) }
 
       before do
         build.project.runners << runner
@@ -139,7 +139,7 @@ describe Ci::Build do
     end
 
     context 'artifacts archive exists' do
-      let(:build) { create(:ci_build, :artifacts) }
+      let(:build) { build_stubbed(:ci_build, :artifacts) }
       it { is_expected.to be_truthy }
 
       context 'is expired' do
@@ -187,7 +187,7 @@ describe Ci::Build do
     end
 
     context 'artifacts archive is a zip file and metadata exists' do
-      let(:build) { create(:ci_build, :artifacts) }
+      let(:build) { build_stubbed(:ci_build, :artifacts) }
       it { is_expected.to be_truthy }
     end
   end
@@ -241,10 +241,10 @@ describe Ci::Build do
   end
 
   describe '#depends_on_builds' do
-    let!(:build) { create(:ci_build, pipeline: pipeline, name: 'build', stage_idx: 0, stage: 'build') }
-    let!(:rspec_test) { create(:ci_build, pipeline: pipeline, name: 'rspec', stage_idx: 1, stage: 'test') }
-    let!(:rubocop_test) { create(:ci_build, pipeline: pipeline, name: 'rubocop', stage_idx: 1, stage: 'test') }
-    let!(:staging) { create(:ci_build, pipeline: pipeline, name: 'staging', stage_idx: 2, stage: 'deploy') }
+    let!(:build) { build_stubbed(:ci_build, pipeline: pipeline, name: 'build', stage_idx: 0, stage: 'build') }
+    let!(:rspec_test) { build_stubbed(:ci_build, pipeline: pipeline, name: 'rspec', stage_idx: 1, stage: 'test') }
+    let!(:rubocop_test) { build_stubbed(:ci_build, pipeline: pipeline, name: 'rubocop', stage_idx: 1, stage: 'test') }
+    let!(:staging) { build_stubbed(:ci_build, pipeline: pipeline, name: 'staging', stage_idx: 2, stage: 'deploy') }
 
     it 'expects to have no dependents if this is first build' do
       expect(build.depends_on_builds).to be_empty
@@ -407,8 +407,8 @@ describe Ci::Build do
       subject { build.last_deployment }
 
       context 'when multiple deployments are created' do
-        let!(:deployment1) { create(:deployment, deployable: build) }
-        let!(:deployment2) { create(:deployment, deployable: build) }
+        let!(:deployment1) { build_stubbed(:deployment, deployable: build) }
+        let!(:deployment2) { build_stubbed(:deployment, deployable: build) }
 
         it 'returns the latest one' do
           is_expected.to eq(deployment2)
@@ -420,22 +420,22 @@ describe Ci::Build do
       subject { build.outdated_deployment? }
 
       context 'when build succeeded' do
-        let(:build) { create(:ci_build, :success) }
-        let!(:deployment) { create(:deployment, deployable: build) }
+        let(:build) { build_stubbed(:ci_build, :success) }
+        let!(:deployment) { build_stubbed(:deployment, deployable: build) }
 
         context 'current deployment is latest' do
           it { is_expected.to be_falsey }
         end
 
         context 'current deployment is not latest on environment' do
-          let!(:deployment2) { create(:deployment, environment: deployment.environment) }
+          let!(:deployment2) { build_stubbed(:deployment, environment: deployment.environment) }
 
           it { is_expected.to be_truthy }
         end
       end
 
       context 'when build failed' do
-        let(:build) { create(:ci_build, :failed) }
+        let(:build) { build_stubbed(:ci_build, :failed) }
 
         it { is_expected.to be_falsey }
       end
@@ -468,7 +468,7 @@ describe Ci::Build do
 
       context 'when environment uses $CI_COMMIT_REF_NAME' do
         let(:build) do
-          create(:ci_build,
+          build_stubbed(:ci_build,
                  ref: 'master',
                  environment: 'review/$CI_COMMIT_REF_NAME')
         end
@@ -478,7 +478,7 @@ describe Ci::Build do
 
       context 'when environment uses yaml_variables containing symbol keys' do
         let(:build) do
-          create(:ci_build,
+          build_stubbed(:ci_build,
                  yaml_variables: [{ key: :APP_HOST, value: 'host' }],
                  environment: 'review/$APP_HOST')
         end
@@ -572,7 +572,7 @@ describe Ci::Build do
     end
 
     context 'build is not erasable' do
-      let!(:build) { create(:ci_build) }
+      let!(:build) { build_stubbed(:ci_build) }
 
       describe '#erase' do
         subject { build.erase }
@@ -587,7 +587,7 @@ describe Ci::Build do
     end
 
     context 'build is erasable' do
-      let!(:build) { create(:ci_build, :trace, :success, :artifacts) }
+      let!(:build) { build_stubbed(:ci_build, :trace, :success, :artifacts) }
 
       describe '#erase' do
         before do
@@ -595,7 +595,7 @@ describe Ci::Build do
         end
 
         context 'erased by user' do
-          let!(:user) { create(:user, username: 'eraser') }
+          let!(:user) { build_stubbed(:user, username: 'eraser') }
 
           include_examples 'erasable'
 
@@ -621,7 +621,7 @@ describe Ci::Build do
       end
 
       describe '#erased?' do
-        let!(:build) { create(:ci_build, :trace, :success, :artifacts) }
+        let!(:build) { build_stubbed(:ci_build, :trace, :success, :artifacts) }
         subject { build.erased? }
 
         context 'job has not been erased' do
@@ -638,7 +638,7 @@ describe Ci::Build do
       end
 
       context 'metadata and build trace are not available' do
-        let!(:build) { create(:ci_build, :success, :artifacts) }
+        let!(:build) { build_stubbed(:ci_build, :success, :artifacts) }
 
         before do
           build.remove_artifacts_metadata!
@@ -654,8 +654,8 @@ describe Ci::Build do
   end
 
   describe '#first_pending' do
-    let!(:first) { create(:ci_build, pipeline: pipeline, status: 'pending', created_at: Date.yesterday) }
-    let!(:second) { create(:ci_build, pipeline: pipeline, status: 'pending') }
+    let!(:first) { build_stubbed(:ci_build, pipeline: pipeline, status: 'pending', created_at: Date.yesterday) }
+    let!(:second) { build_stubbed(:ci_build, pipeline: pipeline, status: 'pending') }
     subject { described_class.first_pending }
 
     it { is_expected.to be_a(described_class) }
@@ -826,13 +826,13 @@ describe Ci::Build do
 
   describe '#has_tags?' do
     context 'when build has tags' do
-      subject { create(:ci_build, tag_list: ['tag']) }
+      subject { build_stubbed(:ci_build, tag_list: ['tag']) }
 
       it { is_expected.to have_tags }
     end
 
     context 'when build does not have tags' do
-      subject { create(:ci_build, tag_list: []) }
+      subject { build_stubbed(:ci_build, tag_list: []) }
 
       it { is_expected.not_to have_tags }
     end
@@ -840,12 +840,12 @@ describe Ci::Build do
 
   describe 'build auto retry feature' do
     describe '#retries_count' do
-      subject { create(:ci_build, name: 'test', pipeline: pipeline) }
+      subject { build_stubbed(:ci_build, name: 'test', pipeline: pipeline) }
 
       context 'when build has been retried several times' do
         before do
-          create(:ci_build, :retried, name: 'test', pipeline: pipeline)
-          create(:ci_build, :retried, name: 'test', pipeline: pipeline)
+          build_stubbed(:ci_build, :retried, name: 'test', pipeline: pipeline)
+          build_stubbed(:ci_build, :retried, name: 'test', pipeline: pipeline)
         end
 
         it 'reports a correct retry count value' do
@@ -862,7 +862,7 @@ describe Ci::Build do
 
     describe '#retries_max' do
       context 'when max retries value is defined' do
-        subject { create(:ci_build, options: { retry: 1 }) }
+        subject { build_stubbed(:ci_build, options: { retry: 1 }) }
 
         it 'returns a number of configured max retries' do
           expect(subject.retries_max).to eq 1
@@ -870,7 +870,7 @@ describe Ci::Build do
       end
 
       context 'when max retries value is not defined' do
-        subject { create(:ci_build) }
+        subject { build_stubbed(:ci_build) }
 
         it 'returns zero' do
           expect(subject.retries_max).to eq 0
@@ -880,7 +880,7 @@ describe Ci::Build do
   end
 
   describe '#keep_artifacts!' do
-    let(:build) { create(:ci_build, artifacts_expire_at: Time.now + 7.days) }
+    let(:build) { build_stubbed(:ci_build, artifacts_expire_at: Time.now + 7.days) }
 
     it 'to reset expire_at' do
       build.keep_artifacts!
@@ -937,8 +937,8 @@ describe Ci::Build do
     context 'when a Build is created after the MR' do
       before do
         @merge_request = create_mr(build, pipeline, factory: :merge_request_with_diffs)
-        pipeline2 = create(:ci_pipeline, project: project)
-        @build2 = create(:ci_build, pipeline: pipeline2)
+        pipeline2 = build_stubbed(:ci_pipeline, project: project)
+        @build2 = build_stubbed(:ci_build, pipeline: pipeline2)
 
         allow(@merge_request).to receive(:commit_shas)
           .and_return([pipeline.sha, pipeline2.sha])
@@ -967,8 +967,8 @@ describe Ci::Build do
   end
 
   describe '#other_actions' do
-    let(:build) { create(:ci_build, :manual, pipeline: pipeline) }
-    let!(:other_build) { create(:ci_build, :manual, pipeline: pipeline, name: 'other action') }
+    let(:build) { build_stubbed(:ci_build, :manual, pipeline: pipeline) }
+    let!(:other_build) { build_stubbed(:ci_build, :manual, pipeline: pipeline, name: 'other action') }
 
     subject { build.other_actions }
 
@@ -1003,14 +1003,14 @@ describe Ci::Build do
 
   describe '#persisted_environment' do
     let!(:environment) do
-      create(:environment, project: project, name: "foo-#{project.default_branch}")
+      build_stubbed(:environment, project: project, name: "foo-#{project.default_branch}")
     end
 
     subject { build.persisted_environment }
 
     context 'when referenced literally' do
       let(:build) do
-        create(:ci_build, pipeline: pipeline, environment: "foo-#{project.default_branch}")
+        build_stubbed(:ci_build, pipeline: pipeline, environment: "foo-#{project.default_branch}")
       end
 
       it { is_expected.to eq(environment) }
@@ -1018,7 +1018,7 @@ describe Ci::Build do
 
     context 'when referenced with a variable' do
       let(:build) do
-        create(:ci_build, pipeline: pipeline, environment: "foo-$CI_COMMIT_REF_NAME")
+        build_stubbed(:ci_build, pipeline: pipeline, environment: "foo-$CI_COMMIT_REF_NAME")
       end
 
       it { is_expected.to eq(environment) }
@@ -1030,7 +1030,7 @@ describe Ci::Build do
   end
 
   describe '#play' do
-    let(:build) { create(:ci_build, :manual, pipeline: pipeline) }
+    let(:build) { build_stubbed(:ci_build, :manual, pipeline: pipeline) }
 
     before do
       project.add_developer(user)
@@ -1096,7 +1096,7 @@ describe Ci::Build do
   end
 
   describe '#repo_url' do
-    let(:build) { create(:ci_build) }
+    let(:build) { build_stubbed(:ci_build) }
     let(:project) { build.project }
 
     subject { build.repo_url }
@@ -1120,7 +1120,7 @@ describe Ci::Build do
       it { is_expected.to be_truthy }
 
       context "and there are specific runner" do
-        let(:runner) { create(:ci_runner, contacted_at: 1.second.ago) }
+        let(:runner) { build_stubbed(:ci_runner, contacted_at: 1.second.ago) }
 
         before do
           build.project.runners << runner
@@ -1165,7 +1165,7 @@ describe Ci::Build do
   end
 
   describe '#update_project_statistics' do
-    let!(:build) { create(:ci_build, artifacts_size: 23) }
+    let!(:build) { build_stubbed(:ci_build, artifacts_size: 23) }
 
     it 'updates project statistics when the artifact size changes' do
       expect(ProjectCacheWorker).to receive(:perform_async)
@@ -1307,7 +1307,7 @@ describe Ci::Build do
       end
 
       let!(:environment) do
-        create(:environment,
+        build_stubbed(:environment,
           project: build.project,
           name: 'production',
           slug: 'prod-slug',
@@ -1398,7 +1398,7 @@ describe Ci::Build do
       end
 
       before do
-        create(:ci_variable,
+        build_stubbed(:ci_variable,
                secret_variable.slice(:key, :value).merge(project: project))
       end
 
@@ -1411,14 +1411,14 @@ describe Ci::Build do
       end
 
       before do
-        create(:ci_variable,
+        build_stubbed(:ci_variable,
                :protected,
                protected_variable.slice(:key, :value).merge(project: project))
       end
 
       context 'when the branch is protected' do
         before do
-          create(:protected_branch, project: build.project, name: build.ref)
+          build_stubbed(:protected_branch, project: build.project, name: build.ref)
         end
 
         it { is_expected.to include(protected_variable) }
@@ -1426,7 +1426,7 @@ describe Ci::Build do
 
       context 'when the tag is protected' do
         before do
-          create(:protected_tag, project: build.project, name: build.ref)
+          build_stubbed(:protected_tag, project: build.project, name: build.ref)
         end
 
         it { is_expected.to include(protected_variable) }
@@ -1442,12 +1442,12 @@ describe Ci::Build do
         { key: 'SECRET_KEY', value: 'secret_value', public: false }
       end
 
-      let(:group) { create(:group, :access_requestable) }
+      let(:group) { build_stubbed(:group, :access_requestable) }
 
       before do
         build.project.update(group: group)
 
-        create(:ci_group_variable,
+        build_stubbed(:ci_group_variable,
                secret_variable.slice(:key, :value).merge(group: group))
       end
 
@@ -1459,19 +1459,19 @@ describe Ci::Build do
         { key: 'PROTECTED_KEY', value: 'protected_value', public: false }
       end
 
-      let(:group) { create(:group, :access_requestable) }
+      let(:group) { build_stubbed(:group, :access_requestable) }
 
       before do
         build.project.update(group: group)
 
-        create(:ci_group_variable,
+        build_stubbed(:ci_group_variable,
                :protected,
                protected_variable.slice(:key, :value).merge(group: group))
       end
 
       context 'when the branch is protected' do
         before do
-          create(:protected_branch, project: build.project, name: build.ref)
+          build_stubbed(:protected_branch, project: build.project, name: build.ref)
         end
 
         it { is_expected.to include(protected_variable) }
@@ -1479,7 +1479,7 @@ describe Ci::Build do
 
       context 'when the tag is protected' do
         before do
-          create(:protected_tag, project: build.project, name: build.ref)
+          build_stubbed(:protected_tag, project: build.project, name: build.ref)
         end
 
         it { is_expected.to include(protected_variable) }
@@ -1491,8 +1491,8 @@ describe Ci::Build do
     end
 
     context 'when build is for triggers' do
-      let(:trigger) { create(:ci_trigger, project: project) }
-      let(:trigger_request) { create(:ci_trigger_request, pipeline: pipeline, trigger: trigger) }
+      let(:trigger) { build_stubbed(:ci_trigger, project: project) }
+      let(:trigger_request) { build_stubbed(:ci_trigger_request, pipeline: pipeline, trigger: trigger) }
 
       let(:user_trigger_variable) do
         { key: 'TRIGGER_KEY_1', value: 'TRIGGER_VALUE_1', public: false }
@@ -1529,16 +1529,16 @@ describe Ci::Build do
     end
 
     context 'when pipeline has a variable' do
-      let!(:pipeline_variable) { create(:ci_pipeline_variable, pipeline: pipeline) }
+      let!(:pipeline_variable) { build_stubbed(:ci_pipeline_variable, pipeline: pipeline) }
 
       it { is_expected.to include(pipeline_variable.to_runner_variable) }
     end
 
     context 'when a job was triggered by a pipeline schedule' do
-      let(:pipeline_schedule) { create(:ci_pipeline_schedule, project: project) }
+      let(:pipeline_schedule) { build_stubbed(:ci_pipeline_schedule, project: project) }
 
       let!(:pipeline_schedule_variable) do
-        create(:ci_pipeline_schedule_variable,
+        build_stubbed(:ci_pipeline_schedule_variable,
           key: 'SCHEDULE_VARIABLE_KEY',
           pipeline_schedule: pipeline_schedule)
       end
@@ -1629,7 +1629,7 @@ describe Ci::Build do
     end
 
     context 'when runner is assigned to build' do
-      let(:runner) { create(:ci_runner, description: 'description', tag_list: %w(docker linux)) }
+      let(:runner) { build_stubbed(:ci_runner, description: 'description', tag_list: %w(docker linux)) }
 
       before do
         build.update(runner: runner)
@@ -1675,7 +1675,7 @@ describe Ci::Build do
 
         allow(project).to receive(:secret_variables_for)
           .with(ref: 'master', environment: nil) do
-            [create(:ci_variable, key: 'secret', value: 'value')]
+            [build_stubbed(:ci_variable, key: 'secret', value: 'value')]
           end
       end
 
@@ -1691,7 +1691,7 @@ describe Ci::Build do
   end
 
   describe 'state transition: any => [:pending]' do
-    let(:build) { create(:ci_build, :created) }
+    let(:build) { build_stubbed(:ci_build, :created) }
 
     it 'queues BuildQueueWorker' do
       expect(BuildQueueWorker).to receive(:perform_async).with(build.id)
@@ -1702,7 +1702,7 @@ describe Ci::Build do
 
   describe 'state transition when build fails' do
     context 'when build is configured to be retried' do
-      subject { create(:ci_build, :running, options: { retry: 3 }) }
+      subject { build_stubbed(:ci_build, :running, options: { retry: 3 }) }
 
       it 'retries builds and assigns a same user to it' do
         expect(described_class).to receive(:retry)
@@ -1713,7 +1713,7 @@ describe Ci::Build do
     end
 
     context 'when build is not configured to be retried' do
-      subject { create(:ci_build, :running) }
+      subject { build_stubbed(:ci_build, :running) }
 
       it 'does not retry build' do
         expect(described_class).not_to receive(:retry)

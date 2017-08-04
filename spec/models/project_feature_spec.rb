@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe ProjectFeature do
-  let(:project) { create(:project) }
-  let(:user) { create(:user) }
+  let(:project) { build_stubbed(:project) }
+  let(:user) { build_stubbed(:user) }
 
   describe '.quoted_access_level_column' do
     it 'returns the table name and quoted column name for a feature' do
@@ -46,8 +46,8 @@ describe ProjectFeature do
       end
 
       it "returns true when user is a member of project group" do
-        group = create(:group)
-        project = create(:project, namespace: group)
+        group = build_stubbed(:group)
+        project = build_stubbed(:project, namespace: group)
         group.add_developer(user)
 
         features.each do |feature|

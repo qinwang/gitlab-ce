@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe DiffViewer::ServerSide do
-  let(:project) { create(:project, :repository) }
+  let(:project) { build_stubbed(:project, :repository) }
   let(:commit) { project.commit('570e7b2abdd848b95f2f578043fc23bd6f6fd24d') }
   let(:diff_file) { commit.diffs.diff_file_with_new_path('files/ruby/popen.rb') }
 

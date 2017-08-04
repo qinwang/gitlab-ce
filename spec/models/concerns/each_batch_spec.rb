@@ -11,7 +11,7 @@ describe EachBatch do
     end
 
     before do
-      5.times { create(:user, updated_at: 1.day.ago) }
+      5.times { build_stubbed(:user, updated_at: 1.day.ago) }
     end
 
     it 'yields an ActiveRecord::Relation when a block is given' do

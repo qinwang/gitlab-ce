@@ -14,14 +14,14 @@ RSpec.describe NotificationSetting do
 
     describe 'user_id' do
       before do
-        subject.user = create(:user)
+        subject.user = build_stubbed(:user)
       end
 
       it { is_expected.to validate_uniqueness_of(:user_id).scoped_to([:source_type, :source_id]).with_message(/already exists in source/) }
     end
 
     context "events" do
-      let(:user) { create(:user) }
+      let(:user) { build_stubbed(:user) }
       let(:notification_setting) { described_class.new(source_id: 1, source_type: 'Project', user_id: user.id) }
 
       before do
@@ -47,11 +47,11 @@ RSpec.describe NotificationSetting do
   end
 
   describe '#for_projects' do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     before do
       1.upto(4) do |i|
-        setting = create(:notification_setting, user: user)
+        setting = build_stubbed(:notification_setting, user: user)
 
         setting.project.update_attributes(pending_delete: true) if i.even?
       end
@@ -65,7 +65,7 @@ RSpec.describe NotificationSetting do
 
   describe '#event_enabled?' do
     before do
-      subject.update!(user: create(:user))
+      subject.update!(user: build_stubbed(:user))
     end
 
     context 'for an event with a matching column name' do

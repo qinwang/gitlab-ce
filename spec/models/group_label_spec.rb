@@ -18,7 +18,7 @@ describe GroupLabel do
   end
 
   describe '#to_reference' do
-    let(:label) { create(:group_label, title: 'feature') }
+    let(:label) { build_stubbed(:group_label, title: 'feature') }
 
     context 'using id' do
       it 'returns a String reference to the object' do
@@ -32,7 +32,7 @@ describe GroupLabel do
       end
 
       it 'uses id when name contains double quote' do
-        label = create(:label, name: %q{"irony"})
+        label = build_stubbed(:label, name: %q{"irony"})
         expect(label.to_reference(format: :name)).to eq "~#{label.id}"
       end
     end

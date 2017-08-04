@@ -1,16 +1,16 @@
 require 'spec_helper'
 
 describe CommitStatus do
-  let(:project) { create(:project, :repository) }
+  let(:project) { build_stubbed(:project, :repository) }
 
   let(:pipeline) do
-    create(:ci_pipeline, project: project, sha: project.commit.id)
+    build_stubbed(:ci_pipeline, project: project, sha: project.commit.id)
   end
 
   let(:commit_status) { create_status(stage: 'test') }
 
   def create_status(**opts)
-    create(:commit_status, pipeline: pipeline, **opts)
+    build_stubbed(:commit_status, pipeline: pipeline, **opts)
   end
 
   it { is_expected.to belong_to(:pipeline) }
@@ -40,7 +40,7 @@ describe CommitStatus do
   end
 
   describe 'status state machine' do
-    let!(:commit_status) { create(:commit_status, :running, project: project) }
+    let!(:commit_status) { build_stubbed(:commit_status, :running, project: project) }
 
     it 'invalidates the cache after a transition' do
       expect(ExpireJobCacheWorker).to receive(:perform_async).with(commit_status.id)
@@ -139,7 +139,7 @@ describe CommitStatus do
 
       context 'when there is auto_canceled_by' do
         before do
-          commit_status.update(auto_canceled_by: create(:ci_empty_pipeline))
+          commit_status.update(auto_canceled_by: build_stubbed(:ci_empty_pipeline))
         end
 
         it 'is auto canceled' do
@@ -381,7 +381,7 @@ describe CommitStatus do
   end
 
   describe '#detailed_status' do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     it 'returns a detailed status' do
       expect(commit_status.detailed_status(user))

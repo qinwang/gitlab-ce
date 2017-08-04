@@ -11,8 +11,8 @@ RSpec.describe Identity do
   end
 
   describe '#is_ldap?' do
-    let(:ldap_identity) { create(:identity, provider: 'ldapmain') }
-    let(:other_identity) { create(:identity, provider: 'twitter') }
+    let(:ldap_identity) { build_stubbed(:identity, provider: 'ldapmain') }
+    let(:other_identity) { build_stubbed(:identity, provider: 'twitter') }
 
     it 'returns true if it is a ldap identity' do
       expect(ldap_identity.ldap?).to be_truthy

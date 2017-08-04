@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Group, 'Routable' do
-  let!(:group) { create(:group, name: 'foo') }
+  let!(:group) { build_stubbed(:group, name: 'foo') }
 
   describe 'Validations' do
     it { is_expected.to validate_presence_of(:route) }
@@ -26,7 +26,7 @@ describe Group, 'Routable' do
     end
 
     it 'ensure route path uniqueness across different objects' do
-      create(:group, parent: group, path: 'xyz')
+      build_stubbed(:group, parent: group, path: 'xyz')
       duplicate = build(:project, namespace: group, path: 'xyz')
 
       expect { duplicate.save! }.to raise_error(ActiveRecord::RecordInvalid, 'Validation failed: Route path has already been taken, Route is invalid')
@@ -34,7 +34,7 @@ describe Group, 'Routable' do
   end
 
   describe '.find_by_full_path' do
-    let!(:nested_group) { create(:group, parent: group) }
+    let!(:nested_group) { build_stubbed(:group, parent: group) }
 
     context 'without any redirect routes' do
       it { expect(described_class.find_by_full_path(group.to_param)).to eq(group) }
@@ -99,7 +99,7 @@ describe Group, 'Routable' do
     end
 
     context 'with valid paths' do
-      let!(:nested_group) { create(:group, parent: group) }
+      let!(:nested_group) { build_stubbed(:group, parent: group) }
 
       it 'returns the projects matching the paths' do
         result = described_class.where_full_path_in([group.to_param, nested_group.to_param])
@@ -116,8 +116,8 @@ describe Group, 'Routable' do
   end
 
   describe '#full_path' do
-    let(:group) { create(:group) }
-    let(:nested_group) { create(:group, parent: group) }
+    let(:group) { build_stubbed(:group) }
+    let(:nested_group) { build_stubbed(:group, parent: group) }
 
     it { expect(group.full_path).to eq(group.path) }
     it { expect(nested_group.full_path).to eq("#{group.full_path}/#{nested_group.path}") }
@@ -146,8 +146,8 @@ describe Group, 'Routable' do
   end
 
   describe '#full_name' do
-    let(:group) { create(:group) }
-    let(:nested_group) { create(:group, parent: group) }
+    let(:group) { build_stubbed(:group) }
+    let(:nested_group) { build_stubbed(:group, parent: group) }
 
     it { expect(group.full_name).to eq(group.name) }
     it { expect(nested_group.full_name).to eq("#{group.name} / #{nested_group.name}") }

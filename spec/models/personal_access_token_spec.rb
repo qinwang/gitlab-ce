@@ -36,7 +36,7 @@ describe PersonalAccessToken do
   end
 
   describe 'revoke!' do
-    let(:active_personal_access_token) { create(:personal_access_token) }
+    let(:active_personal_access_token) { build_stubbed(:personal_access_token) }
 
     it 'revokes the token' do
       active_personal_access_token.revoke!

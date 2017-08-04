@@ -14,10 +14,10 @@ describe SystemHook do
   end
 
   describe "execute" do
-    let(:system_hook) { create(:system_hook) }
-    let(:user)        { create(:user) }
-    let(:project)     { create(:project, namespace: user.namespace) }
-    let(:group)       { create(:group) }
+    let(:system_hook) { build_stubbed(:system_hook) }
+    let(:user)        { build_stubbed(:user) }
+    let(:project)     { build_stubbed(:project, namespace: user.namespace) }
+    let(:group)       { build_stubbed(:group) }
     let(:params) do
       { name: 'John Doe', username: 'jduser', email: 'jg@example.com', password: 'mydummypass' }
     end
@@ -81,7 +81,7 @@ describe SystemHook do
     end
 
     it 'group create hook' do
-      create(:group)
+      build_stubbed(:group)
 
       expect(WebMock).to have_requested(:post, system_hook.url).with(
         body: /group_create/,
@@ -120,8 +120,8 @@ describe SystemHook do
 
   describe '.repository_update_hooks' do
     it 'returns hooks for repository update events only' do
-      hook = create(:system_hook, repository_update_events: true)
-      create(:system_hook, repository_update_events: false)
+      hook = build_stubbed(:system_hook, repository_update_events: true)
+      build_stubbed(:system_hook, repository_update_events: false)
       expect(described_class.repository_update_hooks).to eq([hook])
     end
   end

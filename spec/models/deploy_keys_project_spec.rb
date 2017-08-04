@@ -12,8 +12,8 @@ describe DeployKeysProject do
   end
 
   describe "Destroying" do
-    let(:project)     { create(:project) }
-    subject           { create(:deploy_keys_project, project: project) }
+    let(:project)     { build_stubbed(:project) }
+    subject           { build_stubbed(:deploy_keys_project, project: project) }
     let(:deploy_key)  { subject.deploy_key }
 
     context "when the deploy key is only used by this project" do
@@ -39,7 +39,7 @@ describe DeployKeysProject do
     end
 
     context "when the deploy key is used by more than one project" do
-      let!(:other_project) { create(:project) }
+      let!(:other_project) { build_stubbed(:project) }
 
       before do
         other_project.deploy_keys << deploy_key

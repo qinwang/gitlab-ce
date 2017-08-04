@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Compare do
   include RepoHelpers
 
-  let(:project) { create(:project, :public, :repository) }
+  let(:project) { build_stubbed(:project, :public, :repository) }
   let(:commit)  { project.commit }
 
   let(:start_commit) { sample_image_commit }

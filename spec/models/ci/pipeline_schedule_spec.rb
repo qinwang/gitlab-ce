@@ -37,7 +37,7 @@ describe Ci::PipelineSchedule do
   end
 
   describe '#set_next_run_at' do
-    let!(:pipeline_schedule) { create(:ci_pipeline_schedule, :nightly) }
+    let!(:pipeline_schedule) { build_stubbed(:ci_pipeline_schedule, :nightly) }
 
     context 'when creates new pipeline schedule' do
       let(:expected_next_run_at) do
@@ -67,7 +67,7 @@ describe Ci::PipelineSchedule do
   end
 
   describe '#schedule_next_run!' do
-    let!(:pipeline_schedule) { create(:ci_pipeline_schedule, :nightly) }
+    let!(:pipeline_schedule) { build_stubbed(:ci_pipeline_schedule, :nightly) }
 
     context 'when reschedules after 10 days from now' do
       let(:future_time) { 10.days.from_now }
@@ -103,7 +103,7 @@ describe Ci::PipelineSchedule do
 
       context 'when cron_timezone is Eastern Time (US & Canada)' do
         before do
-          create(:ci_pipeline_schedule, :nightly,
+          build_stubbed(:ci_pipeline_schedule, :nightly,
                   cron_timezone: 'Eastern Time (US & Canada)')
         end
 
@@ -120,7 +120,7 @@ describe Ci::PipelineSchedule do
   end
 
   describe '#job_variables' do
-    let!(:pipeline_schedule) { create(:ci_pipeline_schedule) }
+    let!(:pipeline_schedule) { build_stubbed(:ci_pipeline_schedule) }
 
     let!(:pipeline_schedule_variables) do
       create_list(:ci_pipeline_schedule_variable, 2, pipeline_schedule: pipeline_schedule)

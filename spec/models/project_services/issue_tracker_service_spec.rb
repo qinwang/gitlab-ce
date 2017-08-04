@@ -8,7 +8,7 @@ describe IssueTrackerService do
       let(:service) { RedmineService.new(project: project, active: true) }
 
       before do
-        create(:custom_issue_tracker_service, project: project)
+        build_stubbed(:custom_issue_tracker_service, project: project)
       end
 
       context 'when service is changed manually by user' do

@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe RelativePositioning do
-  let(:project) { create(:project) }
-  let(:issue) { create(:issue, project: project) }
-  let(:issue1) { create(:issue, project: project) }
-  let(:new_issue) { create(:issue, project: project) }
+  let(:project) { build_stubbed(:project) }
+  let(:issue) { build_stubbed(:issue, project: project) }
+  let(:issue1) { build_stubbed(:issue, project: project) }
+  let(:new_issue) { build_stubbed(:issue, project: project) }
 
   before do
     [issue, issue1].each do |issue|
@@ -179,7 +179,7 @@ describe RelativePositioning do
     it 'uses rebalancing if there is no place' do
       issue.update relative_position: 100
       issue1.update relative_position: 101
-      issue2 = create(:issue, relative_position: 102, project: project)
+      issue2 = build_stubbed(:issue, relative_position: 102, project: project)
       new_issue.update relative_position: 103
 
       new_issue.move_between(issue1, issue2)
@@ -192,7 +192,7 @@ describe RelativePositioning do
     it 'positions issue right if we pass none-sequential parameters' do
       issue.update relative_position: 99
       issue1.update relative_position: 101
-      issue2 = create(:issue, relative_position: 102, project: project)
+      issue2 = build_stubbed(:issue, relative_position: 102, project: project)
       new_issue.update relative_position: 103
 
       new_issue.move_between(issue, issue2)

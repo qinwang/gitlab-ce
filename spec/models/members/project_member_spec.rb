@@ -23,8 +23,8 @@ describe ProjectMember do
 
   describe '.add_user' do
     it 'adds the user as a member' do
-      user = create(:user)
-      project = create(:project)
+      user = build_stubbed(:user)
+      project = build_stubbed(:project)
 
       expect(project.users).not_to include(user)
 
@@ -35,18 +35,18 @@ describe ProjectMember do
   end
 
   describe '#real_source_type' do
-    subject { create(:project_member).real_source_type }
+    subject { build_stubbed(:project_member).real_source_type }
 
     it { is_expected.to eq 'Project' }
   end
 
   describe "#destroy" do
-    let(:owner)   { create(:project_member, access_level: ProjectMember::MASTER) }
+    let(:owner)   { build_stubbed(:project_member, access_level: ProjectMember::MASTER) }
     let(:project) { owner.project }
-    let(:master)  { create(:project_member, project: project) }
+    let(:master)  { build_stubbed(:project_member, project: project) }
 
-    let(:owner_todos)  { (0...2).map { create(:todo, user: owner.user, project: project) } }
-    let(:master_todos) { (0...3).map { create(:todo, user: master.user, project: project) } }
+    let(:owner_todos)  { (0...2).map { build_stubbed(:todo, user: owner.user, project: project) } }
+    let(:master_todos) { (0...3).map { build_stubbed(:todo, user: master.user, project: project) } }
 
     before do
       owner_todos
@@ -54,7 +54,7 @@ describe ProjectMember do
     end
 
     it "creates an expired event when left due to expiry" do
-      expired = create(:project_member, project: project, expires_at: Time.now - 6.days)
+      expired = build_stubbed(:project_member, project: project, expires_at: Time.now - 6.days)
       expired.destroy
       expect(Event.recent.first.action).to eq(Event::EXPIRED)
     end
@@ -82,8 +82,8 @@ describe ProjectMember do
 
   describe '.import_team' do
     before do
-      @project_1 = create(:project)
-      @project_2 = create(:project)
+      @project_1 = build_stubbed(:project)
+      @project_2 = build_stubbed(:project)
 
       @user_1 = create :user
       @user_2 = create :user
@@ -130,8 +130,8 @@ describe ProjectMember do
 
   describe '.truncate_teams' do
     before do
-      @project_1 = create(:project)
-      @project_2 = create(:project)
+      @project_1 = build_stubbed(:project)
+      @project_2 = build_stubbed(:project)
 
       @user_1 = create :user
       @user_2 = create :user
@@ -149,7 +149,7 @@ describe ProjectMember do
   describe 'notifications' do
     describe '#after_accept_request' do
       it 'calls NotificationService.new_project_member' do
-        member = create(:project_member, user: create(:user), requested_at: Time.now)
+        member = build_stubbed(:project_member, user: build_stubbed(:user), requested_at: Time.now)
 
         expect_any_instance_of(NotificationService).to receive(:new_project_member)
 

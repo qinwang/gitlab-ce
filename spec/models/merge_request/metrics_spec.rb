@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe MergeRequest::Metrics do
-  subject { create(:merge_request) }
+  subject { build_stubbed(:merge_request) }
 
   describe "when recording the default set of metrics on merge request save" do
     it "records the merge time" do

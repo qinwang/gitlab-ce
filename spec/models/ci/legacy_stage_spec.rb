@@ -125,7 +125,7 @@ describe Ci::LegacyStage do
   end
 
   describe '#detailed_status' do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     subject { stage.detailed_status(user) }
 
@@ -243,7 +243,7 @@ describe Ci::LegacyStage do
 
       context 'when calculating warnings from statuses' do
         before do
-          create(:ci_build, :failed, :allowed_to_fail,
+          build_stubbed(:ci_build, :failed, :allowed_to_fail,
                  stage: stage_name, pipeline: pipeline)
         end
 
@@ -256,7 +256,7 @@ describe Ci::LegacyStage do
 
     context 'when stage does not have warnings' do
       before do
-        create(:ci_build, :success, stage: stage_name,
+        build_stubbed(:ci_build, :success, stage: stage_name,
                                     pipeline: pipeline)
       end
 

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe RedirectRoute do
-  let(:group) { create(:group) }
+  let(:group) { build_stubbed(:group) }
   let!(:redirect_route) { group.redirect_routes.create(path: 'gitlabb') }
 
   describe 'relationships' do

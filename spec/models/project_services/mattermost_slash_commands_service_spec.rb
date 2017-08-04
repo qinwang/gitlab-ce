@@ -4,9 +4,9 @@ describe MattermostSlashCommandsService do
   it_behaves_like "chat slash commands service"
 
   context 'Mattermost API' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
     let(:service) { project.build_mattermost_slash_commands_service }
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     before do
       Mattermost::Session.base_uri("http://mattermost.example.com")

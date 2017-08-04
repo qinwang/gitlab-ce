@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe ChatName do
-  subject { create(:chat_name) }
+  subject { build_stubbed(:chat_name) }
 
   it { is_expected.to belong_to(:service) }
   it { is_expected.to belong_to(:user) }

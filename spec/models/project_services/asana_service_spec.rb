@@ -17,8 +17,8 @@ describe AsanaService do
   end
 
   describe 'Execute' do
-    let(:user) { create(:user) }
-    let(:project) { create(:project) }
+    let(:user) { build_stubbed(:user) }
+    let(:project) { build_stubbed(:project) }
 
     def create_data_for_commits(*messages)
       {

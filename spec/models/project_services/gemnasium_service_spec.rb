@@ -27,8 +27,8 @@ describe GemnasiumService do
   end
 
   describe "Execute" do
-    let(:user)    { create(:user) }
-    let(:project) { create(:project, :repository) }
+    let(:user)    { build_stubbed(:user) }
+    let(:project) { build_stubbed(:project, :repository) }
 
     before do
       @gemnasium_service = described_class.new

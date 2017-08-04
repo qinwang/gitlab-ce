@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe SpamLog do
-  let(:admin) { create(:admin) }
+  let(:admin) { build_stubbed(:admin) }
 
   describe 'associations' do
     it { is_expected.to belong_to(:user) }

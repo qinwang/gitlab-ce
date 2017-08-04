@@ -29,7 +29,7 @@ describe JiraService do
     context 'validating urls' do
       let(:service) do
         described_class.new(
-          project: create(:project),
+          project: build_stubbed(:project),
           active: true,
           username: 'username',
           password: 'test',
@@ -73,9 +73,9 @@ describe JiraService do
 
   describe '#close_issue' do
     let(:custom_base_url) { 'http://custom_url' }
-    let(:user)    { create(:user) }
-    let(:project) { create(:project) }
-    let(:merge_request) { create(:merge_request) }
+    let(:user)    { build_stubbed(:user) }
+    let(:project) { build_stubbed(:project) }
+    let(:merge_request) { build_stubbed(:merge_request) }
 
     before do
       @jira_service = described_class.new
@@ -199,7 +199,7 @@ describe JiraService do
   describe '#test_settings' do
     let(:jira_service) do
       described_class.new(
-        project: create(:project),
+        project: build_stubbed(:project),
         url: 'http://jira.example.com',
         username: 'jira_username',
         password: 'jira_password'
@@ -242,7 +242,7 @@ describe JiraService do
   end
 
   describe "Stored password invalidation" do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     context "when a password was previously set" do
       before do
@@ -347,7 +347,7 @@ describe JiraService do
   end
 
   describe 'description and title' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     context 'when it is not set' do
       before do
@@ -382,7 +382,7 @@ describe JiraService do
   end
 
   describe 'project and issue urls' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     context 'when gitlab.yml was initialized' do
       before do

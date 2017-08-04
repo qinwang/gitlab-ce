@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe IssueCollection do
-  let(:user) { create(:user) }
-  let(:project) { create(:project) }
-  let(:issue1) { create(:issue, project: project) }
-  let(:issue2) { create(:issue, project: project) }
+  let(:user) { build_stubbed(:user) }
+  let(:project) { build_stubbed(:project) }
+  let(:issue1) { build_stubbed(:issue, project: project) }
+  let(:issue2) { build_stubbed(:issue, project: project) }
   let(:collection) { described_class.new([issue1, issue2]) }
 
   describe '#collection' do
@@ -16,7 +16,7 @@ describe IssueCollection do
   describe '#updatable_by_user' do
     context 'using an admin user' do
       it 'returns all issues' do
-        user = create(:admin)
+        user = build_stubbed(:admin)
 
         expect(collection.updatable_by_user(user)).to eq([issue1, issue2])
       end

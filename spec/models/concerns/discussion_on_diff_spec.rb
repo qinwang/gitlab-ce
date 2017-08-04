@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe DiscussionOnDiff do
-  subject { create(:diff_note_on_merge_request).to_discussion }
+  subject { build_stubbed(:diff_note_on_merge_request).to_discussion }
 
   describe "#truncated_diff_lines" do
     let(:truncated_lines) { subject.truncated_diff_lines }

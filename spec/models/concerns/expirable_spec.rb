@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe Expirable do
   describe 'ProjectMember' do
-    let(:no_expire) { create(:project_member) }
-    let(:expire_later) { create(:project_member, expires_at: Time.current + 6.days) }
-    let(:expired) { create(:project_member, expires_at: Time.current - 6.days) }
+    let(:no_expire) { build_stubbed(:project_member) }
+    let(:expire_later) { build_stubbed(:project_member, expires_at: Time.current + 6.days) }
+    let(:expired) { build_stubbed(:project_member, expires_at: Time.current - 6.days) }
 
     describe '.expired' do
       it { expect(ProjectMember.expired).to match_array([expired]) }

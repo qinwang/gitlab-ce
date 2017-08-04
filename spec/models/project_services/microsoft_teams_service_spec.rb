@@ -29,8 +29,8 @@ describe MicrosoftTeamsService do
   end
 
   describe "#execute" do
-    let(:user)    { create(:user) }
-    let(:project) { create(:project, :repository) }
+    let(:user)    { build_stubbed(:user) }
+    let(:project) { build_stubbed(:project, :repository) }
 
     before do
       allow(chat_service).to receive_messages(
@@ -124,8 +124,8 @@ describe MicrosoftTeamsService do
   end
 
   describe "Note events" do
-    let(:user) { create(:user) }
-    let(:project) { create(:project, :repository, creator: user) }
+    let(:user) { build_stubbed(:user) }
+    let(:project) { build_stubbed(:project, :repository, creator: user) }
 
     before do
       allow(chat_service).to receive_messages(
@@ -140,7 +140,7 @@ describe MicrosoftTeamsService do
 
     context 'when commit comment event executed' do
       let(:commit_note) do
-        create(:note_on_commit, author: user,
+        build_stubbed(:note_on_commit, author: user,
                                 project: project,
                                 commit_id: project.repository.commit.id,
                                 note: 'a comment on a commit')
@@ -157,7 +157,7 @@ describe MicrosoftTeamsService do
 
     context 'when merge request comment event executed' do
       let(:merge_request_note) do
-        create(:note_on_merge_request, project: project,
+        build_stubbed(:note_on_merge_request, project: project,
                                        note: "merge request note")
       end
 
@@ -172,7 +172,7 @@ describe MicrosoftTeamsService do
 
     context 'when issue comment event executed' do
       let(:issue_note) do
-        create(:note_on_issue, project: project, note: "issue note")
+        build_stubbed(:note_on_issue, project: project, note: "issue note")
       end
 
       it "calls Microsoft Teams API for issue comment events" do
@@ -186,7 +186,7 @@ describe MicrosoftTeamsService do
 
     context 'when snippet comment event executed' do
       let(:snippet_note) do
-        create(:note_on_project_snippet, project: project,
+        build_stubbed(:note_on_project_snippet, project: project,
                                          note: "snippet note")
       end
 
@@ -201,11 +201,11 @@ describe MicrosoftTeamsService do
   end
 
   describe 'Pipeline events' do
-    let(:user) { create(:user) }
-    let(:project) { create(:project, :repository) }
+    let(:user) { build_stubbed(:user) }
+    let(:project) { build_stubbed(:project, :repository) }
 
     let(:pipeline) do
-      create(:ci_pipeline,
+      build_stubbed(:ci_pipeline,
              project: project, status: status,
              sha: project.commit.sha, ref: project.default_branch)
     end
@@ -262,7 +262,7 @@ describe MicrosoftTeamsService do
     context 'only notify for the default branch' do
       context 'when enabled' do
         let(:pipeline) do
-          create(:ci_pipeline, project: project, status: 'failed', ref: 'not-the-default-branch')
+          build_stubbed(:ci_pipeline, project: project, status: 'failed', ref: 'not-the-default-branch')
         end
 
         before do

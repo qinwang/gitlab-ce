@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe AbuseReport do
-  subject     { create(:abuse_report) }
-  let(:user)  { create(:admin) }
+  subject     { build_stubbed(:abuse_report) }
+  let(:user)  { build_stubbed(:admin) }
 
   it { expect(subject).to be_valid }
 

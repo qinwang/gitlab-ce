@@ -3,26 +3,26 @@ require 'spec_helper'
 describe 'CycleAnalytics#plan' do
   extend CycleAnalyticsHelpers::TestGeneration
 
-  let(:project) { create(:project, :repository) }
+  let(:project) { build_stubbed(:project, :repository) }
   let(:from_date) { 10.days.ago }
-  let(:user) { create(:user, :admin) }
+  let(:user) { build_stubbed(:user, :admin) }
   subject { CycleAnalytics.new(project, from: from_date) }
 
   generate_cycle_analytics_spec(
     phase: :plan,
     data_fn: -> (context) do
       {
-        issue: context.create(:issue, project: context.project),
+        issue: context.build_stubbed(:issue, project: context.project),
         branch_name: context.generate(:branch)
       }
     end,
     start_time_conditions: [["issue associated with a milestone",
                              -> (context, data) do
-                               data[:issue].update(milestone: context.create(:milestone, project: context.project))
+                               data[:issue].update(milestone: context.build_stubbed(:milestone, project: context.project))
                              end],
                             ["list label added to issue",
                              -> (context, data) do
-                               data[:issue].update(label_ids: [context.create(:label, lists: [context.create(:list)]).id])
+                               data[:issue].update(label_ids: [context.build_stubbed(:label, lists: [context.build_stubbed(:list)]).id])
                              end]],
     end_time_conditions:   [["issue mentioned in a commit",
                              -> (context, data) do
@@ -36,8 +36,8 @@ describe 'CycleAnalytics#plan' do
   context "when a regular label (instead of a list label) is added to the issue" do
     it "returns nil" do
       branch_name = generate(:branch)
-      label = create(:label)
-      issue = create(:issue, project: project)
+      label = build_stubbed(:label)
+      issue = build_stubbed(:issue, project: project)
       issue.update(label_ids: [label.id])
       create_commit_referencing_issue(issue, branch_name: branch_name)
 

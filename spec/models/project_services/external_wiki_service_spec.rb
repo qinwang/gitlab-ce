@@ -27,7 +27,7 @@ describe ExternalWikiService do
   end
 
   describe 'External wiki' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     context 'when it is active' do
       before do

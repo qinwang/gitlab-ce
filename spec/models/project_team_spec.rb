@@ -1,13 +1,13 @@
 require "spec_helper"
 
 describe ProjectTeam do
-  let(:master) { create(:user) }
-  let(:reporter) { create(:user) }
-  let(:guest) { create(:user) }
-  let(:nonmember) { create(:user) }
+  let(:master) { build_stubbed(:user) }
+  let(:reporter) { build_stubbed(:user) }
+  let(:guest) { build_stubbed(:user) }
+  let(:nonmember) { build_stubbed(:user) }
 
   context 'personal project' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     before do
       project.add_master(master)
@@ -36,8 +36,8 @@ describe ProjectTeam do
   end
 
   context 'group project' do
-    let(:group) { create(:group) }
-    let!(:project) { create(:project, group: group) }
+    let(:group) { build_stubbed(:group) }
+    let!(:project) { build_stubbed(:project, group: group) }
 
     before do
       group.add_master(master)
@@ -75,17 +75,17 @@ describe ProjectTeam do
 
   describe '#fetch_members' do
     context 'personal project' do
-      let(:project) { create(:project) }
+      let(:project) { build_stubbed(:project) }
 
       it 'returns project members' do
-        user = create(:user)
+        user = build_stubbed(:user)
         project.add_guest(user)
 
         expect(project.team.members).to contain_exactly(user, project.owner)
       end
 
       it 'returns project members of a specified level' do
-        user = create(:user)
+        user = build_stubbed(:user)
         project.add_reporter(user)
 
         expect(project.team.guests).to be_empty
@@ -93,7 +93,7 @@ describe ProjectTeam do
       end
 
       it 'returns invited members of a group' do
-        group_member = create(:group_member)
+        group_member = build_stubbed(:group_member)
 
         project.project_group_links.create!(
           group: group_member.group,
@@ -105,7 +105,7 @@ describe ProjectTeam do
       end
 
       it 'returns invited members of a group of a specified level' do
-        group_member = create(:group_member)
+        group_member = build_stubbed(:group_member)
 
         project.project_group_links.create!(
           group: group_member.group,
@@ -118,17 +118,17 @@ describe ProjectTeam do
     end
 
     context 'group project' do
-      let(:group) { create(:group) }
-      let!(:project) { create(:project, group: group) }
+      let(:group) { build_stubbed(:group) }
+      let!(:project) { build_stubbed(:project, group: group) }
 
       it 'returns project members' do
-        group_member = create(:group_member, group: group)
+        group_member = build_stubbed(:group_member, group: group)
 
         expect(project.team.members).to contain_exactly(group_member.user)
       end
 
       it 'returns project members of a specified level' do
-        group_member = create(:group_member, :reporter, group: group)
+        group_member = build_stubbed(:group_member, :reporter, group: group)
 
         expect(project.team.guests).to be_empty
         expect(project.team.reporters).to contain_exactly(group_member.user)
@@ -139,10 +139,10 @@ describe ProjectTeam do
   describe '#find_member' do
     context 'personal project' do
       let(:project) do
-        create(:project, :public, :access_requestable)
+        build_stubbed(:project, :public, :access_requestable)
       end
 
-      let(:requester) { create(:user) }
+      let(:requester) { build_stubbed(:user) }
 
       before do
         project.add_master(master)
@@ -159,9 +159,9 @@ describe ProjectTeam do
     end
 
     context 'group project' do
-      let(:group) { create(:group, :access_requestable) }
-      let(:project) { create(:project, group: group) }
-      let(:requester) { create(:user) }
+      let(:group) { build_stubbed(:group, :access_requestable) }
+      let(:project) { build_stubbed(:project, group: group) }
+      let(:requester) { build_stubbed(:user) }
 
       before do
         group.add_master(master)
@@ -180,9 +180,9 @@ describe ProjectTeam do
 
   describe "#human_max_access" do
     it 'returns Master role' do
-      user = create(:user)
-      group = create(:group)
-      project = create(:project, namespace: group)
+      user = build_stubbed(:user)
+      group = build_stubbed(:group)
+      project = build_stubbed(:project, namespace: group)
 
       group.add_master(user)
 
@@ -190,9 +190,9 @@ describe ProjectTeam do
     end
 
     it 'returns Owner role' do
-      user = create(:user)
-      group = create(:group)
-      project = create(:project, namespace: group)
+      user = build_stubbed(:user)
+      group = build_stubbed(:group)
+      project = build_stubbed(:project, namespace: group)
 
       group.add_owner(user)
 
@@ -201,11 +201,11 @@ describe ProjectTeam do
   end
 
   describe '#max_member_access' do
-    let(:requester) { create(:user) }
+    let(:requester) { build_stubbed(:user) }
 
     context 'personal project' do
       let(:project) do
-        create(:project, :public, :access_requestable)
+        build_stubbed(:project, :public, :access_requestable)
       end
 
       context 'when project is not shared with group' do
@@ -225,7 +225,7 @@ describe ProjectTeam do
 
       context 'when project is shared with group' do
         before do
-          group = create(:group)
+          group = build_stubbed(:group)
           project.project_group_links.create(
             group: group,
             group_access: Gitlab::Access::DEVELOPER)
@@ -251,9 +251,9 @@ describe ProjectTeam do
     end
 
     context 'group project' do
-      let(:group) { create(:group, :access_requestable) }
+      let(:group) { build_stubbed(:group, :access_requestable) }
       let!(:project) do
-        create(:project, group: group)
+        build_stubbed(:project, group: group)
       end
 
       before do
@@ -272,20 +272,20 @@ describe ProjectTeam do
   end
 
   describe '#member?' do
-    let(:group) { create(:group) }
-    let(:developer) { create(:user) }
-    let(:master) { create(:user) }
+    let(:group) { build_stubbed(:group) }
+    let(:developer) { build_stubbed(:user) }
+    let(:master) { build_stubbed(:user) }
 
     let(:personal_project) do
-      create(:project, namespace: developer.namespace)
+      build_stubbed(:project, namespace: developer.namespace)
     end
 
     let(:group_project) do
-      create(:project, namespace: group)
+      build_stubbed(:project, namespace: group)
     end
 
-    let(:members_project) { create(:project) }
-    let(:shared_project) { create(:project) }
+    let(:members_project) { build_stubbed(:project) }
+    let(:shared_project) { build_stubbed(:project) }
 
     before do
       group.add_master(master)
@@ -294,7 +294,7 @@ describe ProjectTeam do
       members_project.team << [developer, :developer]
       members_project.team << [master, :master]
 
-      create(:project_group_link, project: shared_project, group: group)
+      build_stubbed(:project_group_link, project: shared_project, group: group)
     end
 
     it 'returns false for no user' do
@@ -330,21 +330,21 @@ describe ProjectTeam do
   end
 
   shared_examples 'max member access for users' do
-    let(:project) { create(:project) }
-    let(:group) { create(:group) }
-    let(:second_group) { create(:group) }
+    let(:project) { build_stubbed(:project) }
+    let(:group) { build_stubbed(:group) }
+    let(:second_group) { build_stubbed(:group) }
 
-    let(:master) { create(:user) }
-    let(:reporter) { create(:user) }
-    let(:guest) { create(:user) }
+    let(:master) { build_stubbed(:user) }
+    let(:reporter) { build_stubbed(:user) }
+    let(:guest) { build_stubbed(:user) }
 
-    let(:promoted_guest) { create(:user) }
+    let(:promoted_guest) { build_stubbed(:user) }
 
-    let(:group_developer) { create(:user) }
-    let(:second_developer) { create(:user) }
+    let(:group_developer) { build_stubbed(:user) }
+    let(:second_developer) { build_stubbed(:user) }
 
-    let(:user_without_access) { create(:user) }
-    let(:second_user_without_access) { create(:user) }
+    let(:user_without_access) { build_stubbed(:user) }
+    let(:second_user_without_access) { build_stubbed(:user) }
 
     let(:users) do
       [master, reporter, promoted_guest, guest, group_developer, second_developer, user_without_access].map(&:id)
@@ -407,8 +407,8 @@ describe ProjectTeam do
       end
 
       it 'only requests the extra users when uncached users are passed' do
-        new_user = create(:user)
-        second_new_user = create(:user)
+        new_user = build_stubbed(:user)
+        second_new_user = build_stubbed(:user)
         all_users = users + [new_user.id, second_new_user.id]
 
         expected_all = expected.merge(new_user.id => Gitlab::Access::NO_ACCESS,

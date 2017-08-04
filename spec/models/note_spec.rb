@@ -53,7 +53,7 @@ describe Note do
     end
 
     context 'when noteable and note project are the same' do
-      subject { create(:note) }
+      subject { build_stubbed(:note) }
       it { is_expected.to be_valid }
     end
 
@@ -72,7 +72,7 @@ describe Note do
   end
 
   describe "Commit notes" do
-    let!(:note) { create(:note_on_commit, note: "+1 from me") }
+    let!(:note) { build_stubbed(:note_on_commit, note: "+1 from me") }
     let!(:commit) { note.noteable }
 
     it "is accessible through #noteable" do
@@ -97,11 +97,11 @@ describe Note do
 
   describe 'authorization' do
     before do
-      @p1 = create(:project)
-      @p2 = create(:project)
-      @u1 = create(:user)
-      @u2 = create(:user)
-      @u3 = create(:user)
+      @p1 = build_stubbed(:project)
+      @p2 = build_stubbed(:project)
+      @u1 = build_stubbed(:user)
+      @u2 = build_stubbed(:user)
+      @u3 = build_stubbed(:user)
     end
 
     describe 'read' do
@@ -142,14 +142,14 @@ describe Note do
   it_behaves_like 'an editable mentionable' do
     subject { create :note, noteable: issue, project: issue.project }
 
-    let(:issue) { create(:issue, project: create(:project, :repository)) }
+    let(:issue) { build_stubbed(:issue, project: build_stubbed(:project, :repository)) }
     let(:backref_text) { issue.gfm_reference }
     let(:set_mentionable_text) { ->(txt) { subject.note = txt } }
   end
 
   describe "#all_references" do
-    let!(:note1) { create(:note_on_issue) }
-    let!(:note2) { create(:note_on_issue) }
+    let!(:note1) { build_stubbed(:note_on_issue) }
+    let!(:note2) { build_stubbed(:note_on_issue) }
 
     it "reads the rendered note body from the cache" do
       expect(Banzai::Renderer).to receive(:cache_collection_render)
@@ -194,12 +194,12 @@ describe Note do
   end
 
   describe "cross_reference_not_visible_for?" do
-    let(:private_user)    { create(:user) }
-    let(:private_project) { create(:project, namespace: private_user.namespace) { |p| p.team << [private_user, :master] } }
-    let(:private_issue)   { create(:issue, project: private_project) }
+    let(:private_user)    { build_stubbed(:user) }
+    let(:private_project) { build_stubbed(:project, namespace: private_user.namespace) { |p| p.team << [private_user, :master] } }
+    let(:private_issue)   { build_stubbed(:issue, project: private_project) }
 
-    let(:ext_proj)  { create(:project, :public) }
-    let(:ext_issue) { create(:issue, project: ext_proj) }
+    let(:ext_proj)  { build_stubbed(:project, :public) }
+    let(:ext_issue) { build_stubbed(:issue, project: ext_proj) }
 
     let(:note) do
       create :note,
@@ -241,17 +241,17 @@ describe Note do
 
   describe '#participants' do
     it 'includes the note author' do
-      project = create(:project, :public)
-      issue = create(:issue, project: project)
-      note = create(:note_on_issue, noteable: issue, project: project)
+      project = build_stubbed(:project, :public)
+      issue = build_stubbed(:issue, project: project)
+      note = build_stubbed(:note_on_issue, noteable: issue, project: project)
 
       expect(note.participants).to include(note.author)
     end
   end
 
   describe '.find_discussion' do
-    let!(:note) { create(:discussion_note_on_merge_request) }
-    let!(:note2) { create(:discussion_note_on_merge_request, in_reply_to: note) }
+    let!(:note) { build_stubbed(:discussion_note_on_merge_request) }
+    let!(:note2) { build_stubbed(:discussion_note_on_merge_request, in_reply_to: note) }
     let(:merge_request) { note.noteable }
 
     it 'returns a discussion with multiple notes' do
@@ -264,13 +264,13 @@ describe Note do
   end
 
   describe ".grouped_diff_discussions" do
-    let!(:merge_request) { create(:merge_request) }
+    let!(:merge_request) { build_stubbed(:merge_request) }
     let(:project) { merge_request.project }
-    let!(:active_diff_note1) { create(:diff_note_on_merge_request, project: project, noteable: merge_request) }
-    let!(:active_diff_note2) { create(:diff_note_on_merge_request, project: project, noteable: merge_request, in_reply_to: active_diff_note1) }
-    let!(:active_diff_note3) { create(:diff_note_on_merge_request, project: project, noteable: merge_request, position: active_position2) }
-    let!(:outdated_diff_note1) { create(:diff_note_on_merge_request, project: project, noteable: merge_request, position: outdated_position) }
-    let!(:outdated_diff_note2) { create(:diff_note_on_merge_request, project: project, noteable: merge_request, in_reply_to: outdated_diff_note1) }
+    let!(:active_diff_note1) { build_stubbed(:diff_note_on_merge_request, project: project, noteable: merge_request) }
+    let!(:active_diff_note2) { build_stubbed(:diff_note_on_merge_request, project: project, noteable: merge_request, in_reply_to: active_diff_note1) }
+    let!(:active_diff_note3) { build_stubbed(:diff_note_on_merge_request, project: project, noteable: merge_request, position: active_position2) }
+    let!(:outdated_diff_note1) { build_stubbed(:diff_note_on_merge_request, project: project, noteable: merge_request, position: outdated_position) }
+    let!(:outdated_diff_note2) { build_stubbed(:diff_note_on_merge_request, project: project, noteable: merge_request, in_reply_to: outdated_diff_note1) }
 
     let(:active_position2) do
       Gitlab::Diff::Position.new(
@@ -493,7 +493,7 @@ describe Note do
 
   describe '#discussion_class' do
     let(:note) { build(:note_on_commit) }
-    let(:merge_request) { create(:merge_request) }
+    let(:merge_request) { build_stubbed(:merge_request) }
 
     context 'when the note is displayed out of context' do
       it 'returns OutOfContextDiscussion' do
@@ -509,7 +509,7 @@ describe Note do
   end
 
   describe "#discussion_id" do
-    let(:note) { create(:note_on_commit) }
+    let(:note) { build_stubbed(:note_on_commit) }
 
     context "when it is newly created" do
       it "has a discussion id" do
@@ -533,7 +533,7 @@ describe Note do
     end
 
     context 'when the note is displayed out of context' do
-      let(:merge_request) { create(:merge_request) }
+      let(:merge_request) { build_stubbed(:merge_request) }
 
       it 'overrides the discussion id' do
         expect(note.discussion_id(merge_request)).not_to eq(note.discussion_id)
@@ -542,8 +542,8 @@ describe Note do
   end
 
   describe '#to_discussion' do
-    subject { create(:discussion_note_on_merge_request) }
-    let!(:note2) { create(:discussion_note_on_merge_request, project: subject.project, noteable: subject.noteable, in_reply_to: subject) }
+    subject { build_stubbed(:discussion_note_on_merge_request) }
+    let!(:note2) { build_stubbed(:discussion_note_on_merge_request, project: subject.project, noteable: subject.noteable, in_reply_to: subject) }
 
     it "returns a discussion with just this note" do
       discussion = subject.to_discussion
@@ -554,11 +554,11 @@ describe Note do
   end
 
   describe "#discussion" do
-    let!(:note1) { create(:discussion_note_on_merge_request) }
-    let!(:note2) { create(:diff_note_on_merge_request, project: note1.project, noteable: note1.noteable) }
+    let!(:note1) { build_stubbed(:discussion_note_on_merge_request) }
+    let!(:note2) { build_stubbed(:diff_note_on_merge_request, project: note1.project, noteable: note1.noteable) }
 
     context 'when the note is part of a discussion' do
-      subject { create(:discussion_note_on_merge_request, project: note1.project, noteable: note1.noteable, in_reply_to: note1) }
+      subject { build_stubbed(:discussion_note_on_merge_request, project: note1.project, noteable: note1.noteable, in_reply_to: note1) }
 
       it "returns the discussion this note is in" do
         discussion = subject.discussion
@@ -569,7 +569,7 @@ describe Note do
     end
 
     context 'when the note is not part of a discussion' do
-      subject { create(:note) }
+      subject { build_stubbed(:note) }
 
       it "returns a discussion with just this note" do
         discussion = subject.discussion
@@ -609,8 +609,8 @@ describe Note do
   describe '#in_reply_to?' do
     context 'for a note' do
       context 'when part of a discussion' do
-        subject { create(:discussion_note_on_issue) }
-        let(:note) { create(:discussion_note_on_issue, in_reply_to: subject) }
+        subject { build_stubbed(:discussion_note_on_issue) }
+        let(:note) { build_stubbed(:discussion_note_on_issue, in_reply_to: subject) }
 
         it 'checks if the note is in reply to the other discussion' do
           expect(subject).to receive(:in_reply_to?).with(note).and_call_original
@@ -622,8 +622,8 @@ describe Note do
       end
 
       context 'when not part of a discussion' do
-        subject { create(:note) }
-        let(:note) { create(:note, in_reply_to: subject) }
+        subject { build_stubbed(:note) }
+        let(:note) { build_stubbed(:note, in_reply_to: subject) }
 
         it 'checks if the note is in reply to the other noteable' do
           expect(subject).to receive(:in_reply_to?).with(note).and_call_original
@@ -636,8 +636,8 @@ describe Note do
 
     context 'for a discussion' do
       context 'when part of the same discussion' do
-        subject { create(:diff_note_on_merge_request) }
-        let(:note) { create(:diff_note_on_merge_request, in_reply_to: subject) }
+        subject { build_stubbed(:diff_note_on_merge_request) }
+        let(:note) { build_stubbed(:diff_note_on_merge_request, in_reply_to: subject) }
 
         it 'returns true' do
           expect(subject.in_reply_to?(note.to_discussion)).to be_truthy
@@ -645,8 +645,8 @@ describe Note do
       end
 
       context 'when not part of the same discussion' do
-        subject { create(:diff_note_on_merge_request) }
-        let(:note) { create(:diff_note_on_merge_request) }
+        subject { build_stubbed(:diff_note_on_merge_request) }
+        let(:note) { build_stubbed(:diff_note_on_merge_request) }
 
         it 'returns false' do
           expect(subject.in_reply_to?(note.to_discussion)).to be_falsey
@@ -656,8 +656,8 @@ describe Note do
 
     context 'for a noteable' do
       context 'when a comment on the same noteable' do
-        subject { create(:note) }
-        let(:note) { create(:note, in_reply_to: subject) }
+        subject { build_stubbed(:note) }
+        let(:note) { build_stubbed(:note, in_reply_to: subject) }
 
         it 'returns true' do
           expect(subject.in_reply_to?(note.noteable)).to be_truthy
@@ -665,8 +665,8 @@ describe Note do
       end
 
       context 'when not a comment on the same noteable' do
-        subject { create(:note) }
-        let(:note) { create(:note) }
+        subject { build_stubbed(:note) }
+        let(:note) { build_stubbed(:note) }
 
         it 'returns false' do
           expect(subject.in_reply_to?(note.noteable)).to be_falsey

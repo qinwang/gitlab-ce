@@ -10,7 +10,7 @@ describe FeatureGate do
       end
 
       context 'when user is persisted' do
-        let(:user) { create(:user) }
+        let(:user) { build_stubbed(:user) }
 
         it { expect(user.flipper_id).to eq "User:#{user.id}" }
       end

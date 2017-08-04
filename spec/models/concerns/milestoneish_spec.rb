@@ -1,27 +1,27 @@
 require 'spec_helper'
 
 describe Milestone, 'Milestoneish' do
-  let(:author) { create(:user) }
-  let(:assignee) { create(:user) }
-  let(:non_member) { create(:user) }
-  let(:member) { create(:user) }
-  let(:guest) { create(:user) }
-  let(:admin) { create(:admin) }
-  let(:project) { create(:project, :public) }
-  let(:milestone) { create(:milestone, project: project) }
-  let!(:issue) { create(:issue, project: project, milestone: milestone) }
-  let!(:security_issue_1) { create(:issue, :confidential, project: project, author: author, milestone: milestone) }
-  let!(:security_issue_2) { create(:issue, :confidential, project: project, assignees: [assignee], milestone: milestone) }
-  let!(:closed_issue_1) { create(:issue, :closed, project: project, milestone: milestone) }
-  let!(:closed_issue_2) { create(:issue, :closed, project: project, milestone: milestone) }
-  let!(:closed_security_issue_1) { create(:issue, :confidential, :closed, project: project, author: author, milestone: milestone) }
-  let!(:closed_security_issue_2) { create(:issue, :confidential, :closed, project: project, assignees: [assignee], milestone: milestone) }
-  let!(:closed_security_issue_3) { create(:issue, :confidential, :closed, project: project, author: author, milestone: milestone) }
-  let!(:closed_security_issue_4) { create(:issue, :confidential, :closed, project: project, assignees: [assignee], milestone: milestone) }
-  let!(:merge_request) { create(:merge_request, source_project: project, target_project: project, milestone: milestone) }
-  let(:label_1) { create(:label, title: 'label_1', project: project, priority: 1) }
-  let(:label_2) { create(:label, title: 'label_2', project: project, priority: 2) }
-  let(:label_3) { create(:label, title: 'label_3', project: project) }
+  let(:author) { build_stubbed(:user) }
+  let(:assignee) { build_stubbed(:user) }
+  let(:non_member) { build_stubbed(:user) }
+  let(:member) { build_stubbed(:user) }
+  let(:guest) { build_stubbed(:user) }
+  let(:admin) { build_stubbed(:admin) }
+  let(:project) { build_stubbed(:project, :public) }
+  let(:milestone) { build_stubbed(:milestone, project: project) }
+  let!(:issue) { build_stubbed(:issue, project: project, milestone: milestone) }
+  let!(:security_issue_1) { build_stubbed(:issue, :confidential, project: project, author: author, milestone: milestone) }
+  let!(:security_issue_2) { build_stubbed(:issue, :confidential, project: project, assignees: [assignee], milestone: milestone) }
+  let!(:closed_issue_1) { build_stubbed(:issue, :closed, project: project, milestone: milestone) }
+  let!(:closed_issue_2) { build_stubbed(:issue, :closed, project: project, milestone: milestone) }
+  let!(:closed_security_issue_1) { build_stubbed(:issue, :confidential, :closed, project: project, author: author, milestone: milestone) }
+  let!(:closed_security_issue_2) { build_stubbed(:issue, :confidential, :closed, project: project, assignees: [assignee], milestone: milestone) }
+  let!(:closed_security_issue_3) { build_stubbed(:issue, :confidential, :closed, project: project, author: author, milestone: milestone) }
+  let!(:closed_security_issue_4) { build_stubbed(:issue, :confidential, :closed, project: project, assignees: [assignee], milestone: milestone) }
+  let!(:merge_request) { build_stubbed(:merge_request, source_project: project, target_project: project, milestone: milestone) }
+  let(:label_1) { build_stubbed(:label, title: 'label_1', project: project, priority: 1) }
+  let(:label_2) { build_stubbed(:label, title: 'label_2', project: project, priority: 2) }
+  let(:label_3) { build_stubbed(:label, title: 'label_3', project: project) }
 
   before do
     project.team << [member, :developer]
@@ -44,9 +44,9 @@ describe Milestone, 'Milestoneish' do
 
   describe '#sorted_merge_requests' do
     it 'sorts merge requests by label priority' do
-      merge_request_1 = create(:labeled_merge_request, labels: [label_2], source_project: project, source_branch: 'branch_1', milestone: milestone)
-      merge_request_2 = create(:labeled_merge_request, labels: [label_1], source_project: project, source_branch: 'branch_2', milestone: milestone)
-      merge_request_3 = create(:labeled_merge_request, labels: [label_3], source_project: project, source_branch: 'branch_3', milestone: milestone)
+      merge_request_1 = build_stubbed(:labeled_merge_request, labels: [label_2], source_project: project, source_branch: 'branch_1', milestone: milestone)
+      merge_request_2 = build_stubbed(:labeled_merge_request, labels: [label_1], source_project: project, source_branch: 'branch_2', milestone: milestone)
+      merge_request_3 = build_stubbed(:labeled_merge_request, labels: [label_3], source_project: project, source_branch: 'branch_3', milestone: milestone)
 
       merge_requests = milestone.sorted_merge_requests
 

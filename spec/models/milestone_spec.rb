@@ -21,13 +21,13 @@ describe Milestone do
     it { is_expected.to have_many(:issues) }
   end
 
-  let(:project) { create(:project, :public) }
-  let(:milestone) { create(:milestone, project: project) }
-  let(:issue) { create(:issue, project: project) }
-  let(:user) { create(:user) }
+  let(:project) { build_stubbed(:project, :public) }
+  let(:milestone) { build_stubbed(:milestone, project: project) }
+  let(:issue) { build_stubbed(:issue, project: project) }
+  let(:user) { build_stubbed(:user) }
 
   describe "#title" do
-    let(:milestone) { create(:milestone, title: "<b>foo & bar -> 2.2</b>") }
+    let(:milestone) { build_stubbed(:milestone, title: "<b>foo & bar -> 2.2</b>") }
 
     it "sanitizes title" do
       expect(milestone.title).to eq("foo & bar -> 2.2")
@@ -42,7 +42,7 @@ describe Milestone do
       end
 
       it "accepts the same title in another project" do
-        project = create(:project)
+        project = build_stubbed(:project)
         new_milestone = described_class.new(project: project, title: milestone.title)
 
         expect(new_milestone).to be_valid
@@ -50,8 +50,8 @@ describe Milestone do
     end
 
     context "per group" do
-      let(:group) { create(:group) }
-      let(:milestone) { create(:milestone, group: group) }
+      let(:group) { build_stubbed(:group) }
+      let(:milestone) { build_stubbed(:milestone, group: group) }
 
       before do
         project.update(group: group)
@@ -64,7 +64,7 @@ describe Milestone do
       end
 
       it "does not accept the same title of a child project milestone" do
-        create(:milestone, project: group.projects.first)
+        build_stubbed(:milestone, project: group.projects.first)
 
         new_milestone = described_class.new(group: group, title: milestone.title)
 
@@ -167,7 +167,7 @@ describe Milestone do
   end
 
   describe '.search' do
-    let(:milestone) { create(:milestone, title: 'foo', description: 'bar') }
+    let(:milestone) { build_stubbed(:milestone, title: 'foo', description: 'bar') }
 
     it 'returns milestones with a matching title' do
       expect(described_class.search(milestone.title)).to eq([milestone])
@@ -197,20 +197,20 @@ describe Milestone do
   end
 
   describe '.upcoming_ids_by_projects' do
-    let(:project_1) { create(:project) }
-    let(:project_2) { create(:project) }
-    let(:project_3) { create(:project) }
+    let(:project_1) { build_stubbed(:project) }
+    let(:project_2) { build_stubbed(:project) }
+    let(:project_3) { build_stubbed(:project) }
     let(:projects) { [project_1, project_2, project_3] }
 
-    let!(:past_milestone_project_1) { create(:milestone, project: project_1, due_date: Time.now - 1.day) }
-    let!(:current_milestone_project_1) { create(:milestone, project: project_1, due_date: Time.now + 1.day) }
-    let!(:future_milestone_project_1) { create(:milestone, project: project_1, due_date: Time.now + 2.days) }
+    let!(:past_milestone_project_1) { build_stubbed(:milestone, project: project_1, due_date: Time.now - 1.day) }
+    let!(:current_milestone_project_1) { build_stubbed(:milestone, project: project_1, due_date: Time.now + 1.day) }
+    let!(:future_milestone_project_1) { build_stubbed(:milestone, project: project_1, due_date: Time.now + 2.days) }
 
-    let!(:past_milestone_project_2) { create(:milestone, project: project_2, due_date: Time.now - 1.day) }
-    let!(:closed_milestone_project_2) { create(:milestone, :closed, project: project_2, due_date: Time.now + 1.day) }
-    let!(:current_milestone_project_2) { create(:milestone, project: project_2, due_date: Time.now + 2.days) }
+    let!(:past_milestone_project_2) { build_stubbed(:milestone, project: project_2, due_date: Time.now - 1.day) }
+    let!(:closed_milestone_project_2) { build_stubbed(:milestone, :closed, project: project_2, due_date: Time.now + 1.day) }
+    let!(:current_milestone_project_2) { build_stubbed(:milestone, project: project_2, due_date: Time.now + 2.days) }
 
-    let!(:past_milestone_project_3) { create(:milestone, project: project_3, due_date: Time.now - 1.day) }
+    let!(:past_milestone_project_3) { build_stubbed(:milestone, project: project_3, due_date: Time.now - 1.day) }
 
     # The call to `#try` is because this returns a relation with a Postgres DB,
     # and an array of IDs with a MySQL DB.

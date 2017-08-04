@@ -15,7 +15,7 @@ describe Event do
   end
 
   describe 'Callbacks' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     describe 'after_create :reset_project_activity' do
       it 'calls the reset_project_activity method' do
@@ -42,7 +42,7 @@ describe Event do
         it 'does not update the project last_repository_updated_at' do
           project.update(last_repository_updated_at: 1.year.ago)
 
-          create(:closed_issue_event, project: project, author: project.owner)
+          build_stubbed(:closed_issue_event, project: project, author: project.owner)
 
           project.reload
 
@@ -53,7 +53,7 @@ describe Event do
   end
 
   describe "Push event" do
-    let(:project) { create(:project, :private) }
+    let(:project) { build_stubbed(:project, :private) }
     let(:user) { project.owner }
     let(:event) { create_push_event(project, user) }
 
@@ -98,31 +98,31 @@ describe Event do
     subject { described_class.new(project: target.project, target: target) }
 
     context 'issue note event' do
-      let(:target) { create(:note_on_issue) }
+      let(:target) { build_stubbed(:note_on_issue) }
 
       it { is_expected.to be_note }
     end
 
     context 'merge request diff note event' do
-      let(:target) { create(:legacy_diff_note_on_merge_request) }
+      let(:target) { build_stubbed(:legacy_diff_note_on_merge_request) }
 
       it { is_expected.to be_note }
     end
   end
 
   describe '#visible_to_user?' do
-    let(:project) { create(:project, :public) }
-    let(:non_member) { create(:user) }
-    let(:member) { create(:user) }
-    let(:guest) { create(:user) }
-    let(:author) { create(:author) }
-    let(:assignee) { create(:user) }
-    let(:admin) { create(:admin) }
-    let(:issue) { create(:issue, project: project, author: author, assignees: [assignee]) }
-    let(:confidential_issue) { create(:issue, :confidential, project: project, author: author, assignees: [assignee]) }
-    let(:note_on_commit) { create(:note_on_commit, project: project) }
-    let(:note_on_issue) { create(:note_on_issue, noteable: issue, project: project) }
-    let(:note_on_confidential_issue) { create(:note_on_issue, noteable: confidential_issue, project: project) }
+    let(:project) { build_stubbed(:project, :public) }
+    let(:non_member) { build_stubbed(:user) }
+    let(:member) { build_stubbed(:user) }
+    let(:guest) { build_stubbed(:user) }
+    let(:author) { build_stubbed(:author) }
+    let(:assignee) { build_stubbed(:user) }
+    let(:admin) { build_stubbed(:admin) }
+    let(:issue) { build_stubbed(:issue, project: project, author: author, assignees: [assignee]) }
+    let(:confidential_issue) { build_stubbed(:issue, :confidential, project: project, author: author, assignees: [assignee]) }
+    let(:note_on_commit) { build_stubbed(:note_on_commit, project: project) }
+    let(:note_on_issue) { build_stubbed(:note_on_issue, noteable: issue, project: project) }
+    let(:note_on_confidential_issue) { build_stubbed(:note_on_issue, noteable: confidential_issue, project: project) }
     let(:event) { described_class.new(project: project, target: target, author_id: author.id) }
 
     before do
@@ -143,7 +143,7 @@ describe Event do
       end
 
       context 'private project' do
-        let(:project) { create(:project, :private) }
+        let(:project) { build_stubbed(:project, :private) }
 
         it do
           aggregate_failures do
@@ -213,9 +213,9 @@ describe Event do
     end
 
     context 'merge request diff note event' do
-      let(:project) { create(:project, :public) }
-      let(:merge_request) { create(:merge_request, source_project: project, author: author, assignee: assignee) }
-      let(:note_on_merge_request) { create(:legacy_diff_note_on_merge_request, noteable: merge_request, project: project) }
+      let(:project) { build_stubbed(:project, :public) }
+      let(:merge_request) { build_stubbed(:merge_request, source_project: project, author: author, assignee: assignee) }
+      let(:note_on_merge_request) { build_stubbed(:legacy_diff_note_on_merge_request, noteable: merge_request, project: project) }
       let(:target) { note_on_merge_request }
 
       it do
@@ -228,7 +228,7 @@ describe Event do
       end
 
       context 'private project' do
-        let(:project) { create(:project, :private) }
+        let(:project) { build_stubbed(:project, :private) }
 
         it do
           expect(event.visible_to_user?(non_member)).to eq false
@@ -243,8 +243,8 @@ describe Event do
   end
 
   describe '.limit_recent' do
-    let!(:event1) { create(:closed_issue_event) }
-    let!(:event2) { create(:closed_issue_event) }
+    let!(:event1) { build_stubbed(:closed_issue_event) }
+    let!(:event2) { build_stubbed(:closed_issue_event) }
 
     describe 'without an explicit limit' do
       subject { described_class.limit_recent }
@@ -260,7 +260,7 @@ describe Event do
   end
 
   describe '#reset_project_activity' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     context 'when a project was updated less than 1 hour ago' do
       it 'does not update the project' do

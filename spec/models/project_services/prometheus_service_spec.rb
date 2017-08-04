@@ -4,7 +4,7 @@ describe PrometheusService, :use_clean_rails_memory_store_caching do
   include PrometheusHelpers
   include ReactiveCachingHelpers
 
-  let(:project) { create(:prometheus_project) }
+  let(:project) { build_stubbed(:prometheus_project) }
   let(:service) { project.prometheus_service }
   let(:environment_query) { Gitlab::Prometheus::Queries::EnvironmentQuery }
 
@@ -95,7 +95,7 @@ describe PrometheusService, :use_clean_rails_memory_store_caching do
   end
 
   describe '#calculate_reactive_cache' do
-    let(:environment) { create(:environment, slug: 'env-slug') }
+    let(:environment) { build_stubbed(:environment, slug: 'env-slug') }
 
     around do |example|
       Timecop.freeze { example.run }

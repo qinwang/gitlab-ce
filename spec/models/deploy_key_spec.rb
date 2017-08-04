@@ -7,11 +7,11 @@ describe DeployKey, :mailer do
   end
 
   describe 'notification' do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     it 'does not send a notification' do
       perform_enqueued_jobs do
-        create(:deploy_key, user: user)
+        build_stubbed(:deploy_key, user: user)
       end
 
       should_not_email(user)

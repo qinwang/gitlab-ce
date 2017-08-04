@@ -9,11 +9,11 @@ describe ProjectLabel do
     it { is_expected.to validate_presence_of(:project) }
 
     context 'validates if title must not exist at group level' do
-      let(:group) { create(:group, name: 'gitlab-org') }
-      let(:project) { create(:project, group: group) }
+      let(:group) { build_stubbed(:group, name: 'gitlab-org') }
+      let(:project) { build_stubbed(:project, group: group) }
 
       before do
-        create(:group_label, group: group, title: 'Bug')
+        build_stubbed(:group_label, group: group, title: 'Bug')
       end
 
       it 'returns error if title already exists at group level' do
@@ -33,7 +33,7 @@ describe ProjectLabel do
       end
 
       it 'does not returns error if project does not belong to group' do
-        another_project = create(:project)
+        another_project = build_stubbed(:project)
         label = described_class.new(project: another_project, title: 'Bug')
 
         label.valid?
@@ -42,8 +42,8 @@ describe ProjectLabel do
       end
 
       it 'does not returns error when title does not change' do
-        project_label = create(:label, project: project, name: 'Security')
-        create(:group_label, group: group, name: 'Security')
+        project_label = build_stubbed(:label, project: project, name: 'Security')
+        build_stubbed(:group_label, group: group, name: 'Security')
         project_label.description = 'Security related stuff.'
 
         project_label.valid?
@@ -73,7 +73,7 @@ describe ProjectLabel do
   end
 
   describe '#to_reference' do
-    let(:label) { create(:label) }
+    let(:label) { build_stubbed(:label) }
 
     context 'using id' do
       it 'returns a String reference to the object' do
@@ -87,7 +87,7 @@ describe ProjectLabel do
       end
 
       it 'uses id when name contains double quote' do
-        label = create(:label, name: %q{"irony"})
+        label = build_stubbed(:label, name: %q{"irony"})
         expect(label.to_reference(format: :name)).to eq "~#{label.id}"
       end
     end
@@ -100,7 +100,7 @@ describe ProjectLabel do
     end
 
     context 'cross project reference' do
-      let(:project) { create(:project) }
+      let(:project) { build_stubbed(:project) }
 
       context 'using name' do
         it 'returns cross reference with label name' do

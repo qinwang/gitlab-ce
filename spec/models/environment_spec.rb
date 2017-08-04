@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Environment do
-  set(:project) { create(:project) }
-  subject(:environment) { create(:environment, project: project) }
+  set(:project) { build_stubbed(:project) }
+  subject(:environment) { build_stubbed(:environment, project: project) }
 
   it { is_expected.to belong_to(:project) }
   it { is_expected.to have_many(:deployments) }
@@ -21,13 +21,13 @@ describe Environment do
   it { is_expected.to validate_uniqueness_of(:external_url).scoped_to(:project_id) }
 
   describe '.order_by_last_deployed_at' do
-    let(:project) { create(:project, :repository) }
-    let!(:environment1) { create(:environment, project: project) }
-    let!(:environment2) { create(:environment, project: project) }
-    let!(:environment3) { create(:environment, project: project) }
-    let!(:deployment1) { create(:deployment, environment: environment1) }
-    let!(:deployment2) { create(:deployment, environment: environment2) }
-    let!(:deployment3) { create(:deployment, environment: environment1) }
+    let(:project) { build_stubbed(:project, :repository) }
+    let!(:environment1) { build_stubbed(:environment, project: project) }
+    let!(:environment2) { build_stubbed(:environment, project: project) }
+    let!(:environment3) { build_stubbed(:environment, project: project) }
+    let!(:deployment1) { build_stubbed(:deployment, environment: environment1) }
+    let!(:deployment2) { build_stubbed(:deployment, environment: environment2) }
+    let!(:deployment3) { build_stubbed(:deployment, environment: environment1) }
 
     it 'returns the environments in order of having been last deployed' do
       expect(project.environments.order_by_last_deployed_at.to_a).to eq([environment3, environment2, environment1])
@@ -64,7 +64,7 @@ describe Environment do
   end
 
   describe '#includes_commit?' do
-    let(:project) { create(:project, :repository) }
+    let(:project) { build_stubbed(:project, :repository) }
 
     context 'without a last deployment' do
       it "returns false" do
@@ -74,7 +74,7 @@ describe Environment do
 
     context 'with a last deployment' do
       let!(:deployment) do
-        create(:deployment, environment: environment, sha: project.commit('master').id)
+        build_stubbed(:deployment, environment: environment, sha: project.commit('master').id)
       end
 
       context 'in the same branch' do
@@ -106,7 +106,7 @@ describe Environment do
       'test-production' => false
     }.each do |name, expected_value|
       it "returns #{expected_value} for #{name}" do
-        env = create(:environment, name: name)
+        env = build_stubbed(:environment, name: name)
 
         expect(env.update_merge_request_metrics?).to eq(expected_value)
       end
@@ -114,9 +114,9 @@ describe Environment do
   end
 
   describe '#first_deployment_for' do
-    let(:project)       { create(:project, :repository) }
-    let!(:deployment)   { create(:deployment, environment: environment, ref: commit.parent.id) }
-    let!(:deployment1)  { create(:deployment, environment: environment, ref: commit.id) }
+    let(:project)       { build_stubbed(:project, :repository) }
+    let!(:deployment)   { build_stubbed(:deployment, environment: environment, ref: commit.parent.id) }
+    let!(:deployment1)  { build_stubbed(:deployment, environment: environment, ref: commit.id) }
     let(:head_commit)   { project.commit }
     let(:commit)        { project.commit.parent }
 
@@ -157,9 +157,9 @@ describe Environment do
     end
 
     context 'when matching action is defined' do
-      let(:build) { create(:ci_build) }
-      let!(:deployment) { create(:deployment, environment: environment, deployable: build, on_stop: 'close_app') }
-      let!(:close_action) { create(:ci_build, :manual, pipeline: build.pipeline, name: 'close_app') }
+      let(:build) { build_stubbed(:ci_build) }
+      let!(:deployment) { build_stubbed(:deployment, environment: environment, deployable: build, on_stop: 'close_app') }
+      let!(:close_action) { build_stubbed(:ci_build, :manual, pipeline: build.pipeline, name: 'close_app') }
 
       context 'when environment is available' do
         before do
@@ -180,7 +180,7 @@ describe Environment do
   end
 
   describe '#stop_with_action!' do
-    let(:user) { create(:admin) }
+    let(:user) { build_stubbed(:admin) }
 
     subject { environment.stop_with_action!(user) }
 
@@ -215,18 +215,18 @@ describe Environment do
     end
 
     context 'when matching action is defined' do
-      let(:pipeline) { create(:ci_pipeline, project: project) }
-      let(:build) { create(:ci_build, pipeline: pipeline) }
+      let(:pipeline) { build_stubbed(:ci_pipeline, project: project) }
+      let(:build) { build_stubbed(:ci_build, pipeline: pipeline) }
 
       let!(:deployment) do
-        create(:deployment, environment: environment,
+        build_stubbed(:deployment, environment: environment,
                             deployable: build,
                             on_stop: 'close_app')
       end
 
       context 'when user is not allowed to stop environment' do
         let!(:close_action) do
-          create(:ci_build, :manual, pipeline: pipeline, name: 'close_app')
+          build_stubbed(:ci_build, :manual, pipeline: pipeline, name: 'close_app')
         end
 
         it 'raises an exception' do
@@ -238,13 +238,13 @@ describe Environment do
         before do
           project.add_developer(user)
 
-          create(:protected_branch, :developers_can_merge,
+          build_stubbed(:protected_branch, :developers_can_merge,
                  name: 'master', project: project)
         end
 
         context 'when action did not yet finish' do
           let!(:close_action) do
-            create(:ci_build, :manual, pipeline: pipeline, name: 'close_app')
+            build_stubbed(:ci_build, :manual, pipeline: pipeline, name: 'close_app')
           end
 
           it 'returns the same action' do
@@ -255,7 +255,7 @@ describe Environment do
 
         context 'if action did finish' do
           let!(:close_action) do
-            create(:ci_build, :manual, :success,
+            build_stubbed(:ci_build, :manual, :success,
                    pipeline: pipeline, name: 'close_app')
           end
 
@@ -274,7 +274,7 @@ describe Environment do
 
     context 'when last deployment to environment is the most recent one' do
       before do
-        create(:deployment, environment: environment, ref: 'feature')
+        build_stubbed(:deployment, environment: environment, ref: 'feature')
       end
 
       it { is_expected.to be true }
@@ -282,8 +282,8 @@ describe Environment do
 
     context 'when last deployment to environment is not the most recent' do
       before do
-        create(:deployment, environment: environment, ref: 'feature')
-        create(:deployment, environment: environment, ref: 'master')
+        build_stubbed(:deployment, environment: environment, ref: 'feature')
+        build_stubbed(:deployment, environment: environment, ref: 'master')
       end
 
       it { is_expected.to be false }
@@ -291,10 +291,10 @@ describe Environment do
   end
 
   describe '#actions_for' do
-    let(:deployment) { create(:deployment, environment: environment) }
+    let(:deployment) { build_stubbed(:deployment, environment: environment) }
     let(:pipeline) { deployment.deployable.pipeline }
-    let!(:review_action) { create(:ci_build, :manual, name: 'review-apps', pipeline: pipeline, environment: 'review/$CI_COMMIT_REF_NAME' )}
-    let!(:production_action) { create(:ci_build, :manual, name: 'production', pipeline: pipeline, environment: 'production' )}
+    let!(:review_action) { build_stubbed(:ci_build, :manual, name: 'review-apps', pipeline: pipeline, environment: 'review/$CI_COMMIT_REF_NAME' )}
+    let!(:production_action) { build_stubbed(:ci_build, :manual, name: 'production', pipeline: pipeline, environment: 'production' )}
 
     it 'returns a list of actions with matching environment' do
       expect(environment.actions_for('review/master')).to contain_exactly(review_action)
@@ -306,10 +306,10 @@ describe Environment do
 
     context 'when the enviroment is available' do
       context 'with a deployment service' do
-        let(:project) { create(:kubernetes_project) }
+        let(:project) { build_stubbed(:kubernetes_project) }
 
         context 'and a deployment' do
-          let!(:deployment) { create(:deployment, environment: environment) }
+          let!(:deployment) { build_stubbed(:deployment, environment: environment) }
           it { is_expected.to be_truthy }
         end
 
@@ -324,7 +324,7 @@ describe Environment do
     end
 
     context 'when the environment is unavailable' do
-      let(:project) { create(:kubernetes_project) }
+      let(:project) { build_stubbed(:kubernetes_project) }
 
       before do
         environment.stop
@@ -335,7 +335,7 @@ describe Environment do
   end
 
   describe '#terminals' do
-    let(:project) { create(:kubernetes_project) }
+    let(:project) { build_stubbed(:kubernetes_project) }
     subject { environment.terminals }
 
     context 'when the environment has terminals' do
@@ -366,10 +366,10 @@ describe Environment do
 
     context 'when the enviroment is available' do
       context 'with a deployment service' do
-        let(:project) { create(:prometheus_project) }
+        let(:project) { build_stubbed(:prometheus_project) }
 
         context 'and a deployment' do
-          let!(:deployment) { create(:deployment, environment: environment) }
+          let!(:deployment) { build_stubbed(:deployment, environment: environment) }
           it { is_expected.to be_truthy }
         end
 
@@ -384,7 +384,7 @@ describe Environment do
     end
 
     context 'when the environment is unavailable' do
-      let(:project) { create(:prometheus_project) }
+      let(:project) { build_stubbed(:prometheus_project) }
 
       before do
         environment.stop
@@ -395,7 +395,7 @@ describe Environment do
   end
 
   describe '#metrics' do
-    let(:project) { create(:prometheus_project) }
+    let(:project) { build_stubbed(:prometheus_project) }
     subject { environment.metrics }
 
     context 'when the environment has metrics' do
@@ -426,10 +426,10 @@ describe Environment do
 
     context 'when the enviroment is available' do
       context 'with a deployment service' do
-        let(:project) { create(:prometheus_project) }
+        let(:project) { build_stubbed(:prometheus_project) }
 
         context 'and a deployment' do
-          let!(:deployment) { create(:deployment, environment: environment) }
+          let!(:deployment) { build_stubbed(:deployment, environment: environment) }
           it { is_expected.to be_truthy }
         end
 
@@ -444,7 +444,7 @@ describe Environment do
     end
 
     context 'when the environment is unavailable' do
-      let(:project) { create(:prometheus_project) }
+      let(:project) { build_stubbed(:prometheus_project) }
 
       before do
         environment.stop
@@ -455,7 +455,7 @@ describe Environment do
   end
 
   describe '#additional_metrics' do
-    let(:project) { create(:prometheus_project) }
+    let(:project) { build_stubbed(:prometheus_project) }
     subject { environment.additional_metrics }
 
     context 'when the environment has additional metrics' do
@@ -486,10 +486,10 @@ describe Environment do
 
     context 'when the enviroment is available' do
       context 'with a deployment service' do
-        let(:project) { create(:prometheus_project) }
+        let(:project) { build_stubbed(:prometheus_project) }
 
         context 'and a deployment' do
-          let!(:deployment) { create(:deployment, environment: environment) }
+          let!(:deployment) { build_stubbed(:deployment, environment: environment) }
           it { is_expected.to be_truthy }
         end
 
@@ -504,7 +504,7 @@ describe Environment do
     end
 
     context 'when the environment is unavailable' do
-      let(:project) { create(:prometheus_project) }
+      let(:project) { build_stubbed(:prometheus_project) }
 
       before do
         environment.stop

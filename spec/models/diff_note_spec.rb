@@ -3,7 +3,7 @@ require 'spec_helper'
 describe DiffNote do
   include RepoHelpers
 
-  let(:merge_request) { create(:merge_request) }
+  let(:merge_request) { build_stubbed(:merge_request) }
   let(:project) { merge_request.project }
   let(:commit) { project.commit(sample_commit.id) }
 
@@ -29,7 +29,7 @@ describe DiffNote do
     )
   end
 
-  subject { create(:diff_note_on_merge_request, project: project, position: position, noteable: merge_request) }
+  subject { build_stubbed(:diff_note_on_merge_request, project: project, position: position, noteable: merge_request) }
 
   describe "#position=" do
     context "when provided a string" do
@@ -158,7 +158,7 @@ describe DiffNote do
   describe "creation" do
     describe "updating of position" do
       context "when noteable is a commit" do
-        let(:diff_note) { create(:diff_note_on_commit, project: project, position: position) }
+        let(:diff_note) { build_stubbed(:diff_note_on_commit, project: project, position: position) }
 
         it "doesn't update the position" do
           diff_note
@@ -169,7 +169,7 @@ describe DiffNote do
       end
 
       context "when noteable is a merge request" do
-        let(:diff_note) { create(:diff_note_on_merge_request, project: project, position: position, noteable: merge_request) }
+        let(:diff_note) { build_stubbed(:diff_note_on_merge_request, project: project, position: position, noteable: merge_request) }
 
         context "when the note is active" do
           it "doesn't update the position" do
@@ -197,7 +197,7 @@ describe DiffNote do
   end
 
   describe "#discussion_id" do
-    let(:note) { create(:diff_note_on_merge_request) }
+    let(:note) { build_stubbed(:diff_note_on_merge_request) }
 
     context "when it is newly created" do
       it "has a discussion id" do

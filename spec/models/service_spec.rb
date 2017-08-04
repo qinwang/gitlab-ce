@@ -12,10 +12,10 @@ describe Service do
 
   describe "Test Button" do
     describe '#can_test?' do
-      let(:service) { create(:service, project: project) }
+      let(:service) { build_stubbed(:service, project: project) }
 
       context 'when repository is not empty' do
-        let(:project) { create(:project, :repository) }
+        let(:project) { build_stubbed(:project, :repository) }
 
         it 'returns true' do
           expect(service.can_test?).to be true
@@ -23,7 +23,7 @@ describe Service do
       end
 
       context 'when repository is empty' do
-        let(:project) { create(:project) }
+        let(:project) { build_stubbed(:project) }
 
         it 'returns true' do
           expect(service.can_test?).to be true
@@ -33,10 +33,10 @@ describe Service do
 
     describe '#test' do
       let(:data) { 'test' }
-      let(:service) { create(:service, project: project) }
+      let(:service) { build_stubbed(:service, project: project) }
 
       context 'when repository is not empty' do
-        let(:project) { create(:project, :repository) }
+        let(:project) { build_stubbed(:project, :repository) }
 
         it 'test runs execute' do
           expect(service).to receive(:execute).with(data)
@@ -46,7 +46,7 @@ describe Service do
       end
 
       context 'when repository is empty' do
-        let(:project) { create(:project) }
+        let(:project) { build_stubbed(:project) }
 
         it 'test runs execute' do
           expect(service).to receive(:execute).with(data)
@@ -69,7 +69,7 @@ describe Service do
             api_key: '123456789'
           })
       end
-      let(:project) { create(:project) }
+      let(:project) { build_stubbed(:project) }
 
       describe 'is prefilled for projects pushover service' do
         it "has all fields prefilled" do
@@ -88,7 +88,7 @@ describe Service do
   describe "{property}_changed?" do
     let(:service) do
       BambooService.create(
-        project: create(:project),
+        project: build_stubbed(:project),
         properties: {
           bamboo_url: 'http://gitlab.com',
           username: 'mic',
@@ -128,7 +128,7 @@ describe Service do
   describe "{property}_touched?" do
     let(:service) do
       BambooService.create(
-        project: create(:project),
+        project: build_stubbed(:project),
         properties: {
           bamboo_url: 'http://gitlab.com',
           username: 'mic',
@@ -168,7 +168,7 @@ describe Service do
   describe "{property}_was" do
     let(:service) do
       BambooService.create(
-        project: create(:project),
+        project: build_stubbed(:project),
         properties: {
           bamboo_url: 'http://gitlab.com',
           username: 'mic',
@@ -208,7 +208,7 @@ describe Service do
   describe 'initialize service with no properties' do
     let(:service) do
       GitlabIssueTrackerService.create(
-        project: create(:project),
+        project: build_stubbed(:project),
         title: 'random title'
       )
     end
@@ -223,7 +223,7 @@ describe Service do
   end
 
   describe "callbacks" do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
     let!(:service) do
       RedmineService.new(
         project: project,

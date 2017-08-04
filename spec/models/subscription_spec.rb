@@ -12,7 +12,7 @@ describe Subscription do
     it { is_expected.to validate_presence_of(:user) }
 
     it 'validates uniqueness of project_id scoped to subscribable_id, subscribable_type, and user_id' do
-      create(:subscription)
+      build_stubbed(:subscription)
 
       expect(subject).to validate_uniqueness_of(:project_id).scoped_to([:subscribable_id, :subscribable_type, :user_id])
     end

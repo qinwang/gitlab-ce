@@ -4,10 +4,10 @@ describe Repository, models: true do
   include RepoHelpers
   TestBlob = Struct.new(:path)
 
-  let(:project) { create(:project, :repository) }
+  let(:project) { build_stubbed(:project, :repository) }
   let(:repository) { project.repository }
-  let(:broken_repository) { create(:project, :broken_storage).repository }
-  let(:user) { create(:user) }
+  let(:broken_repository) { build_stubbed(:project, :broken_storage).repository }
+  let(:user) { build_stubbed(:user) }
   let(:committer) { Gitlab::Git::Committer.from_user(user) }
 
   let(:commit_options) do
@@ -16,7 +16,7 @@ describe Repository, models: true do
   end
 
   let(:merge_commit) do
-    merge_request = create(:merge_request, source_branch: 'feature', target_branch: 'master', source_project: project)
+    merge_request = build_stubbed(:merge_request, source_branch: 'feature', target_branch: 'master', source_project: project)
 
     merge_commit_id = repository.merge(user,
                                        merge_request.diff_head_sha,
@@ -371,7 +371,7 @@ describe Repository, models: true do
     end
 
     context "when committing to another project" do
-      let(:forked_project) { create(:project, :repository) }
+      let(:forked_project) { build_stubbed(:project, :repository) }
 
       it "creates a fork and commit to the forked project" do
         expect do
@@ -586,7 +586,7 @@ describe Repository, models: true do
     end
 
     it 'properly handles query when repo is empty' do
-      repository = create(:project).repository
+      repository = build_stubbed(:project).repository
       results = repository.search_files_by_content('test', 'master')
 
       expect(results).to match_array([])
@@ -622,7 +622,7 @@ describe Repository, models: true do
     end
 
     it 'properly handles query when repo is empty' do
-      repository = create(:project).repository
+      repository = build_stubbed(:project).repository
 
       results = repository.search_files_by_name('test', 'master')
 
@@ -1091,7 +1091,7 @@ describe Repository, models: true do
       end
 
       it 'expires creation and branch cache' do
-        empty_repository = create(:project, :empty_repo).repository
+        empty_repository = build_stubbed(:project, :empty_repo).repository
 
         expect(empty_repository).to receive(:expire_exists_cache)
         expect(empty_repository).to receive(:expire_root_ref_cache)
@@ -1181,7 +1181,7 @@ describe Repository, models: true do
   end
 
   describe '#empty?' do
-    let(:empty_repository) { create(:project_empty_repo).repository }
+    let(:empty_repository) { build_stubbed(:project_empty_repo).repository }
 
     it 'returns true for an empty repository' do
       expect(empty_repository.empty?).to eq(true)
@@ -1285,7 +1285,7 @@ describe Repository, models: true do
   end
 
   describe '#merge' do
-    let(:merge_request) { create(:merge_request, source_branch: 'feature', target_branch: 'master', source_project: project) }
+    let(:merge_request) { build_stubbed(:merge_request, source_branch: 'feature', target_branch: 'master', source_project: project) }
 
     let(:commit_options) do
       author = repository.user_to_committer(user)
@@ -1675,7 +1675,7 @@ describe Repository, models: true do
   end
 
   describe '#rm_branch' do
-    let(:user) { create(:user) }
+    let(:user) { build_stubbed(:user) }
 
     it 'removes a branch' do
       expect(repository).to receive(:before_remove_branch)
@@ -1689,7 +1689,7 @@ describe Repository, models: true do
     it 'removes a tag' do
       expect(repository).to receive(:before_remove_tag)
 
-      repository.rm_tag(create(:user), 'v1.1.0')
+      repository.rm_tag(build_stubbed(:user), 'v1.1.0')
 
       expect(repository.find_tag('v1.1.0')).to be_nil
     end

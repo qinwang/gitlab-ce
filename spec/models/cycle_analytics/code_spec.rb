@@ -3,15 +3,15 @@ require 'spec_helper'
 describe 'CycleAnalytics#code' do
   extend CycleAnalyticsHelpers::TestGeneration
 
-  let(:project) { create(:project, :repository) }
+  let(:project) { build_stubbed(:project, :repository) }
   let(:from_date) { 10.days.ago }
-  let(:user) { create(:user, :admin) }
+  let(:user) { build_stubbed(:user, :admin) }
   subject { CycleAnalytics.new(project, from: from_date) }
 
   context 'with deployment' do
     generate_cycle_analytics_spec(
       phase: :code,
-      data_fn: -> (context) { { issue: context.create(:issue, project: context.project) } },
+      data_fn: -> (context) { { issue: context.build_stubbed(:issue, project: context.project) } },
       start_time_conditions: [["issue mentioned in a commit",
                                -> (context, data) do
                                  context.create_commit_referencing_issue(data[:issue])
@@ -27,7 +27,7 @@ describe 'CycleAnalytics#code' do
 
     context "when a regular merge request (that doesn't close the issue) is created" do
       it "returns nil" do
-        issue = create(:issue, project: project)
+        issue = build_stubbed(:issue, project: project)
 
         create_commit_referencing_issue(issue)
         create_merge_request_closing_issue(issue, message: "Closes nothing")
@@ -43,7 +43,7 @@ describe 'CycleAnalytics#code' do
   context 'without deployment' do
     generate_cycle_analytics_spec(
       phase: :code,
-      data_fn: -> (context) { { issue: context.create(:issue, project: context.project) } },
+      data_fn: -> (context) { { issue: context.build_stubbed(:issue, project: context.project) } },
       start_time_conditions: [["issue mentioned in a commit",
                                -> (context, data) do
                                  context.create_commit_referencing_issue(data[:issue])
@@ -58,7 +58,7 @@ describe 'CycleAnalytics#code' do
 
     context "when a regular merge request (that doesn't close the issue) is created" do
       it "returns nil" do
-        issue = create(:issue, project: project)
+        issue = build_stubbed(:issue, project: project)
 
         create_commit_referencing_issue(issue)
         create_merge_request_closing_issue(issue, message: "Closes nothing")

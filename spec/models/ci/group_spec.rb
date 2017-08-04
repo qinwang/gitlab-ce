@@ -31,8 +31,8 @@ describe Ci::Group do
 
     context 'when there are more than one commit status in the group' do
       let(:jobs) do
-        [create(:ci_build, :failed),
-         create(:ci_build, :success)]
+        [build_stubbed(:ci_build, :failed),
+         build_stubbed(:ci_build, :success)]
       end
 
       it 'fabricates a new detailed status object' do

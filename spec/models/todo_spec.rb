@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Todo do
-  let(:issue) { create(:issue) }
+  let(:issue) { build_stubbed(:issue) }
 
   describe 'relationships' do
     it { is_expected.to belong_to(:author).class_name("User") }
@@ -56,12 +56,12 @@ describe Todo do
 
   describe '#done' do
     it 'changes state to done' do
-      todo = create(:todo, state: :pending)
+      todo = build_stubbed(:todo, state: :pending)
       expect { todo.done }.to change(todo, :state).from('pending').to('done')
     end
 
     it 'does not raise error when is already done' do
-      todo = create(:todo, state: :done)
+      todo = build_stubbed(:todo, state: :done)
       expect { todo.done }.not_to raise_error
     end
   end
@@ -80,7 +80,7 @@ describe Todo do
 
   describe '#target' do
     context 'for commits' do
-      let(:project) { create(:project, :repository) }
+      let(:project) { build_stubbed(:project, :repository) }
       let(:commit) { project.commit }
 
       it 'returns an instance of Commit when exists' do
@@ -110,7 +110,7 @@ describe Todo do
 
   describe '#target_reference' do
     it 'returns commit full reference with short id' do
-      project = create(:project, :repository)
+      project = build_stubbed(:project, :repository)
       commit = project.commit
 
       subject.project = project

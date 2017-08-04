@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe ProtectableDropdown do
-  let(:project) { create(:project, :repository) }
+  let(:project) { build_stubbed(:project, :repository) }
   let(:subject) { described_class.new(project, :branches) }
 
   describe 'initialize' do
@@ -22,7 +22,7 @@ describe ProtectableDropdown do
     it "includes branches matching a protected branch wildcard" do
       expect(subject.protectable_ref_names).to include('feature')
 
-      create(:protected_branch, name: 'feat*', project: project)
+      build_stubbed(:protected_branch, name: 'feat*', project: project)
 
       subject = described_class.new(project.reload, :branches)
 

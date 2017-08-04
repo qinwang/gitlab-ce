@@ -8,8 +8,8 @@ describe Ability do
   end
 
   describe '.can_edit_note?' do
-    let(:project) { create(:project) }
-    let(:note) { create(:note_on_issue, project: project) }
+    let(:project) { build_stubbed(:project) }
+    let(:note) { build_stubbed(:note_on_issue, project: project) }
 
     context 'using an anonymous user' do
       it 'returns false' do
@@ -19,15 +19,15 @@ describe Ability do
 
     context 'using a system note' do
       it 'returns false' do
-        system_note = create(:note, system: true)
-        user = create(:user)
+        system_note = build_stubbed(:note, system: true)
+        user = build_stubbed(:user)
 
         expect(described_class.can_edit_note?(user, system_note)).to be_falsy
       end
     end
 
     context 'using users with different access levels' do
-      let(:user) { create(:user) }
+      let(:user) { build_stubbed(:user) }
 
       it 'returns true for the author' do
         expect(described_class.can_edit_note?(note.author, note)).to be_truthy
@@ -52,7 +52,7 @@ describe Ability do
       end
 
       it 'returns true for a group owner' do
-        group = create(:group)
+        group = build_stubbed(:group)
         project.project_group_links.create(
           group: group,
           group_access: Gitlab::Access::MASTER)
@@ -66,7 +66,7 @@ describe Ability do
   describe '.users_that_can_read_project' do
     context 'using a public project' do
       it 'returns all the users' do
-        project = create(:project, :public)
+        project = build_stubbed(:project, :public)
         user = build(:user)
 
         expect(described_class.users_that_can_read_project([user], project))
@@ -75,7 +75,7 @@ describe Ability do
     end
 
     context 'using an internal project' do
-      let(:project) { create(:project, :internal) }
+      let(:project) { build_stubbed(:project, :internal) }
 
       it 'returns users that are administrators' do
         user = build(:user, admin: true)
@@ -126,7 +126,7 @@ describe Ability do
     end
 
     context 'using a private project' do
-      let(:project) { create(:project, :private) }
+      let(:project) { build_stubbed(:project, :private) }
 
       it 'returns users that are administrators' do
         user = build(:user, admin: true)
@@ -186,19 +186,19 @@ describe Ability do
     let(:author) { users[0] }
 
     it 'private snippet is readable only by its author' do
-      snippet = create(:personal_snippet, :private, author: author)
+      snippet = build_stubbed(:personal_snippet, :private, author: author)
 
       expect(users_for_snippet(snippet)).to match_array([author])
     end
 
     it 'internal snippet is readable by all registered users' do
-      snippet = create(:personal_snippet, :public, author: author)
+      snippet = build_stubbed(:personal_snippet, :public, author: author)
 
       expect(users_for_snippet(snippet)).to match_array(users)
     end
 
     it 'public snippet is readable by all users' do
-      snippet = create(:personal_snippet, :public, author: author)
+      snippet = build_stubbed(:personal_snippet, :public, author: author)
 
       expect(users_for_snippet(snippet)).to match_array(users)
     end
@@ -253,7 +253,7 @@ describe Ability do
   end
 
   describe '.project_disabled_features_rules' do
-    let(:project) { create(:project, :wiki_disabled) }
+    let(:project) { build_stubbed(:project, :wiki_disabled) }
 
     subject { described_class.policy_for(project.owner, project) }
 

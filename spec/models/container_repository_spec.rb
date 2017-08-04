@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe ContainerRepository do
-  let(:group) { create(:group, name: 'group') }
-  let(:project) { create(:project, path: 'test', group: group) }
+  let(:group) { build_stubbed(:group, name: 'group') }
+  let(:project) { build_stubbed(:project, path: 'test', group: group) }
 
   let(:repository) do
-    create(:container_repository, name: 'my_image', project: project)
+    build_stubbed(:container_repository, name: 'my_image', project: project)
   end
 
   before do
@@ -41,7 +41,7 @@ describe ContainerRepository do
     end
 
     context 'when path contains uppercase letters' do
-      let(:project) { create(:project, :repository, path: 'MY_PROJECT', group: group) }
+      let(:project) { build_stubbed(:project, :repository, path: 'MY_PROJECT', group: group) }
 
       it 'returns a full path without capital letters' do
         expect(repository.path).to eq('group/my_project/my_image')
@@ -75,7 +75,7 @@ describe ContainerRepository do
 
   describe '#delete_tags!' do
     let(:repository) do
-      create(:container_repository, name: 'my_image',
+      build_stubbed(:container_repository, name: 'my_image',
                                     tags: %w[latest rc1],
                                     project: project)
     end
@@ -118,7 +118,7 @@ describe ContainerRepository do
 
   describe '#root_repository?' do
     context 'when repository is a root repository' do
-      let(:repository) { create(:container_repository, :root) }
+      let(:repository) { build_stubbed(:container_repository, :root) }
 
       it 'returns true' do
         expect(repository).to be_root_repository
@@ -185,7 +185,7 @@ describe ContainerRepository do
     end
 
     context 'when received multi-level repository with nested groups' do
-      let(:group) { create(:group, :nested, name: 'nested') }
+      let(:group) { build_stubbed(:group, :nested, name: 'nested') }
       let(:path) { project.full_path + '/some/image' }
 
       it 'fabricates repository assigned to a correct project' do

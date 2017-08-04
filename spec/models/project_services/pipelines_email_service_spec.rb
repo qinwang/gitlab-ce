@@ -2,10 +2,10 @@ require 'spec_helper'
 
 describe PipelinesEmailService, :mailer do
   let(:pipeline) do
-    create(:ci_pipeline, project: project, sha: project.commit('master').sha)
+    build_stubbed(:ci_pipeline, project: project, sha: project.commit('master').sha)
   end
 
-  let(:project) { create(:project, :repository) }
+  let(:project) { build_stubbed(:project, :repository) }
   let(:recipient) { 'test@gitlab.com' }
 
   let(:data) do
@@ -31,9 +31,9 @@ describe PipelinesEmailService, :mailer do
   end
 
   describe '#test_data' do
-    let(:build)   { create(:ci_build) }
+    let(:build)   { build_stubbed(:ci_build) }
     let(:project) { build.project }
-    let(:user)    { create(:user) }
+    let(:user)    { build_stubbed(:user) }
 
     before do
       project.team << [user, :developer]

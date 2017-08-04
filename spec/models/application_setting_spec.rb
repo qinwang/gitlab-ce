@@ -257,7 +257,7 @@ describe ApplicationSetting do
     describe 'performance_bar_allowed_group_id=' do
       context 'with a blank path' do
         before do
-          setting.performance_bar_allowed_group_id = create(:group).full_path
+          setting.performance_bar_allowed_group_id = build_stubbed(:group).full_path
         end
 
         it 'persists nil for a "" path and clears allowed user IDs cache' do
@@ -278,7 +278,7 @@ describe ApplicationSetting do
       end
 
       context 'with a path to an existing group' do
-        let(:group) { create(:group) }
+        let(:group) { build_stubbed(:group) }
 
         it 'persists a valid group path and clears allowed user IDs cache' do
           expect(Gitlab::PerformanceBar).to receive(:expire_allowed_user_ids_cache)
@@ -324,7 +324,7 @@ describe ApplicationSetting do
       end
 
       context 'with a performance_bar_allowed_group_id saved' do
-        let(:group) { create(:group) }
+        let(:group) { build_stubbed(:group) }
 
         before do
           setting.performance_bar_allowed_group_id = group.full_path
@@ -338,7 +338,7 @@ describe ApplicationSetting do
 
     describe 'performance_bar_enabled' do
       context 'with the Performance Bar is enabled' do
-        let(:group) { create(:group) }
+        let(:group) { build_stubbed(:group) }
 
         before do
           setting.performance_bar_allowed_group_id = group.full_path
@@ -352,7 +352,7 @@ describe ApplicationSetting do
 
     describe 'performance_bar_enabled=' do
       context 'when the performance bar is enabled' do
-        let(:group) { create(:group) }
+        let(:group) { build_stubbed(:group) }
 
         before do
           setting.performance_bar_allowed_group_id = group.full_path

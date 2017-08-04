@@ -16,7 +16,7 @@ describe User, 'TokenAuthenticatable' do
   it_behaves_like 'TokenAuthenticatable'
 
   describe 'ensures authentication token' do
-    subject { create(:user).send(token_field) }
+    subject { build_stubbed(:user).send(token_field) }
     it { is_expected.to be_a String }
   end
 end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe SnippetBlob do
-  let(:snippet) { create(:snippet) }
+  let(:snippet) { build_stubbed(:snippet) }
 
   subject { described_class.new(snippet) }
 
@@ -31,7 +31,7 @@ describe SnippetBlob do
 
   describe '#rendered_markup' do
     context 'when the content is GFM' do
-      let(:snippet) { create(:snippet, file_name: 'file.md') }
+      let(:snippet) { build_stubbed(:snippet, file_name: 'file.md') }
 
       it 'returns the rendered GFM' do
         expect(subject.rendered_markup).to eq(snippet.content_html)

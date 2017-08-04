@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe WikiPage do
-  let(:project) { create(:project) }
+  let(:project) { build_stubbed(:project) }
   let(:user) { project.owner }
   let(:wiki) { ProjectWiki.new(project, user) }
 
@@ -350,7 +350,7 @@ describe WikiPage do
   end
 
   describe '#==' do
-    let(:original_wiki_page) { create(:wiki_page) }
+    let(:original_wiki_page) { build_stubbed(:wiki_page) }
 
     it 'returns true for identical wiki page' do
       expect(original_wiki_page).to eq(original_wiki_page)

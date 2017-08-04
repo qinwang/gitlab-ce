@@ -3,10 +3,10 @@ require 'spec_helper'
 describe Discussion do
   subject { described_class.new([first_note, second_note, third_note]) }
 
-  let(:first_note) { create(:diff_note_on_merge_request) }
+  let(:first_note) { build_stubbed(:diff_note_on_merge_request) }
   let(:merge_request) { first_note.noteable }
-  let(:second_note) { create(:diff_note_on_merge_request, in_reply_to: first_note) }
-  let(:third_note) { create(:diff_note_on_merge_request) }
+  let(:second_note) { build_stubbed(:diff_note_on_merge_request, in_reply_to: first_note) }
+  let(:third_note) { build_stubbed(:diff_note_on_merge_request) }
 
   describe '.build' do
     it 'returns a discussion of the right type' do

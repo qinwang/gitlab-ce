@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Issuable do
   let(:issuable_class) { Issue }
-  let(:issue) { create(:issue) }
-  let(:user) { create(:user) }
+  let(:issue) { build_stubbed(:issue) }
+  let(:user) { build_stubbed(:user) }
 
   describe "Associations" do
     subject { build(:issue) }
@@ -14,7 +14,7 @@ describe Issuable do
     it { is_expected.to have_many(:todos).dependent(:destroy) }
 
     context 'Notes' do
-      let!(:note) { create(:note, noteable: issue, project: issue.project) }
+      let!(:note) { build_stubbed(:note, noteable: issue, project: issue.project) }
       let(:scoped_issue) { Issue.includes(notes: :author).find(issue.id) }
 
       it 'indicates if the notes have their authors loaded' do
@@ -66,7 +66,7 @@ describe Issuable do
   end
 
   describe ".search" do
-    let!(:searchable_issue) { create(:issue, title: "Searchable awesome issue") }
+    let!(:searchable_issue) { build_stubbed(:issue, title: "Searchable awesome issue") }
 
     it 'returns issues with a matching title' do
       expect(issuable_class.search(searchable_issue.title))
@@ -93,7 +93,7 @@ describe Issuable do
 
   describe ".full_search" do
     let!(:searchable_issue) do
-      create(:issue, title: "Searchable awesome issue", description: 'Many cute kittens')
+      build_stubbed(:issue, title: "Searchable awesome issue", description: 'Many cute kittens')
     end
 
     it 'returns issues with a matching title' do
@@ -175,7 +175,7 @@ describe Issuable do
   end
 
   describe "#sort" do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     context "by milestone due date" do
       # Correct order is:
@@ -183,12 +183,12 @@ describe Issuable do
       # Issues/MRs with milestones without dates
       # Issues/MRs without milestones
 
-      let!(:issue) { create(:issue, project: project) }
-      let!(:early_milestone) { create(:milestone, project: project, due_date: 10.days.from_now) }
-      let!(:late_milestone) { create(:milestone, project: project, due_date: 30.days.from_now) }
-      let!(:issue1) { create(:issue, project: project, milestone: early_milestone) }
-      let!(:issue2) { create(:issue, project: project, milestone: late_milestone) }
-      let!(:issue3) { create(:issue, project: project) }
+      let!(:issue) { build_stubbed(:issue, project: project) }
+      let!(:early_milestone) { build_stubbed(:milestone, project: project, due_date: 10.days.from_now) }
+      let!(:late_milestone) { build_stubbed(:milestone, project: project, due_date: 30.days.from_now) }
+      let!(:issue1) { build_stubbed(:issue, project: project, milestone: early_milestone) }
+      let!(:issue2) { build_stubbed(:issue, project: project, milestone: late_milestone) }
+      let!(:issue3) { build_stubbed(:issue, project: project) }
 
       it "sorts desc" do
         issues = project.issues.sort('milestone_due_desc')
@@ -203,7 +203,7 @@ describe Issuable do
 
     context 'when all of the results are level on the sort key' do
       let!(:issues) do
-        10.times { create(:issue, project: project) }
+        10.times { build_stubbed(:issue, project: project) }
       end
 
       it 'has no duplicates across pages' do
@@ -286,7 +286,7 @@ describe Issuable do
     end
 
     context "merge_request is assigned" do
-      let(:merge_request) { create(:merge_request) }
+      let(:merge_request) { build_stubbed(:merge_request) }
       let(:data) { merge_request.to_hook_data(user) }
 
       before do
@@ -300,7 +300,7 @@ describe Issuable do
     end
 
     context 'issue has labels' do
-      let(:labels) { [create(:label), create(:label)] }
+      let(:labels) { [build_stubbed(:label), build_stubbed(:label)] }
 
       before do
         issue.update_attribute(:labels, labels)
@@ -316,9 +316,9 @@ describe Issuable do
   end
 
   describe '#labels_array' do
-    let(:project) { create(:project) }
-    let(:bug) { create(:label, project: project, title: 'bug') }
-    let(:issue) { create(:issue, project: project) }
+    let(:project) { build_stubbed(:project) }
+    let(:bug) { build_stubbed(:label, project: project, title: 'bug') }
+    let(:issue) { build_stubbed(:issue, project: project) }
 
     before do
       issue.labels << bug
@@ -330,9 +330,9 @@ describe Issuable do
   end
 
   describe '#user_notes_count' do
-    let(:project) { create(:project) }
-    let(:issue1) { create(:issue, project: project) }
-    let(:issue2) { create(:issue, project: project) }
+    let(:project) { build_stubbed(:project) }
+    let(:issue1) { build_stubbed(:issue, project: project) }
+    let(:issue2) { build_stubbed(:issue, project: project) }
 
     before do
       create_list(:note, 3, noteable: issue1, project: project)
@@ -349,8 +349,8 @@ describe Issuable do
     let(:project) { issue.project }
 
     before do
-      create(:award_emoji, :upvote, awardable: issue)
-      create(:award_emoji, :downvote, awardable: issue)
+      build_stubbed(:award_emoji, :upvote, awardable: issue)
+      build_stubbed(:award_emoji, :downvote, awardable: issue)
     end
 
     it "returns correct values" do
@@ -360,20 +360,20 @@ describe Issuable do
   end
 
   describe '.order_due_date_and_labels_priority' do
-    let(:project) { create(:project) }
+    let(:project) { build_stubbed(:project) }
 
     def create_issue(milestone, labels)
-      create(:labeled_issue, milestone: milestone, labels: labels, project: project)
+      build_stubbed(:labeled_issue, milestone: milestone, labels: labels, project: project)
     end
 
     it 'sorts issues in order of milestone due date, then label priority' do
-      first_priority = create(:label, project: project, priority: 1)
-      second_priority = create(:label, project: project, priority: 2)
-      no_priority = create(:label, project: project)
+      first_priority = build_stubbed(:label, project: project, priority: 1)
+      second_priority = build_stubbed(:label, project: project, priority: 2)
+      no_priority = build_stubbed(:label, project: project)
 
-      first_milestone = create(:milestone, project: project, due_date: Time.now)
-      second_milestone = create(:milestone, project: project, due_date: Time.now + 1.month)
-      third_milestone = create(:milestone, project: project)
+      first_milestone = build_stubbed(:milestone, project: project, due_date: Time.now)
+      second_milestone = build_stubbed(:milestone, project: project, due_date: Time.now + 1.month)
+      third_milestone = build_stubbed(:milestone, project: project)
 
       # The issues here are ordered by label priority, to ensure that we don't
       # accidentally just sort by creation date.
@@ -400,8 +400,8 @@ describe Issuable do
   end
 
   describe '.order_labels_priority' do
-    let(:label_1) { create(:label, title: 'label_1', project: issue.project, priority: 1) }
-    let(:label_2) { create(:label, title: 'label_2', project: issue.project, priority: 2) }
+    let(:label_1) { build_stubbed(:label, title: 'label_1', project: issue.project, priority: 1) }
+    let(:label_2) { build_stubbed(:label, title: 'label_2', project: issue.project, priority: 2) }
 
     subject { Issue.order_labels_priority(excluded_labels: ['label_1']).first.highest_priority }
 
@@ -414,13 +414,13 @@ describe Issuable do
   end
 
   describe ".with_label" do
-    let(:project) { create(:project, :public) }
-    let(:bug) { create(:label, project: project, title: 'bug') }
-    let(:feature) { create(:label, project: project, title: 'feature') }
-    let(:enhancement) { create(:label, project: project, title: 'enhancement') }
-    let(:issue1) { create(:issue, title: "Bugfix1", project: project) }
-    let(:issue2) { create(:issue, title: "Bugfix2", project: project) }
-    let(:issue3) { create(:issue, title: "Feature1", project: project) }
+    let(:project) { build_stubbed(:project, :public) }
+    let(:bug) { build_stubbed(:label, project: project, title: 'bug') }
+    let(:feature) { build_stubbed(:label, project: project, title: 'feature') }
+    let(:enhancement) { build_stubbed(:label, project: project, title: 'enhancement') }
+    let(:issue1) { build_stubbed(:issue, title: "Bugfix1", project: project) }
+    let(:issue2) { build_stubbed(:issue, title: "Bugfix2", project: project) }
+    let(:issue3) { build_stubbed(:issue, title: "Feature1", project: project) }
 
     before do
       issue1.labels << bug
@@ -444,8 +444,8 @@ describe Issuable do
   end
 
   describe '#spend_time' do
-    let(:user) { create(:user) }
-    let(:issue) { create(:issue) }
+    let(:user) { build_stubbed(:user) }
+    let(:issue) { build_stubbed(:issue) }
 
     def spend_time(seconds)
       issue.spend_time(duration: seconds, user: user)

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Ci::ArtifactBlob do
-  let(:build) { create(:ci_build, :artifacts) }
+  let(:build) { build_stubbed(:ci_build, :artifacts) }
   let(:entry) { build.artifacts_metadata_entry('other_artifacts_0.1.2/another-subdirectory/banana_sample.gif') }
 
   subject { described_class.new(entry) }
