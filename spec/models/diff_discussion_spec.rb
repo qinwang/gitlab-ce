@@ -5,8 +5,8 @@ describe DiffDiscussion do
 
   subject { described_class.new([diff_note]) }
 
-  let(:project) { build_stubbed(:project, :repository) }
-  let(:merge_request) { build_stubbed(:merge_request, source_project: project, target_project: project) }
+  let(:project) { create(:project, :repository) }
+  let(:merge_request) { create(:merge_request, source_project: project, target_project: project) }
   let(:diff_note) { build_stubbed(:diff_note_on_merge_request, noteable: merge_request, project: project) }
 
   describe '#reply_attributes' do
@@ -18,7 +18,7 @@ describe DiffDiscussion do
   end
 
   describe '#merge_request_version_params' do
-    let(:merge_request) { build_stubbed(:merge_request, source_project: project, target_project: project, importing: true) }
+    let(:merge_request) { create(:merge_request, source_project: project, target_project: project, importing: true) }
     let!(:merge_request_diff1) { merge_request.merge_request_diffs.create(head_commit_sha: '6f6d7e7ed97bb5f0054f2b1df789b39ca89b6ff9') }
     let!(:merge_request_diff2) { merge_request.merge_request_diffs.create(head_commit_sha: nil) }
     let!(:merge_request_diff3) { merge_request.merge_request_diffs.create(head_commit_sha: '5937ac0a7beb003549fc5fd26fc247adbce4a52e') }
@@ -40,7 +40,7 @@ describe DiffDiscussion do
         )
       end
 
-      let(:diff_note) { build_stubbed(:diff_note_on_merge_request, noteable: merge_request, project: project, position: position) }
+      let(:diff_note) { create(:diff_note_on_merge_request, noteable: merge_request, project: project, position: position) }
 
       before do
         diff_note.position = diff_note.original_position
@@ -63,7 +63,7 @@ describe DiffDiscussion do
         )
       end
 
-      let(:diff_note) { build_stubbed(:diff_note_on_merge_request, noteable: merge_request, project: project, position: position) }
+      let(:diff_note) { create(:diff_note_on_merge_request, noteable: merge_request, project: project, position: position) }
 
       before do
         diff_note.position = diff_note.original_position
@@ -76,7 +76,7 @@ describe DiffDiscussion do
     end
 
     context 'when the discussion does not have a merge request version' do
-      let(:diff_note) { build_stubbed(:diff_note_on_merge_request, noteable: merge_request, project: project, diff_refs: project.commit(sample_commit.id).diff_refs) }
+      let(:diff_note) { create(:diff_note_on_merge_request, noteable: merge_request, project: project, diff_refs: project.commit(sample_commit.id).diff_refs) }
 
       before do
         diff_note.position = diff_note.original_position

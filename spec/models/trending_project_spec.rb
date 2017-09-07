@@ -2,24 +2,24 @@ require 'spec_helper'
 
 describe TrendingProject do
   let(:user) { build_stubbed(:user) }
-  let(:public_project1) { build_stubbed(:project, :public) }
-  let(:public_project2) { build_stubbed(:project, :public) }
-  let(:public_project3) { build_stubbed(:project, :public) }
-  let(:private_project) { build_stubbed(:project, :private) }
-  let(:internal_project) { build_stubbed(:project, :internal) }
+  let(:public_project1) { create(:project, :public) }
+  let(:public_project2) { create(:project, :public) }
+  let(:public_project3) { create(:project, :public) }
+  let(:private_project) { create(:project, :private) }
+  let(:internal_project) { create(:project, :internal) }
 
   before do
     3.times do
-      build_stubbed(:note_on_commit, project: public_project1)
+      create(:note_on_commit, project: public_project1)
     end
 
     2.times do
-      build_stubbed(:note_on_commit, project: public_project2)
+      create(:note_on_commit, project: public_project2)
     end
 
-    build_stubbed(:note_on_commit, project: public_project3, created_at: 5.weeks.ago)
-    build_stubbed(:note_on_commit, project: private_project)
-    build_stubbed(:note_on_commit, project: internal_project)
+    create(:note_on_commit, project: public_project3, created_at: 5.weeks.ago)
+    create(:note_on_commit, project: private_project)
+    create(:note_on_commit, project: internal_project)
   end
 
   describe '.refresh!' do
