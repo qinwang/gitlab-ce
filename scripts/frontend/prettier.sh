@@ -13,22 +13,18 @@ fi
 case $1 in
 check)
   action=check
-  prettier_args=--list-different
   files=staged
   ;;
 save)
   action=save
-  prettier_args=--write
   files=staged
   ;;
 check-all)
   action=check
-  prettier_args=--list-different
   files=all
   ;;
 save-all)
   action=save
-  prettier_args=--write
   files=all
   ;;
 *)
@@ -46,7 +42,7 @@ else
 fi
 
 if [ "$action" == "check" ]; then
-    if $PRETTIER_PATH $prettier_args $file_list; then
+    if $PRETTIER_PATH --list-different $file_list; then
         echo -e "\nFormat of $files files is correct."
         exit 0
     else
@@ -56,7 +52,7 @@ if [ "$action" == "check" ]; then
 fi
 
 if [ "$action" == "save" ]; then
-    if $PRETTIER_PATH $prettier_args $file_list; then
+    if $PRETTIER_PATH --write $file_list; then
         echo -e "\nFormatted $files files successfully with prettier."
         exit 0
     else
