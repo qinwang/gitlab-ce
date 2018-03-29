@@ -37,7 +37,7 @@ save-all)
   ;;
 esac
 
-echo "Loading $files files ..."
+echo -e "Loading $files files ...\n"
 
 if [ "$files" == "staged" ]; then
     file_list=$(git diff --name-only --cached --diff-filter=ACMRTUB '*.vue' '*.js' '*.scss'  | tr '\r\n' ' ')
@@ -46,18 +46,16 @@ else
 fi
 
 if [ "$action" == "check" ]; then
-    echo -e "Running command: prettier $prettier_args $file_list\n"
     if $PRETTIER_PATH $prettier_args $file_list; then
         echo -e "\nFormat of $files files is correct."
         exit 0
     else
-        echo -e "\nPlease format the files listed above."
+        echo -e "\n===============================\nGitLab uses Prettier to format all JavaScript code.\nPlease format each file listed below or run 'yarn prettier-$files-save'\n===============================\n"
         exit 1
     fi
 fi
 
 if [ "$action" == "save" ]; then
-    echo -e "Running command: prettier $prettier_args $file_list\n"
     if $PRETTIER_PATH $prettier_args $file_list; then
         echo -e "\nFormatted $files files successfully with prettier."
         exit 0
