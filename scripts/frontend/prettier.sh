@@ -50,7 +50,7 @@ if [ "$action" == "check" ]; then
         echo -e "\nFormat of $files files is correct."
         exit 0
     else
-        echo -e "\n===============================\nGitLab uses Prettier to format all JavaScript code.\nPlease format each file listed below or run 'yarn prettier-$files-save'\n===============================\n"
+        echo -e "\n===============================\nGitLab uses Prettier to format all JavaScript code.\nPlease format each file listed above or run 'yarn prettier-$files-save'\n===============================\n"
         exit 1
     fi
 fi
