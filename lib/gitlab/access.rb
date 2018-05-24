@@ -11,8 +11,8 @@ module Gitlab
     GUEST     = 10
     REPORTER  = 20
     DEVELOPER = 30
-    MASTER    = 40
-    OWNER     = 50
+    MAINTAINER = 40
+    OWNER = 50
 
     # Branch protection settings
     PROTECTION_NONE          = 0
@@ -32,7 +32,7 @@ module Gitlab
           "Guest"      => GUEST,
           "Reporter"   => REPORTER,
           "Developer"  => DEVELOPER,
-          "Maintainer" => MASTER
+          "Maintainer" => MAINTAINER
         }
       end
 
@@ -47,7 +47,7 @@ module Gitlab
           guest:     GUEST,
           reporter:  REPORTER,
           developer: DEVELOPER,
-          master:    MASTER
+          maintainer: MAINTAINER
         }
       end
 

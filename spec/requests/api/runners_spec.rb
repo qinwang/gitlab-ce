@@ -18,8 +18,8 @@ describe API::Runners do
 
   before do
     # Set project access for users
-    create(:project_member, :master, user: user, project: project)
-    create(:project_member, :master, user: user, project: project2)
+    create(:project_member, :maintainer, user: user, project: project)
+    create(:project_member, :maintainer, user: user, project: project2)
     create(:project_member, :reporter, user: user2, project: project)
   end
 
@@ -513,7 +513,7 @@ describe API::Runners do
   end
 
   describe 'GET /projects/:id/runners' do
-    context 'authorized user with master privileges' do
+    context 'authorized user with maintainer privileges' do
       it "returns project's runners" do
         get api("/projects/#{project.id}/runners", user)
 
@@ -526,7 +526,7 @@ describe API::Runners do
       end
     end
 
-    context 'authorized user without master privileges' do
+    context 'authorized user without maintainer privileges' do
       it "does not return project's runners" do
         get api("/projects/#{project.id}/runners", user2)
 

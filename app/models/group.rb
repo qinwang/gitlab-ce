@@ -186,8 +186,8 @@ class Group < Namespace
     add_user(user, :developer, current_user: current_user)
   end
 
-  def add_master(user, current_user = nil)
-    add_user(user, :master, current_user: current_user)
+  def add_maintainer(user, current_user = nil)
+    add_user(user, :maintainer, current_user: current_user)
   end
 
   def add_owner(user, current_user = nil)
@@ -206,10 +206,10 @@ class Group < Namespace
     members_with_parents.owners.where(user_id: user).any?
   end
 
-  def has_master?(user)
+  def has_maintainer?(user)
     return false unless user
 
-    members_with_parents.masters.where(user_id: user).any?
+    members_with_parents.maintainers.where(user_id: user).any?
   end
 
   # Check if user is a last owner of the group.
