@@ -100,6 +100,7 @@ class User < ActiveRecord::Base
   has_many :groups, through: :group_members
   has_many :owned_groups, -> { where(members: { access_level: Gitlab::Access::OWNER }) }, through: :group_members, source: :group
   has_many :maintainers_groups, -> { where(members: { access_level: Gitlab::Access::MAINTAINER }) }, through: :group_members, source: :group
+  alias_attribute :masters_groups, :maintainers_groups
 
   # Projects
   has_many :groups_projects,          through: :groups, source: :projects
@@ -1240,6 +1241,9 @@ class User < ActiveRecord::Base
     union = Gitlab::SQL::Union.new([owned_groups, maintainers_groups])
     Group.from("(#{union.to_sql}) namespaces")
   end
+
+  # @deprecated
+  alias_method :owned_or_masters_groups, :owned_or_maintainers_groups
 
   protected
 

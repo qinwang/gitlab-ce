@@ -14,6 +14,7 @@ module ProtectedRefAccess
   }.freeze
 
   included do
+    scope :master, -> { maintainer } # @deprecated
     scope :maintainer, -> { where(access_level: Gitlab::Access::MAINTAINER) }
     scope :developer, -> { where(access_level: Gitlab::Access::DEVELOPER) }
 

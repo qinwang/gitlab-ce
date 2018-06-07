@@ -9,5 +9,8 @@ module SelectForProjectAuthorization
     def select_as_maintainer_for_project_authorization
       select(["projects.id AS project_id", "#{Gitlab::Access::MAINTAINER} AS access_level"])
     end
+
+    # @deprecated
+    alias_method :select_as_master_for_project_authorization, :select_as_maintainer_for_project_authorization
   end
 end
