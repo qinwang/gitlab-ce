@@ -1,14 +1,20 @@
+- extra_toggle_classes = local_assigns.fetch(:extra_toggle_classes, [])
+- dropdown_classes = local_assigns.fetch(:dropdown_classes, [])
+- merge_access_levels_attributes_field_name = local_assigns.fetch(:merge_access_levels_attributes_field_name, 'protected_branch[merge_access_levels_attributes][0][access_level]')
+- push_access_levels_attributes_field_name = local_assigns.fetch(:push_access_levels_attributes_field_name, 'protected_branch[push_access_levels_attributes][0][access_level]')
+
 - content_for :merge_access_levels do
   .merge_access_levels-container
     = dropdown_tag('Select',
-                    options: { toggle_class: 'js-allowed-to-merge qa-allowed-to-merge-select wide',
-                    dropdown_class: 'dropdown-menu-selectable qa-allowed-to-merge-dropdown capitalize-header',
-                    data: { field_name: 'protected_branch[merge_access_levels_attributes][0][access_level]', input_id: 'merge_access_levels_attributes' }})
+                    options: { toggle_class: %w[js-allowed-to-merge qa-allowed-to-merge-select wide].merge(extra_toggle_classes),
+                    dropdown_class: %w[dropdown-menu-selectable qa-allowed-to-merge-dropdown capitalize-header].merge(dropdown_classes),
+                    data: { input_id: 'merge_access_levels_attributes', field_name: merge_access_levels_attributes_field_name }})
 - content_for :push_access_levels do
   .push_access_levels-container
     = dropdown_tag('Select',
-                    options: { toggle_class: 'js-allowed-to-push qa-allowed-to-push-select wide',
-                    dropdown_class: 'dropdown-menu-selectable qa-allowed-to-push-dropdown capitalize-header',
-                    data: { field_name: 'protected_branch[push_access_levels_attributes][0][access_level]', input_id: 'push_access_levels_attributes' }})
+                    options: { toggle_class: %w[js-allowed-to-push qa-allowed-to-push-select wide].merge(extra_toggle_classes),,
+                    dropdown_class: %w[dropdown-menu-selectable qa-allowed-to-push-dropdown capitalize-header].merge(dropdown_classes),
+                    data: { input_id: 'push_access_levels_attributes', field_name: push_access_levels_attributes_field_name }})
+  = render_if_exists 'projects/protected_refs/share_projects_with_other_groups_notice'
 
 = render 'projects/protected_branches/shared/create_protected_branch'

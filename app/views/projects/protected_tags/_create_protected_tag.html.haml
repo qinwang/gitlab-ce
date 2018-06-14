@@ -1,8 +1,15 @@
+- extra_toggle_classes = local_assigns.fetch(:extra_toggle_classes, [])
+- dropdown_classes = local_assigns.fetch(:dropdown_classes, [])
+- filter = local_assigns.fetch(:filter, false)
+- create_access_levels_attributes_field_name = local_assigns.fetch(:create_access_levels_attributes_field_name, 'protected_tag[create_access_levels_attributes][0][access_level]')
+
 - content_for :create_access_levels do
   .create_access_levels-container
     = dropdown_tag('Select',
-                   options: { toggle_class: 'js-allowed-to-create wide',
-                   dropdown_class: 'dropdown-menu-selectable capitalize-header',
-                   data: { field_name: 'protected_tag[create_access_levels_attributes][0][access_level]', input_id: 'create_access_levels_attributes' }})
+                   options: { toggle_class: %w[js-allowed-to-create wide].merge(extra_toggle_classes),
+                   dropdown_class: %w[dropdown-menu-selectable capitalize-header].merge(dropdown_classes),
+                   filter: filter,
+                   data: { input_id: 'create_access_levels_attributes', field_name: create_access_levels_attributes_field_name }})
+  = render_if_exists 'projects/protected_refs/share_projects_with_other_groups_notice'
 
 = render 'projects/protected_tags/shared/create_protected_tag'
