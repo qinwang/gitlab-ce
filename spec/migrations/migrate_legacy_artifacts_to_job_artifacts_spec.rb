@@ -37,24 +37,6 @@ describe MigrateLegacyArtifactsToJobArtifacts, :migration, :sidekiq do
         end
       end
     end
-
-    context 'when new artifacts has already existed' do
-      before do
-        job_artifacts.create!(job_id: 1, id: 1, project_id: 1, file_type: 1, size: 123, file: 'archive.zip')
-        job_artifacts.create!(job_id: 6, id: 2, project_id: 1, file_type: 1, size: 123, file: 'archive.zip')
-      end
-
-      it 'schedules a background migration to specific targets' do
-        Sidekiq::Testing.fake! do
-          Timecop.freeze do
-            migrate!
-
-            expect(migration_name).to be_scheduled_delayed_migration(5.minutes, 3, 5)
-            expect(BackgroundMigrationWorker.jobs.size).to eq 1
-          end
-        end
-      end
-    end
   end
 
   context 'when legacy artifacts do not exist' do
