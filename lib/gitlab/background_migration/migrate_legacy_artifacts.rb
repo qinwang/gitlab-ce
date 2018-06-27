@@ -95,7 +95,7 @@ module Gitlab
                  artifacts_metadata = NULL,
                  artifacts_metadata_store = NULL
            WHERE id BETWEEN #{start_id.to_i} AND #{stop_id.to_i}
-                  AND (artifacts_file <> '' OR artifacts_metadata <> '')
+                   AND artifacts_file <> ''
         EOF
       end
     end
