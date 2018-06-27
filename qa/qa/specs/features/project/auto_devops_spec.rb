@@ -1,3 +1,5 @@
+require 'pathname'
+
 module QA
   feature 'Auto Devops', :kubernetes do
     after do
@@ -14,7 +16,7 @@ module QA
       end
 
       # Create Auto Devops compatible repo
-      Factory::Repository::Push.fabricate! do |push|
+      Factory::Repository::ProjectPush.fabricate! do |push|
         push.project = project
         push.directory = Pathname
           .new(__dir__)

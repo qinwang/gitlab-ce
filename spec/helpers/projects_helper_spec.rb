@@ -90,6 +90,10 @@ describe ProjectsHelper do
       expect(helper.project_list_cache_key(project)).to include(project.cache_key)
     end
 
+    it "includes the last activity date" do
+      expect(helper.project_list_cache_key(project)).to include(project.last_activity_date)
+    end
+
     it "includes the controller name" do
       expect(helper.controller).to receive(:controller_name).and_return("testcontroller")
 
@@ -244,13 +248,20 @@ describe ProjectsHelper do
   describe '#link_to_member' do
     let(:group)   { build_stubbed(:group) }
     let(:project) { build_stubbed(:project, group: group) }
-    let(:user)    { build_stubbed(:user) }
+    let(:user)    { build_stubbed(:user, name: '<h1>Administrator</h1>') }
 
     describe 'using the default options' do
       it 'returns an HTML link to the user' do
         link = helper.link_to_member(project, user)
 
         expect(link).to match(%r{/#{user.username}})
+      end
+
+      it 'HTML escapes the name of the user' do
+        link = helper.link_to_member(project, user)
+
+        expect(link).to include(ERB::Util.html_escape(user.name))
+        expect(link).not_to include(user.name)
       end
     end
   end
@@ -276,7 +287,11 @@ describe ProjectsHelper do
 
   describe '#sanitizerepo_repo_path' do
     let(:project) { create(:project, :repository) }
-    let(:storage_path) { Gitlab.config.repositories.storages.default.legacy_disk_path }
+    let(:storage_path) do
+      Gitlab::GitalyClient::StorageSettings.allow_disk_access do
+        Gitlab.config.repositories.storages.default.legacy_disk_path
+      end
+    end
 
     before do
       allow(Settings.shared).to receive(:[]).with('path').and_return('/base/repo/export/path')

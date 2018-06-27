@@ -434,44 +434,34 @@ describe Repository do
   end
 
   describe '#can_be_merged?' do
-    shared_examples 'can be merged' do
-      context 'mergeable branches' do
-        subject { repository.can_be_merged?('0b4bc9a49b562e85de7cc9e834518ea6828729b9', 'master') }
+    context 'mergeable branches' do
+      subject { repository.can_be_merged?('0b4bc9a49b562e85de7cc9e834518ea6828729b9', 'master') }
 
-        it { is_expected.to be_truthy }
-      end
-
-      context 'non-mergeable branches without conflict sides missing' do
-        subject { repository.can_be_merged?('bb5206fee213d983da88c47f9cf4cc6caf9c66dc', 'feature') }
-
-        it { is_expected.to be_falsey }
-      end
-
-      context 'non-mergeable branches with conflict sides missing' do
-        subject { repository.can_be_merged?('conflict-missing-side', 'conflict-start') }
-
-        it { is_expected.to be_falsey }
-      end
-
-      context 'non merged branch' do
-        subject { repository.merged_to_root_ref?('fix') }
-
-        it { is_expected.to be_falsey }
-      end
-
-      context 'non existent branch' do
-        subject { repository.merged_to_root_ref?('non_existent_branch') }
-
-        it { is_expected.to be_nil }
-      end
+      it { is_expected.to be_truthy }
     end
 
-    context 'when Gitaly can_be_merged feature is enabled' do
-      it_behaves_like 'can be merged'
+    context 'non-mergeable branches without conflict sides missing' do
+      subject { repository.can_be_merged?('bb5206fee213d983da88c47f9cf4cc6caf9c66dc', 'feature') }
+
+      it { is_expected.to be_falsey }
     end
 
-    context 'when Gitaly can_be_merged feature is disabled', :disable_gitaly do
-      it_behaves_like 'can be merged'
+    context 'non-mergeable branches with conflict sides missing' do
+      subject { repository.can_be_merged?('conflict-missing-side', 'conflict-start') }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context 'non merged branch' do
+      subject { repository.merged_to_root_ref?('fix') }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context 'non existent branch' do
+      subject { repository.merged_to_root_ref?('non_existent_branch') }
+
+      it { is_expected.to be_nil }
     end
   end
 
@@ -1195,7 +1185,7 @@ describe Repository do
           Gitlab::Git::OperationService.new(git_user, repository.raw_repository).with_branch('feature') do
             new_rev
           end
-        end.to raise_error(Gitlab::Git::HooksService::PreReceiveError)
+        end.to raise_error(Gitlab::Git::PreReceiveError)
       end
     end
 
@@ -1938,13 +1928,13 @@ describe Repository do
       context 'when pre hooks failed' do
         before do
           allow_any_instance_of(Gitlab::GitalyClient::OperationService)
-            .to receive(:user_delete_branch).and_raise(Gitlab::Git::HooksService::PreReceiveError)
+            .to receive(:user_delete_branch).and_raise(Gitlab::Git::PreReceiveError)
         end
 
         it 'gets an error and does not delete the branch' do
           expect do
             repository.rm_branch(user, 'feature')
-          end.to raise_error(Gitlab::Git::HooksService::PreReceiveError)
+          end.to raise_error(Gitlab::Git::PreReceiveError)
 
           expect(repository.find_branch('feature')).not_to be_nil
         end
@@ -1980,7 +1970,7 @@ describe Repository do
 
           expect do
             repository.rm_branch(user, 'feature')
-          end.to raise_error(Gitlab::Git::HooksService::PreReceiveError)
+          end.to raise_error(Gitlab::Git::PreReceiveError)
         end
 
         it 'does not delete the branch' do
@@ -1988,7 +1978,7 @@ describe Repository do
 
           expect do
             repository.rm_branch(user, 'feature')
-          end.to raise_error(Gitlab::Git::HooksService::PreReceiveError)
+          end.to raise_error(Gitlab::Git::PreReceiveError)
           expect(repository.find_branch('feature')).not_to be_nil
         end
       end

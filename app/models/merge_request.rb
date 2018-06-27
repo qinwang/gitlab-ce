@@ -128,8 +128,15 @@ class MergeRequest < ActiveRecord::Base
     end
 
     after_transition unchecked: :cannot_be_merged do |merge_request, transition|
-      NotificationService.new.merge_request_unmergeable(merge_request)
-      TodoService.new.merge_request_became_unmergeable(merge_request)
+      begin
+        if merge_request.notify_conflict?
+          NotificationService.new.merge_request_unmergeable(merge_request)
+          TodoService.new.merge_request_became_unmergeable(merge_request)
+        end
+      rescue Gitlab::Git::CommandError
+        # Checking mergeability can trigger exception, e.g. non-utf8
+        # We ignore this type of errors.
+      end
     end
 
     def check_state?(merge_status)
@@ -367,6 +374,10 @@ class MergeRequest < ActiveRecord::Base
     else
       merge_request_diff.diffs(diff_options)
     end
+  end
+
+  def non_latest_diffs
+    merge_request_diffs.where.not(id: merge_request_diff.id)
   end
 
   def diff_size
@@ -610,18 +621,7 @@ class MergeRequest < ActiveRecord::Base
   def reload_diff(current_user = nil)
     return unless open?
 
-    old_diff_refs = self.diff_refs
-    new_diff = create_merge_request_diff
-
-    MergeRequests::MergeRequestDiffCacheService.new.execute(self, new_diff)
-
-    new_diff_refs = self.diff_refs
-
-    update_diff_discussion_positions(
-      old_diff_refs: old_diff_refs,
-      new_diff_refs: new_diff_refs,
-      current_user: current_user
-    )
+    MergeRequests::ReloadDiffsService.new(self, current_user).execute
   end
 
   def check_if_can_be_merged
@@ -704,6 +704,10 @@ class MergeRequest < ActiveRecord::Base
 
   def remove_source_branch?
     should_remove_source_branch? || force_remove_source_branch?
+  end
+
+  def notify_conflict?
+    (opened? || locked?) && !project.repository.can_be_merged?(diff_head_sha, target_branch)
   end
 
   def related_notes
@@ -1115,6 +1119,10 @@ class MergeRequest < ActiveRecord::Base
     true
   end
 
+  def discussions_rendered_on_frontend?
+    true
+  end
+
   def update_project_counter_caches
     Projects::OpenMergeRequestsCountService.new(target_project).refresh_cache
   end
@@ -1125,8 +1133,11 @@ class MergeRequest < ActiveRecord::Base
     project.merge_requests.merged.where(author_id: author_id).empty?
   end
 
+  # TODO: remove once production database rename completes
+  alias_attribute :allow_collaboration, :allow_maintainer_to_push
+
   def allow_collaboration
-    collaborative_push_possible? && super
+    collaborative_push_possible? && allow_maintainer_to_push
   end
 
   alias_method :allow_collaboration?, :allow_collaboration

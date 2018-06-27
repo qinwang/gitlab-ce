@@ -25,6 +25,7 @@ class Project < ActiveRecord::Base
   include FastDestroyAll::Helpers
   include WithUploads
   include BatchDestroyDependentAssociations
+  extend Gitlab::Cache::RequestCache
 
   extend Gitlab::ConfigHelper
 
@@ -68,7 +69,7 @@ class Project < ActiveRecord::Base
 
   add_authentication_token_field :runners_token
 
-  before_validation :mark_remote_mirrors_for_removal, if: -> { ActiveRecord::Base.connection.table_exists?(:remote_mirrors) }
+  before_validation :mark_remote_mirrors_for_removal, if: -> { RemoteMirror.table_exists? }
 
   before_save :ensure_runners_token
 
@@ -292,6 +293,7 @@ class Project < ActiveRecord::Base
   validates :name, uniqueness: { scope: :namespace_id }
   validates :import_url, url: { protocols: %w(http https ssh git),
                                 allow_localhost: false,
+                                enforce_user: true,
                                 ports: VALID_IMPORT_PORTS }, if: [:external_import?, :import_url_changed?]
   validates :star_count, numericality: { greater_than_or_equal_to: 0 }
   validate :check_limit, on: :create
@@ -673,6 +675,12 @@ class Project < ActiveRecord::Base
 
       self[:import_status] = 'none'
     end
+  end
+
+  def human_import_status_name
+    ensure_import_state
+
+    import_state.human_status_name
   end
 
   def import_schedule
@@ -1609,6 +1617,7 @@ class Project < ActiveRecord::Base
 
   def after_import
     repository.after_import
+    wiki.repository.after_import
     import_finish
     remove_import_jid
     update_project_counter_caches
@@ -2005,6 +2014,15 @@ class Project < ActiveRecord::Base
     @gitlab_deploy_token ||= deploy_tokens.gitlab_deploy_token
   end
 
+  def any_lfs_file_locks?
+    lfs_file_locks.any?
+  end
+  request_cache(:any_lfs_file_locks?) { self.id }
+
+  def auto_cancel_pending_pipelines?
+    auto_cancel_pending_pipelines == 'enabled'
+  end
+
   private
 
   def storage
@@ -2132,10 +2150,14 @@ class Project < ActiveRecord::Base
     check_access = -> do
       next false if empty_repo?
 
-      merge_request = source_of_merge_requests.opened
-                        .where(allow_collaboration: true)
-                        .find_by(source_branch: branch_name)
-      merge_request&.can_be_merged_by?(user)
+      merge_requests = source_of_merge_requests.opened
+                         .where(allow_collaboration: true)
+
+      if branch_name
+        merge_requests.find_by(source_branch: branch_name)&.can_be_merged_by?(user)
+      else
+        merge_requests.any? { |merge_request| merge_request.can_be_merged_by?(user) }
+      end
     end
 
     if RequestStore.active?

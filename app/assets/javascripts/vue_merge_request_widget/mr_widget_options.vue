@@ -36,7 +36,7 @@ import {
   notify,
   SourceBranchRemovalStatus,
 } from './dependencies';
-import { setFavicon } from '../lib/utils/common_utils';
+import { setFaviconOverlay } from '../lib/utils/common_utils';
 
 export default {
   el: '#js-vue-mr-widget',
@@ -159,8 +159,9 @@ export default {
     },
     setFaviconHelper() {
       if (this.mr.ciStatusFaviconPath) {
-        setFavicon(this.mr.ciStatusFaviconPath);
+        return setFaviconOverlay(this.mr.ciStatusFaviconPath);
       }
+      return Promise.resolve();
     },
     fetchDeployments() {
       return this.service.fetchDeployments()
@@ -171,7 +172,7 @@ export default {
           }
         })
         .catch(() => {
-          createFlash('Something went wrong while fetching the environments for this merge request. Please try again.'); // eslint-disable-line
+          createFlash('Something went wrong while fetching the environments for this merge request. Please try again.');
         });
     },
     fetchActionsContent() {
@@ -190,7 +191,7 @@ export default {
       if (data.ci_status === this.mr.ciStatus) return;
       if (!data.pipeline) return;
 
-      const label = data.pipeline.details.status.label;
+      const { label } = data.pipeline.details.status;
       const title = `Pipeline ${label}`;
       const message = `Pipeline ${label} for "${data.title}"`;
 
@@ -210,7 +211,7 @@ export default {
       // `params` should be an Array contains a Boolean, like `[true]`
       // Passing parameter as Boolean didn't work.
       eventHub.$on('SetBranchRemoveFlag', (params) => {
-        this.mr.isRemovingSourceBranch = params[0];
+        [this.mr.isRemovingSourceBranch] = params;
       });
 
       eventHub.$on('FailedToMerge', (mergeError) => {
@@ -282,8 +283,8 @@ export default {
       />
     </div>
     <div
-      class="mr-widget-footer"
       v-if="shouldRenderMergeHelp"
+      class="mr-widget-footer"
     >
       <mr-widget-merge-help />
     </div>
