@@ -220,19 +220,7 @@ module Gitlab
         end
 
         def shas_with_signatures(repository, shas)
-          GitalyClient.migrate(:filter_shas_with_signatures) do |is_enabled|
-            if is_enabled
-              Gitlab::GitalyClient::CommitService.new(repository).filter_shas_with_signatures(shas)
-            else
-              shas.select do |sha|
-                begin
-                  Rugged::Commit.extract_signature(repository.rugged, sha)
-                rescue Rugged::OdbError
-                  false
-                end
-              end
-            end
-          end
+          Gitlab::GitalyClient::CommitService.new(repository).filter_shas_with_signatures(shas)
         end
 
         # Only to be used when the object ids will not necessarily have a
@@ -250,13 +238,7 @@ module Gitlab
         end
 
         def extract_signature(repository, commit_id)
-          repository.gitaly_migrate(:extract_commit_signature) do |is_enabled|
-            if is_enabled
-              repository.gitaly_commit_client.extract_signature(commit_id)
-            else
-              rugged_extract_signature(repository, commit_id)
-            end
-          end
+          repository.gitaly_commit_client.extract_signature(commit_id)
         end
 
         def extract_signature_lazily(repository, commit_id)
@@ -276,34 +258,7 @@ module Gitlab
         end
 
         def batch_signature_extraction(repository, commit_ids)
-          repository.gitaly_migrate(:extract_commit_signature_in_batch) do |is_enabled|
-            if is_enabled
-              gitaly_batch_signature_extraction(repository, commit_ids)
-            else
-              rugged_batch_signature_extraction(repository, commit_ids)
-            end
-          end
-        end
-
-        def gitaly_batch_signature_extraction(repository, commit_ids)
           repository.gitaly_commit_client.get_commit_signatures(commit_ids)
-        end
-
-        def rugged_batch_signature_extraction(repository, commit_ids)
-          commit_ids.each_with_object({}) do |commit_id, signatures|
-            signature_data = rugged_extract_signature(repository, commit_id)
-            next unless signature_data
-
-            signatures[commit_id] = signature_data
-          end
-        end
-
-        def rugged_extract_signature(repository, commit_id)
-          begin
-            Rugged::Commit.extract_signature(repository.rugged, commit_id)
-          rescue Rugged::OdbError
-            nil
-          end
         end
 
         def get_message(repository, commit_id)
@@ -323,13 +278,7 @@ module Gitlab
         end
 
         def get_messages(repository, commit_ids)
-          repository.gitaly_migrate(:commit_messages) do |is_enabled|
-            if is_enabled
-              repository.gitaly_commit_client.get_commit_messages(commit_ids)
-            else
-              commit_ids.map { |id| [id, rugged_find(repository, id).message] }.to_h
-            end
-          end
+          repository.gitaly_commit_client.get_commit_messages(commit_ids)
         end
       end
 
@@ -493,13 +442,18 @@ module Gitlab
       def tree_entry(path)
         return unless path.present?
 
-        @repository.gitaly_migrate(:commit_tree_entry) do |is_migrated|
-          if is_migrated
-            gitaly_tree_entry(path)
-          else
-            rugged_tree_entry(path)
-          end
-        end
+        # We're only interested in metadata, so limit actual data to 1 byte
+        # since Gitaly doesn't support "send no data" option.
+        entry = @repository.gitaly_commit_client.tree_entry(id, path, 1)
+        return unless entry
+
+        # To be compatible with the rugged format
+        entry = entry.to_h
+        entry.delete(:data)
+        entry[:name] = File.basename(path)
+        entry[:type] = entry[:type].downcase
+
+        entry
       end
 
       def to_gitaly_commit
@@ -560,28 +514,6 @@ module Gitlab
 
       def serialize_keys
         SERIALIZE_KEYS
-      end
-
-      def gitaly_tree_entry(path)
-        # We're only interested in metadata, so limit actual data to 1 byte
-        # since Gitaly doesn't support "send no data" option.
-        entry = @repository.gitaly_commit_client.tree_entry(id, path, 1)
-        return unless entry
-
-        # To be compatible with the rugged format
-        entry = entry.to_h
-        entry.delete(:data)
-        entry[:name] = File.basename(path)
-        entry[:type] = entry[:type].downcase
-
-        entry
-      end
-
-      # Is this the same as Blob.find_entry_by_path ?
-      def rugged_tree_entry(path)
-        rugged_commit.tree.path(path)
-      rescue Rugged::TreeError
-        nil
       end
 
       def gitaly_commit_author_from_rugged(author_or_committer)
