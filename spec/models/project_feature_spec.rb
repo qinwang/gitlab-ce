@@ -119,4 +119,52 @@ describe ProjectFeature do
       end
     end
   end
+
+  context 'Site Statistics' do
+    let(:project_without_wiki) { create(:project, wiki_access_level: ProjectFeature::DISABLED) }
+
+    context 'when creating a project' do
+      it 'tracks wiki availability when wikis are enabled by default' do
+        expect { project }.to change { SiteStatistic.fetch.wikis_count }.by(1)
+      end
+
+      it 'does not track wiki availability when wikis are disabled by default' do
+        expect { project_without_wiki }.not_to change { SiteStatistic.fetch.wikis_count }
+      end
+    end
+
+    context 'when updating a project_feature' do
+      it 'untracks wiki availability when disabling wiki access' do
+        project
+
+        expect { project.project_feature.update_attribute(:wiki_access_level, ProjectFeature::DISABLED) }.to change { SiteStatistic.fetch.wikis_count }.by(-1)
+      end
+
+      it 'tracks again wiki availability when re-enabling wiki access as public' do
+        project_without_wiki
+
+        expect { project_without_wiki.project_feature.update_attribute(:wiki_access_level, ProjectFeature::ENABLED) }.to change { SiteStatistic.fetch.wikis_count }.by(1)
+      end
+
+      it 'tracks again wiki availability when re-enabling wiki access as private' do
+        project_without_wiki
+
+        expect { project_without_wiki.project_feature.update_attribute(:wiki_access_level, ProjectFeature::PRIVATE) }.to change { SiteStatistic.fetch.wikis_count }.by(1)
+      end
+    end
+
+    context 'when removing a project' do
+      it 'untracks wiki availability when removing a project with previous wiki access' do
+        project
+
+        expect { project.destroy }.to change { SiteStatistic.fetch.wikis_count }.by(-1)
+      end
+
+      it 'does not untrack wiki availability when removing a project without wiki access' do
+        project_without_wiki
+
+        expect { project_without_wiki.destroy }.to_not change { SiteStatistic.fetch.wikis_count }
+      end
+    end
+  end
 end

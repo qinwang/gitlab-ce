@@ -19,6 +19,7 @@ class ProjectFeature < ActiveRecord::Base
   ENABLED  = 20
 
   FEATURES = %i(issues merge_requests wiki snippets builds repository).freeze
+  STATISTICS_ATTRIBUTE = 'wikis_count'.freeze
 
   class << self
     def access_level_attribute(feature)
@@ -52,6 +53,9 @@ class ProjectFeature < ActiveRecord::Base
   default_value_for :wiki_access_level,           value: ENABLED, allows_nil: false
   default_value_for :repository_access_level,     value: ENABLED, allows_nil: false
 
+  after_create ->(model) { SiteStatistic.track(STATISTICS_ATTRIBUTE) if model.wiki_enabled? }
+  after_update :update_site_statistics
+
   def feature_available?(feature, user)
     get_permission(user, access_level(feature))
   end
@@ -77,6 +81,25 @@ class ProjectFeature < ActiveRecord::Base
   end
 
   private
+
+  def untrack_statistics_for_deletion
+    if wiki_enabled?
+
+      SiteStatistic.untrack(STATISTICS_ATTRIBUTE)
+    end
+  end
+
+  def update_site_statistics
+    return unless wiki_access_level_changed?
+
+    if self.wiki_access_level_was == DISABLED
+      # possible new states are PRIVATE / ENABLED, both should be tracked
+      SiteStatistic.track(STATISTICS_ATTRIBUTE)
+    elsif self.wiki_access_level == DISABLED
+      # old state was either PRIVATE / ENABLED, only untrack if new state is DISABLED
+      SiteStatistic.untrack(STATISTICS_ATTRIBUTE)
+    end
+  end
 
   # Validates builds and merge requests access level
   # which cannot be higher than repository access level

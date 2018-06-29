@@ -99,6 +99,10 @@ describe Project do
         expect(project.ci_cd_settings).to be_an_instance_of(ProjectCiCdSetting)
         expect(project.ci_cd_settings).to be_persisted
       end
+
+      it 'tracks project in SiteStatistic' do
+        expect { create(:project) }.to change { SiteStatistic.fetch.repositories_count }.by(1)
+      end
     end
 
     context 'updating cd_cd_settings' do
@@ -106,6 +110,14 @@ describe Project do
         project = create(:project)
 
         expect { project.update(ci_cd_settings: nil) }.not_to raise_exception
+      end
+    end
+
+    context 'when deleting a project' do
+      it 'untracks project in SiteStatistic' do
+        project = create(:project)
+
+        expect { project.destroy }.to change { SiteStatistic.fetch.repositories_count }.by(-1)
       end
     end
 
