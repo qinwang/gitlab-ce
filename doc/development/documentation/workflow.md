@@ -1,6 +1,10 @@
 # Documentation process at GitLab
 
-TBA: introduction
+At GitLab, developers contribute new or updated documentation along with their code, but product managers and technical writers also have essential roles in the process.
+
+- Product Managers - In the issue for all new and updated features, PMs include specific documentation requirements that the developer who is writing or updating the docs must meet, along with feature descriptions and use cases. They call out any specific areas where collaborating with a technical writer is recommended, and usually act as the first reviewer of the docs.
+- Developers - Author documentation and merge it on time (before feature freeze? or 'x days before..'?).
+- Technical Writers - Review each issue to ensure PM's requirements are complete, help developers with any questions throughout the process, and act as the final reviewer of all new and updated docs content before it's merged.
 
 ## Requirements
 
@@ -11,7 +15,7 @@ It is required to deliver documentation whenever:
 - It changes a process, workflow, or feature previously documented
 
 Documentation is not required when a feature is changed on the backend
-only and does not affect the user directly.
+only and does not directly affect the way that any user or administrator would interact with GitLab.
 
 ## Documentation blurb
 
@@ -69,6 +73,12 @@ writing it, or any other help, ping a Technical Writer on your issue, MR, or on 
   - Feature name
   - Feature overview/description
   - Feature use cases
+  - The documentation requirements for the developer working on the docs
+    - What new page, new subsection of an existing page, or other update to an existing page/subsection is needed.
+    - Just one page/section/update or multiple (perhaps there's an end user and admin change needing docs, or we need to update a previously recommended workflow, or we want to link the new feature from various places; consider and mention all ways documentation should be affected
+    - Suggested title of any page or subsection, if applicable
+  - Label the issue with Documentation (anything else?)
+
 2. Developer (dev): in the feature MR, add:
   - Feature name, overview/description, use cases from the feature issue
   - Tutorial: write how to use the feature, step by step, with no gaps.
@@ -109,7 +119,7 @@ assign the correct milestone. In these cases, assign a technical writer
 for approval/merge, or mention `@gl\-docsteam` in case you don't know
 which tech writer to assign for. [note: do we want this?]
 
-Are considered irrelevant changes:
+The following are considered insignificant changes:
 
 - TBA
 
@@ -134,12 +144,14 @@ the following template:
 To write the feature overview, one should consider answering the following questions:
 
 - What is it?
-- Why is it cool?
-- What one can do with it that couldn't do without it?
+- Who is it for?
+- What is the context in which it is used and are there any prerequisites/requirements?
+- What can the user do with it? (Be sure to consider multiple audiences, like GitLab admin and developer-user.)
+- What are the benefits to using it over any alternatives?
 
 ## Use cases
 
-Describe one to three real use cases for that feature. Give real life examples.
+Describe one to three use cases for that feature. Give real life examples.
 
 ## Requirements
 
