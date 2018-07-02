@@ -23,7 +23,7 @@ module QA
         def rebase!
           click_element :mr_rebase_button
 
-          wait(reload: false) do
+          wait.sleep(reload: false) do
             has_text?('Fast-forward merge without a merge commit')
           end
         end
@@ -41,13 +41,13 @@ module QA
         def merge!
           click_element :merge_button
 
-          wait(reload: false) do
+          wait.sleep(reload: false) do
             has_text?('The changes were merged into')
           end
         end
 
         def mark_to_squash
-          wait(reload: true) do
+          wait.sleep(reload: true) do
             has_css?(element_selector_css(:squash_checkbox))
           end
 
