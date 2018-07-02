@@ -60,6 +60,7 @@ function resetHiddenInputs(parent, val, inputItemName) {
 function setupMultiProjectSelect(select) {
   const $select = $(select);
   const inputItemName = $select.data('inputItemName');
+  const $iconParent = $select.parents('.input-icon-wrapper').first();
 
   const queryOptions = {
     order_by: $select.data('orderBy') || 'id',
@@ -82,6 +83,14 @@ function setupMultiProjectSelect(select) {
 
   $select.on('change', e => {
     resetHiddenInputs($select.parent(), e.val, inputItemName);
+  });
+
+  $select.on('select2-opening', () => {
+    $iconParent.addClass('hide-icon');
+  });
+
+  $select.on('select2-close', () => {
+    $iconParent.removeClass('hide-icon');
   });
 
   return select;

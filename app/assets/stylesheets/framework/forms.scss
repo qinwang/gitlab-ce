@@ -250,8 +250,14 @@ label {
   .input-icon-right {
     position: absolute;
     right: 0.8em;
-    top: 50%;
-    transform: translateY(-50%);
+    bottom: 0;
+    transform: translateY(-75%);
     color: $theme-gray-600;
+  }
+
+  &.hide-icon {
+    .input-icon-right {
+      display: none;
+    }
   }
 }

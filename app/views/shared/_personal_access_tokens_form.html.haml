@@ -29,7 +29,9 @@
     = f.label :project_ids, class: 'label-light'
     %p
       Limit this token's access to specific projects.
-    = project_select_tag :project_ids, class: "project-multi-select", data: { order_by: 'last_activity_at', multiple: 'multiple', close_on_select: 'false', input_item_name: 'personal_access_token[project_ids]' }
+    .input-icon-wrapper
+      = project_select_tag :project_ids, class: "project-multi-select", data: { order_by: 'last_activity_at', multiple: 'multiple', close_on_select: 'false', input_item_name: 'personal_access_token[project_ids]' }
+      = icon('angle-down', { class: 'input-icon-right' })
 
   .prepend-top-default
     = f.submit "Create #{type} token", class: "btn btn-create"
