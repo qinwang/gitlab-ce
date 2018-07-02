@@ -91,7 +91,9 @@ function setupMultiProjectSelect(select) {
 
   // setup: on change, add hidden input fields for each value
   $select.on('change', e => {
-    resetHiddenInputs($select.parent(), e.val, inputName);
+    const val = e.val || $select.select2('val');
+
+    resetHiddenInputs($select.parent(), val, inputName);
   });
 
   // setup: add the input icon which is toggled on/off when loading

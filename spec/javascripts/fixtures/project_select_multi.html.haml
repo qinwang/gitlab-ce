@@ -1,0 +1,3 @@
+%form
+  .form-group
+    = project_select_tag :project_ids, class: "project-multi-select", data: { order_by: 'last_activity_at', multiple: 'multiple', close_on_select: 'false', input_name: 'fixture[project_ids]' }
