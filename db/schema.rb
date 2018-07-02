@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180702135109) do
+ActiveRecord::Schema.define(version: 20180701230554) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -389,7 +389,6 @@ ActiveRecord::Schema.define(version: 20180702135109) do
 
   add_index "ci_job_artifacts", ["expire_at", "job_id"], name: "index_ci_job_artifacts_on_expire_at_and_job_id", using: :btree
   add_index "ci_job_artifacts", ["file_store"], name: "index_ci_job_artifacts_on_file_store", using: :btree
-  add_index "ci_job_artifacts", ["id"], name: "tmp_index_ci_job_artifacts_on_id_with_null_file_location", where: "(file_location IS NULL)", using: :btree
   add_index "ci_job_artifacts", ["job_id", "file_type"], name: "index_ci_job_artifacts_on_job_id_and_file_type", unique: true, using: :btree
   add_index "ci_job_artifacts", ["project_id"], name: "index_ci_job_artifacts_on_project_id", using: :btree
 
