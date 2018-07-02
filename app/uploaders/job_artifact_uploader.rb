@@ -3,6 +3,7 @@ class JobArtifactUploader < GitlabUploader
   include ObjectStorage::Concern
 
   ObjectNotReadyError = Class.new(StandardError)
+  UnknownFileLocationError = Class.new(StandardError)
 
   storage_options Gitlab.config.artifacts
 
@@ -36,6 +37,8 @@ class JobArtifactUploader < GitlabUploader
                 creation_date, model.job_id.to_s, model.id.to_s)
     elsif model.legacy_path?
       File.join(model.created_at.utc.strftime('%Y_%m'), model.project_id.to_s, model.job_id.to_s)
+    else
+      raise UnknownFileLocationError
     end
   end
 

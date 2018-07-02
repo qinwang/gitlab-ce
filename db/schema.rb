@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180626125654) do
+ActiveRecord::Schema.define(version: 20180702135109) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -337,7 +337,7 @@ ActiveRecord::Schema.define(version: 20180626125654) do
   add_index "ci_builds", ["commit_id", "status", "type"], name: "index_ci_builds_on_commit_id_and_status_and_type", using: :btree
   add_index "ci_builds", ["commit_id", "type", "name", "ref"], name: "index_ci_builds_on_commit_id_and_type_and_name_and_ref", using: :btree
   add_index "ci_builds", ["commit_id", "type", "ref"], name: "index_ci_builds_on_commit_id_and_type_and_ref", using: :btree
-  add_index "ci_builds", ["id"], name: "index_ci_builds_on_id", where: "(artifacts_file <> ''::text)", using: :btree
+  add_index "ci_builds", ["id"], name: "tmp_partial_index_ci_builds_on_id_with_legacy_artifacts", where: "(artifacts_file <> ''::text)", using: :btree
   add_index "ci_builds", ["project_id", "id"], name: "index_ci_builds_on_project_id_and_id", using: :btree
   add_index "ci_builds", ["protected"], name: "index_ci_builds_on_protected", using: :btree
   add_index "ci_builds", ["runner_id"], name: "index_ci_builds_on_runner_id", using: :btree
@@ -389,6 +389,7 @@ ActiveRecord::Schema.define(version: 20180626125654) do
 
   add_index "ci_job_artifacts", ["expire_at", "job_id"], name: "index_ci_job_artifacts_on_expire_at_and_job_id", using: :btree
   add_index "ci_job_artifacts", ["file_store"], name: "index_ci_job_artifacts_on_file_store", using: :btree
+  add_index "ci_job_artifacts", ["id"], name: "tmp_index_ci_job_artifacts_on_id_with_null_file_location", where: "(file_location IS NULL)", using: :btree
   add_index "ci_job_artifacts", ["job_id", "file_type"], name: "index_ci_job_artifacts_on_job_id_and_file_type", unique: true, using: :btree
   add_index "ci_job_artifacts", ["project_id"], name: "index_ci_job_artifacts_on_project_id", using: :btree
 

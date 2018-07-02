@@ -3,8 +3,7 @@ class MigrateLegacyArtifactsToJobArtifacts < ActiveRecord::Migration
 
   DOWNTIME = false
   MIGRATION = 'MigrateLegacyArtifacts'.freeze
-  BATCH_SIZE = 2000
-  TMP_INDEX = 'tmp_index_ci_builds_on_present_artifacts_file'.freeze
+  BATCH_SIZE = 100
 
   disable_ddl_transaction!
 

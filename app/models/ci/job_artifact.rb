@@ -7,6 +7,8 @@ module Ci
     belongs_to :project
     belongs_to :job, class_name: "Ci::Build", foreign_key: :job_id
 
+    default_value_for :file_location, :hashed_path
+
     mount_uploader :file, JobArtifactUploader
 
     before_save :set_size, if: :file_changed?
@@ -25,14 +27,9 @@ module Ci
       trace: 3
     }
 
-    ##
-    # File location of the file
-    # hashed_path: `File.join(disk_hash[0..1], disk_hash[2..3], disk_hash, creation_date, model.job_id.to_s, model.id.to_s)`
-    #              `disk_hash` is `Digest::SHA2.hexdigest(model.project_id.to_s)`
-    # legacy_path: `File.join(model.created_at.utc.strftime('%Y_%m'), model.project_id.to_s, model.id.to_s)`
     enum file_location: {
-      hashed_path: nil,
-      legacy_path: 1
+      legacy_path: 1, # a path using a timestamp and raw project/model IDs
+      hashed_path: 2 # a path using a SHA2 based on the project ID
     }
 
     def update_file_store
@@ -47,6 +44,10 @@ module Ci
 
     def local_store?
       [nil, ::JobArtifactUploader::Store::LOCAL].include?(self.file_store)
+    end
+
+    def hashed_path?
+      super || self.file_location.nil?
     end
 
     def expire_in
