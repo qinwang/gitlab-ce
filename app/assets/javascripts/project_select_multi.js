@@ -40,8 +40,26 @@ function createQuerier(queryOptions) {
     .then(callback);
 }
 
+function removeHiddenInputs(parent) {
+  $(parent).children('.js-hidden-input').remove();
+}
+
+function addHiddenInputs(parent, val, inputItemName) {
+  const inputs = val.map(x =>
+    $(`<input type="hidden" class="js-hidden-input" name="${_.escape(inputItemName)}[]" value="${_.escape(x)}" />`),
+  );
+
+  inputs.forEach(x => $(parent).append(x));
+}
+
+function resetHiddenInputs(parent, val, inputItemName) {
+  removeHiddenInputs(parent);
+  addHiddenInputs(parent, val, inputItemName);
+}
+
 function setupMultiProjectSelect(select) {
   const $select = $(select);
+  const inputItemName = $select.data('inputItemName');
 
   const queryOptions = {
     order_by: $select.data('orderBy') || 'id',
@@ -61,6 +79,10 @@ function setupMultiProjectSelect(select) {
   });
 
   $select.val([]);
+
+  $select.on('change', e => {
+    resetHiddenInputs($select.parent(), e.val, inputItemName);
+  });
 
   return select;
 }
