@@ -3,6 +3,8 @@ import _ from 'underscore';
 import Api from './api';
 import { renderAvatar } from './helpers/avatar_helper';
 
+const PER_PAGE = 20;
+
 function renderProjectItem(project) {
   const projectTitle = project.name_with_namespace || project.name;
 
@@ -33,9 +35,10 @@ function renderProjectSelection(project) {
 }
 
 function createQuerier(queryOptions) {
-  return ({ term, callback }) => Api.projects(term, queryOptions)
+  return ({ term, callback, page }) => Api.projects(term, { ...queryOptions, page })
     .then(results => ({
       results,
+      more: results.length === PER_PAGE,
     }))
     .then(callback);
 }
@@ -64,6 +67,7 @@ function setupMultiProjectSelect(select) {
 
   const queryOptions = {
     order_by: $select.data('orderBy') || 'id',
+    per_page: PER_PAGE,
   };
 
   $select.select2({
