@@ -5,6 +5,10 @@ import { renderAvatar } from './helpers/avatar_helper';
 
 const PER_PAGE = 20;
 
+function renderInputIcon() {
+  return '<i class="fa fa-angle-down input-icon-right" aria-hidden="true" data-hidden="true"></i>';
+}
+
 function renderProjectItem(project) {
   const projectTitle = project.name_with_namespace || project.name;
 
@@ -62,8 +66,7 @@ function resetHiddenInputs(parent, val, inputItemName) {
 
 function setupMultiProjectSelect(select) {
   const $select = $(select);
-  const inputItemName = $select.data('inputItemName');
-  const $iconParent = $select.parents('.input-icon-wrapper').first();
+  const inputName = $select.data('inputName');
 
   const queryOptions = {
     order_by: $select.data('orderBy') || 'id',
@@ -74,8 +77,7 @@ function setupMultiProjectSelect(select) {
     query: createQuerier(queryOptions),
     multiple: true,
     closeOnSelect: false,
-    text: null,
-    dropdownCssClass: 'project-multi-select-dropdown dropdown-menu-selectable',
+    dropdownCssClass: 'project-multi-select-dropdown',
     containerCssClass: 'project-multi-select-dropdown',
     placeholder: 'All Products',
     formatResult: renderProjectItem,
@@ -83,18 +85,25 @@ function setupMultiProjectSelect(select) {
     id: x => x.id,
   });
 
+  const $select2Container = $select.select2('container');
+
   $select.val([]);
 
+  // setup: on change, add hidden input fields for each value
   $select.on('change', e => {
-    resetHiddenInputs($select.parent(), e.val, inputItemName);
+    resetHiddenInputs($select.parent(), e.val, inputName);
   });
 
+  // setup: add the input icon which is toggled on/off when loading
+  //   - this prevents collision with select2's spinner
+  $select2Container.append(renderInputIcon());
+
   $select.on('select2-opening', () => {
-    $iconParent.addClass('hide-icon');
+    $select2Container.addClass('hide-input-icon');
   });
 
   $select.on('select2-close', () => {
-    $iconParent.removeClass('hide-icon');
+    $select2Container.removeClass('hide-input-icon');
   });
 
   return select;
