@@ -1,7 +1,11 @@
 require 'spec_helper'
 
 describe 'Profile > Personal Access Tokens', :js do
+  include Select2Helper
+
   let(:user) { create(:user) }
+  let(:project1) { create(:project) }
+  let(:project2) { create(:project) }
 
   def active_personal_access_tokens
     find(".table.active-tokens")
@@ -42,11 +46,15 @@ describe 'Profile > Personal Access Tokens', :js do
       check "api"
       check "read_user"
 
+      # Projects
+      select2(project1.id, { from: '#project_ids', multiple: true })
+
       click_on "Create personal access token"
       expect(active_personal_access_tokens).to have_text(name)
       expect(active_personal_access_tokens).to have_text('In')
       expect(active_personal_access_tokens).to have_text('api')
       expect(active_personal_access_tokens).to have_text('read_user')
+      expect(active_personal_access_tokens).to have_text(project1.name)
     end
 
     context "when creation fails" do

@@ -64,6 +64,18 @@ function resetHiddenInputs(parent, val, inputItemName) {
   addHiddenInputs(parent, val, inputItemName);
 }
 
+function mapIdsToProjects(val) {
+  if (!val) {
+    return Promise.resolve([]);
+  }
+
+  const ids = Array.isArray(val) ? val : [val];
+  const reqs = ids.map(id => Api.project(id).catch(() => null));
+
+  return Promise.all(reqs)
+    .then(projs => projs.filter(x => x));
+}
+
 function setupMultiProjectSelect(select) {
   const $select = $(select);
   const inputName = $select.data('inputName');
@@ -75,6 +87,7 @@ function setupMultiProjectSelect(select) {
 
   $select.select2({
     query: createQuerier(queryOptions),
+    minimumInputLength: 0,
     multiple: true,
     closeOnSelect: false,
     dropdownCssClass: 'project-multi-select-dropdown',
@@ -82,6 +95,7 @@ function setupMultiProjectSelect(select) {
     placeholder: 'All Products',
     formatResult: renderProjectItem,
     formatSelection: renderProjectSelection,
+    initSelection: (element, callback) => mapIdsToProjects(element.val()).then(callback),
     id: x => x.id,
   });
 
