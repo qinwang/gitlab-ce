@@ -3840,24 +3840,24 @@ describe Project do
     end
   end
 
-  describe '#migrate_to_hashed_storage_synchronously!' do
+  describe '#rename_using_hashed_storage!' do
     before do
       @project = create(:project)
-      @old_path = @project.full_path
+      @path_before_rename = @project.full_path
       @project.update!(path: 'some-new-path')
     end
 
     it 'sets project to read only state' do
-      @project.migrate_to_hashed_storage_synchronously!
+      @project.rename_using_hashed_storage!
 
       expect(@project.repository_read_only).to be_truthy
     end
 
     it 'calls ProjectMigrateHashedStorageWorker with correct options' do
-      expect_any_instance_of(ProjectMigrateHashedStorageWorker).
-        to receive(:perform).with(@project.id, { old_path: @old_path })
+      expect_any_instance_of(ProjectMigrateHashedStorageWorker)
+        .to receive(:perform).with(@project.id, path_before_rename: @path_before_rename)
 
-      @project.migrate_to_hashed_storage_synchronously!
+      @project.rename_using_hashed_storage!
     end
   end
 end
