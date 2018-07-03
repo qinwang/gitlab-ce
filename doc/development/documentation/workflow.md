@@ -31,22 +31,43 @@ When refactoring documentation in needed, it should be submitted it in its own M
 **Do not** join new features' MRs with refactoring existing docs, as they might have
 different priorities.
 
-### Skip the review process
-
-When there's an insignificant change to the docs, you can skip the review
-of the PM. Add the same labels as you would for a regular doc change and
-assign the correct milestone. In these cases, assign a technical writer
-for approval/merge, or mention `@gl\-docsteam` in case you don't know
-which tech writer to assign for.
-
-The following are considered insignificant changes:
-
-- Typos or corrections of any type (grammar, broken links, etc)
-- TBA (what else?)
-
 NOTE: **Note:**
-If you're moving a document to another location, you must ping a technical
-writer for review.
+[Smaller MRs are better](https://gitlab.com/gitlab-com/blog-posts/issues/185#note_4401010)! Do not mix subjects, and ship the smallest MR possible.
+
+### Documentation review process
+
+The docs shipped by the developer should be reviewed by the PM (for accuracy) and a Technical Writer (for clarity and structure).
+
+#### Documentation updates that require review
+
+Every relevant documentation change must be reviewed by a Technical Writer
+to avoid redundancy, duplications, bad locations, typos, broken links, misinformation,
+and to ensure the document is clear and discoverable. If you don't know who to
+ping, ping any of them, or all of them (`@gl\-docsteam`).
+
+A Technical Writer must review documentation updates that involve:
+
+- Docs introducing new features
+- Changing documentation location
+- Refactoring existing documentation
+- Creating new documentation files
+
+If you need any help to choose the correct place for a doc, for start
+writing it, or any other help, ping a Technical Writer on your issue, MR,
+or on Slack.
+
+#### Skip the PM's review
+
+When there's a non-significant change to the docs, you can skip the review
+of the PM. Add the same labels as you would for a regular doc change and
+assign the correct milestone. In these cases, assign a Technical Writer
+for approval/merge, or mention `@gl\-docsteam` in case you don't know
+which Tech Writer to assign for.
+
+#### Skip the entire review
+
+When the MR only contains corrections to the content (typos, grammar,
+broken links, etc), it can be merged without the PM's and Tech Writer's review.
 
 ## Documentation blurb
 
@@ -89,22 +110,11 @@ Monitoring; CI/CD tutorials should be linked from CI/CD examples)
 an application with GitLab CI/CD" is much better. Think of something
 someone will search for and use these keywords in the headings.
 
-## Documentation review and feedback
-
-Every relevant documentation change must be reviewed by a Technical Writer
-to avoid redundancy, duplications, bad locations, typos, broken links, misinformation,
-and to ensure the document is clear and discoverable. If you don't know who to
-ping, ping any of them, or all of them (`@gl\-docsteam`).
-
-If you need any help to choose the correct place for a doc, for start
-writing it, or any other help, ping a Technical Writer on your issue, MR,
-or on Slack.
-
 ## Documentation workflow
 
 To follow a consistent workflow every month, documentation changes
 involve the Product Managers, the developer who shipped the feature,
-and the technical writing team. Each role is described below.
+and the Technical Writing team. Each role is described below.
 
 ### 1. Product Manager's role in the documentation process
 
@@ -122,15 +132,15 @@ The Product Manager (PM) should add to the feature issue:
 
 ### 2. Developer's role in the documentation process
 
-As a developer, you should ship the documentation with the feature, as
-in GitLab the documentation is part of the product.
+As a developer, or as a community contributor, you should ship the documentation
+with the feature, as in GitLab the documentation is part of the product.
 
-The dev can either add the documentaion to the same MR as the code, or,
-alternatively, create a follow-up issue and MR to ship the docs.
+The docs can either be shipped along with the MR introducing the code, or,
+alternatively, created from a follow-up issue and MR.
 
 The docs should be shipped **by the feature freeze date**. Justified
 exceptions are accepted, as long as the [following process](#documentation-shipped-late)
-and the missed-deliverable due date (the 14th of each month) are respected.
+and the missed-deliverable due date (the 14th of each month) are both respected.
 
 #### Documentation shipped in the feature MR
 
@@ -226,7 +236,7 @@ State any requirements for using the feature and/or following along with the tut
 The only assumption that is redundant and doesn't need to be mentioned is having an account
 on GitLab.
 
-## Tutorial
+## Instructions
 
 - Step-by-step guide, with no gaps between the steps.
 - Be clear, concise, and stick to the goal of the doc: explain how to use that feature. Do not use fancy words.
