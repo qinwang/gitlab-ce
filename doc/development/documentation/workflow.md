@@ -179,11 +179,12 @@ Shipping late means that you're affecting the whole workflow as well as
 other teams' priorities, therefore, it should be strongly avoided.
 
 If you didn't ship the docs within the feature freeze, proceed as
-[described above](#documentation-shipped-in-a-follow-up-mr) and
-include the labels `Pick into X.Y`, `missed-deliverable`,
-in the issue and the MR, and assign them the correct milestone.
+[described above](#documentation-shipped-in-a-follow-up-mr) and,
+besides the regular labels, include the labels `Pick into X.Y` and
+`missed-deliverable` in the issue and the MR, and assign them the correct
+milestone.
 
-The **due date** for merging `missed-deliverable` MRs is on the **14th** of each month.
+The **due date** for **merging** `missed-deliverable` MRs is on the **14th** of each month.
 
 ### 3. Technical Writer's role in the documentation process
 
