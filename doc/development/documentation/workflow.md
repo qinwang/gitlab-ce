@@ -1,3 +1,7 @@
+---
+description: Learn the process of shipping documentation for GitLab.
+---
+
 # Documentation process at GitLab
 
 At GitLab, developers contribute new or updated documentation along with their code, but product managers and technical writers also have essential roles in the process.
@@ -71,49 +75,7 @@ broken links, etc), it can be merged without the PM's and Tech Writer's review.
 
 ## Documentation structure
 
-For consistency throughout the documentation, it's important to maintain the same
-structure among the docs.
-
-### Documentation blurb
-
-Every document should include:
-
-- **Feature name**: defines an intuitive name for the feature that clearly
-states what it is
-- **Feature overview** and description: describe what is it, why should one
-use it, and what it does
-- **Use cases**: describes real use case scenarios for that feature
-- **Requirements**: describes what one needs to have set up to be able to
-use the feature or to follow along with the tutorial. Define the assumptions
-to follow along (e.g., be familiar with GitLab CI/CD, an account on a
-third-party service, dependencies installed, etc) at the beginning of the doc
-- **Instructions**: clearly describes the steps to use that feature, with no gaps
-- **Troubleshooting** guide (recommended but not required): if you know beforehand what issues
-one might have when setting it up, or when something is changed, or on upgrading, it's
-important to describe it too. Think of things that may go wrong and include them in the
-docs. This is important to minimize request for support, and to avoid comments with
-questions that you know someone might ask. Answering them beforehand only makes your
-document better and more approachable.
-
-### Documentation files
-
-- When you create a new directory, always start with an `index.md` file.
-Do not use another file name and **do not** create `README.md` files
-- Do not use special chars and spaces, or capital letters in file names,
-directory names, branch names, and anything that generates a path.
-- Max screenshot size: 100KB
-- We do not support videos (yet)
-
-### Discoverability
-
-Your new document will be discoverable by the user only if:
-
-- Crosslinked from the higher-level index (e.g., Issue Boards docs
-should be linked from Issues; Prometheus docs should be linked from
-Monitoring; CI/CD tutorials should be linked from CI/CD examples)
-- The headings are clear. E.g., "App testing" is a bad heading, "Testing
-an application with GitLab CI/CD" is much better. Think of something
-someone will search for and use these keywords in the headings.
+Read through the [documentation structure](structure.md) docs for an overview.
 
 ## Documentation workflow
 
@@ -125,9 +87,7 @@ and the Technical Writing team. Each role is described below.
 
 The Product Manager (PM) should add to the feature issue:
 
-- Feature name
-- Feature overview/description
-- Feature use cases
+- The [documentation blurb](structure.md#documentation-blurb)
 - The documentation requirements for the developer working on the docs
   - What new page, new subsection of an existing page, or other update to an existing page/subsection is needed.
   - Just one page/section/update or multiple (perhaps there's an end user and admin change needing docs, or we need to update a previously recommended workflow, or we want to link the new feature from various places; consider and mention all ways documentation should be affected
@@ -151,7 +111,7 @@ and the missed-deliverable due date (the 14th of each month) are both respected.
 
 The developer should add to the feature MR the documentation containing:
 
-- Feature name, overview/description, use cases from the feature issue
+- The [documentation blurb](structure.md#documentation-blurb)
 - Instructions: write how to use the feature, step by step, with no gaps.
 - Crosslink: link with internal docs and external resources (if applicable)
 - Index: link the new doc or the new heading from the higher-level index
@@ -189,7 +149,8 @@ besides the regular labels, include the labels `Pick into X.Y` and
 `missed-deliverable` in the issue and the MR, and assign them the correct
 milestone.
 
-The **due date** for **merging** `missed-deliverable` MRs is on the **14th** of each month.
+The **due date** for **merging** `missed-deliverable` MRs is on the
+**14th** of each month.
 
 ### 3. Technical Writer's role in the documentation process
 
@@ -210,49 +171,4 @@ A technical writer must review the documentation for:
   - Describe the difference between new features and feature updates
   - Creating a new doc vs updating an existing doc
 -->
-
-## Documentation template for new docs
-
-To start a new document, respect the file tree and file name,
-as well as the style guidelines. Use the following template:
-
-```md
-# Feature Name **[TIER]** (1)
-
-> Introduced in GitLab Tier X.Y (2)
-
-## Overview
-
-To write the feature overview, one should consider answering the following questions:
-
-- What is it?
-- Who is it for?
-- What is the context in which it is used and are there any prerequisites/requirements?
-- What can the user do with it? (Be sure to consider multiple audiences, like GitLab admin and developer-user.)
-- What are the benefits to using it over any alternatives?
-
-## Use cases
-
-Describe one to three use cases for that feature. Give real life examples.
-
-## Requirements
-
-State any requirements for using the feature and/or following along with the tutorial.
-
-The only assumption that is redundant and doesn't need to be mentioned is having an account
-on GitLab.
-
-## Instructions
-
-- Step-by-step guide, with no gaps between the steps.
-- Be clear, concise, and stick to the goal of the doc: explain how to use that feature. Do not use fancy words.
-- Use inclusive language and avoid jargons and uncommon words. The docs should be clear and very easy to understand.
-- Write in the 3rd person ("we", "you", "us", "one", instead of "I" or "me")
-- Always provide internal and external reference links
-- Always link the doc from its higher-level index
-
-*(1): Apply the [tier badges](styleguide.md#product-badges) accordingly
-*(2): Apply the correct format for the [GitLab version introducing the feature](styleguide.md#gitlab-versions-and-tiers)
-
-```
 

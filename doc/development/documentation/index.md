@@ -27,50 +27,18 @@ is documented.
 
 Whenever you submit a merge request for the documentation, use the documentation MR description template.
 
-Please check the [documentation workflow](https://about.gitlab.com/handbook/product/technical-writing/workflow/) before getting started.
+## Documentation workflow
+
+Please read through the [documentation workflow](workflow.md) before getting started.
 
 ## Documentation structure
 
-- Overview and use cases: what it is, why it is necessary, why one would use it
-- Requirements: what do we need to get started
-- Tutorial: how to set it up, how to use it
-
-Always link a new document from its topic-related index, otherwise, it will
-not be included it in the documentation site search.
-
-_Note: to be extended._
-
-### Feature overview and use cases
-
-Every major feature (regardless if present in GitLab Community or Enterprise editions)
-should present, at the beginning of the document, two main sections: **overview** and
-**use cases**. Every GitLab EE-only feature should also contain these sections.
-
-**Overview**: as the name suggests, the goal here is to provide an overview of the feature.
-Describe what is it, what it does, why it is important/cool/nice-to-have,
-what problem it solves, and what you can do with this feature that you couldn't
-do before.
-
-**Use cases**: provide at least two, ideally three, use cases for every major feature.
-You should answer this question: what can you do with this feature/change? Use cases
-are examples of how this feature or change can be used in real life.
-
-Examples:
-- CE and EE: [Issues](../user/project/issues/index.md#use-cases)
-- CE and EE: [Merge Requests](../user/project/merge_requests/index.md#overview)
-- EE-only: [Geo](https://docs.gitlab.com/ee/gitlab-geo/README.html#overview)
-- EE-only: [Jenkins integration](https://docs.gitlab.com/ee/integration/jenkins.md#overview)
-
-Note that if you don't have anything to add between the doc title (`<h1>`) and
-the header `## Overview`, you can omit the header, but keep the content of the
-overview there.
-
-> **Overview** and **use cases** are required to **every** Enterprise Edition feature,
-and for every **major** feature present in Community Edition.
+Follow through the [documentation structure guide](structure.md) for learning
+how to structure GitLab docs.
 
 ## Markdown and styles
 
-Currently GitLab docs use Redcarpet as [markdown](../user/markdown.md) engine, but there's an [open discussion](https://gitlab.com/gitlab-com/gitlab-docs/issues/50) for implementing Kramdown in the near future.
+Currently GitLab docs use Redcarpet as [markdown](../../user/markdown.md) engine, but there's an [open discussion](https://gitlab.com/gitlab-com/gitlab-docs/issues/50) for implementing Kramdown in the near future.
 
 All the docs follow the [documentation style guidelines](styleguide.md).
 
@@ -84,8 +52,17 @@ In order to have a [solid site structure](https://searchengineland.com/seo-benef
 all docs should be linked. Every new document should be cross-linked to its related documentation, and linked from its topic-related index, when existent.
 
 The directories `/workflow/`, `/gitlab-basics/`, `/university/`, and `/articles/` have
-been deprecated and the majority their docs have been moved to their correct location
+been **deprecated** and the majority their docs have been moved to their correct location
 in small iterations. Please don't create new docs in these folders.
+
+### Documentation files
+
+- When you create a new directory, always start with an `index.md` file.
+Do not use another file name and **do not** create `README.md` files
+- **Do not** use special chars and spaces, or capital letters in file names,
+directory names, branch names, and anything that generates a path.
+- Max screenshot size: 100KB
+- We do not support videos (yet)
 
 ### Location and naming documents
 
@@ -116,7 +93,7 @@ The table below shows what kind of documentation goes where.
 
 ---
 
-**General rules:**
+**General rules & best practices:**
 
 1. The correct naming and location of a new document, is a combination
    of the relative URL of the document in question and the GitLab Map design
