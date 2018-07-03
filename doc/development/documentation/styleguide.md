@@ -12,13 +12,18 @@ Check the GitLab handbook for the [writing styles guidelines](https://about.gitl
 
 ## Files
 
-- [Directory structure](index.md#location-and-naming-documents)
-- [Documentation files](index.md#documentation-files)
-- [Markdown](../../user/markdown.md)
+- [Directory structure](index.md#location-and-naming-documents): place the docs
+in the correct location
+- [Documentation files](index.md#documentation-files): name the files accordingly
+- [Markdown](../../user/markdown.md): use the GitLab Flavored Markdown in the
+documentation
 
 NOTE: **Note:**
 **Do not** use capital letters, spaces, or special chars in file names,
 branch names, directory names, headings, or in anything that generates a path.
+
+NOTE: **Note:**
+**Do not** create new `README.md` files. Name them `index.md` instead.
 
 ## Text
 

@@ -87,7 +87,7 @@ and the Technical Writing team. Each role is described below.
 
 The Product Manager (PM) should add to the feature issue:
 
-- The [documentation blurb](structure.md#documentation-blurb)
+- Feature name, overview/description, and use cases, for the [documentation blurb](structure.md#documentation-blurb)
 - The documentation requirements for the developer working on the docs
   - What new page, new subsection of an existing page, or other update to an existing page/subsection is needed.
   - Just one page/section/update or multiple (perhaps there's an end user and admin change needing docs, or we need to update a previously recommended workflow, or we want to link the new feature from various places; consider and mention all ways documentation should be affected
@@ -111,12 +111,14 @@ and the missed-deliverable due date (the 14th of each month) are both respected.
 
 The developer should add to the feature MR the documentation containing:
 
-- The [documentation blurb](structure.md#documentation-blurb)
+- The [documentation blurb](structure.md#documentation-blurb): copy the
+feature name, overview/description, and use cases from the feature issue
 - Instructions: write how to use the feature, step by step, with no gaps.
-- Crosslink: link with internal docs and external resources (if applicable)
+- [Crosslink for discoverability](structure.md#discoverability): link with
+internal docs and external resources (if applicable)
 - Index: link the new doc or the new heading from the higher-level index
 for [discoverability](#discoverability)
-- Screenshots: when necessary, add screenshots for:
+- [Screenshots](styleguide.md#images): when necessary, add screenshots for:
   - Illustrating a step of the process
   - Indicating the location of a navigation menu
 - Label the MR with `Documentation`, `Deliverable`, `docs-P1`, and assign
@@ -130,9 +132,11 @@ the correct milestone
 If the docs aren't being shipped within the feature MR:
 
 - Create a new issue mentioning "docs" or "documentation" in the title
-- Label the issue with: `Documentation`, `Deliverable`, `docs-P1`, `<product-label>` (product label == CI/CD, Pages, Prometheus, etc)
+- Label the issue with: `Documentation`, `Deliverable`, `docs-P1`, `<product-label>`
+(product label == CI/CD, Pages, Prometheus, etc)
 - Add the correct milestone
-- Create a new MR for the docs changes [LINK]
+- Create a new MR for shipping the docs changes and follow the same
+process [described above](#documentation-shipped-in-the-feature-mr)
 - Add the same labels and milestone as you did for the issue
 - Assign the PM for review
 - When done, mention the `@gl\-docsteam` in the MR asking for review
@@ -140,8 +144,9 @@ If the docs aren't being shipped within the feature MR:
 
 #### Documentation shipped late
 
-Shipping late means that you're affecting the whole workflow as well as
-other teams' priorities, therefore, it should be strongly avoided.
+Shipping late means that you're affecting the whole feature workflow
+as well as other teams' priorities (PMs, tech writers, release managers,
+release post reviewers), therefore, it should be strongly avoided.
 
 If you didn't ship the docs within the feature freeze, proceed as
 [described above](#documentation-shipped-in-a-follow-up-mr) and,

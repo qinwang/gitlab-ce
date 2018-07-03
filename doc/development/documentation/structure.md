@@ -14,6 +14,7 @@ Before getting started, read through the following docs:
 - [Branch naming for docs-only changes](index.md#branch-naming)
 - [Documentation directory struture](index.md#documentation-directory-structure)
 - [Documentation style guidelines](styleguide.md)
+- [Documentation workflow](workflow.md)
 
 ## Documentation blurb
 
@@ -71,6 +72,9 @@ Your new document will be discoverable by the user only if:
 - Crosslinked from the higher-level index (e.g., Issue Boards docs
 should be linked from Issues; Prometheus docs should be linked from
 Monitoring; CI/CD tutorials should be linked from CI/CD examples)
+  - When referencing other GitLab products and features, link to their
+respective docs; when referrencing third-party products or technologies,
+link out to their external sites, documentation, and resources.
 - The headings are clear. E.g., "App testing" is a bad heading, "Testing
 an application with GitLab CI/CD" is much better. Think of something
 someone will search for and use these keywords in the headings.
