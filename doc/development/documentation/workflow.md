@@ -69,7 +69,12 @@ which Tech Writer to assign for.
 When the MR only contains corrections to the content (typos, grammar,
 broken links, etc), it can be merged without the PM's and Tech Writer's review.
 
-## Documentation blurb
+## Documentation structure
+
+For consistency throughout the documentation, it's important to maintain the same
+structure among the docs.
+
+### Documentation blurb
 
 Every document should include:
 
@@ -90,7 +95,7 @@ docs. This is important to minimize request for support, and to avoid comments w
 questions that you know someone might ask. Answering them beforehand only makes your
 document better and more approachable.
 
-## Documentation files
+### Documentation files
 
 - When you create a new directory, always start with an `index.md` file.
 Do not use another file name and **do not** create `README.md` files
@@ -99,7 +104,7 @@ directory names, branch names, and anything that generates a path.
 - Max screenshot size: 100KB
 - We do not support videos (yet)
 
-## Discoverability
+### Discoverability
 
 Your new document will be discoverable by the user only if:
 
@@ -245,8 +250,9 @@ on GitLab.
 - Write in the 3rd person ("we", "you", "us", "one", instead of "I" or "me")
 - Always provide internal and external reference links
 - Always link the doc from its higher-level index
+
+*(1): Apply the [tier badges](styleguide.md#product-badges) accordingly
+*(2): Apply the correct format for the [GitLab version introducing the feature](styleguide.md#gitlab-versions-and-tiers)
+
 ```
 
-TBA: brief example and crosslink (1) and (2)
-
-TBA: crosslink with doc index and style guidelines
