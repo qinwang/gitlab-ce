@@ -10,6 +10,16 @@ GitLab documentation. Check the
 
 Check the GitLab handbook for the [writing styles guidelines](https://about.gitlab.com/handbook/communication/#writing-style-guidelines).
 
+## Files
+
+- [Directory structure](index.md#location-and-naming-documents)
+- [Documentation files](index.md#documentation-files)
+- [Markdown](../../user/markdown.md)
+
+NOTE: **Note:**
+**Do not** use capital letters, spaces, or special chars in file names,
+branch names, directory names, headings, or in anything that generates a path.
+
 ## Text
 
 - Split up long lines (wrap text), this makes it much easier to review and edit. Only
@@ -101,10 +111,7 @@ For punctuation rules, please refer to the [GitLab UX guide](https://design.gitl
   the `.md` document that you're working on is located. Always prepend their
   names with the name of the document that they will be included in. For
   example, if there is a document called `twitter.md`, then a valid image name
-  could be `twitter_login_screen.png`. [**Exception**: images for
-  [articles](index.md#technical-articles) should be
-  put in a directory called `img` underneath `/articles/article_title/img/`, therefore,
-  there's no need to prepend the document name to their filenames.]
+  could be `twitter_login_screen.png`.
 - Images should have a specific, non-generic name that will differentiate them.
 - Keep all file names in lower case.
 - Consider using PNG images instead of JPEG.
@@ -112,6 +119,8 @@ For punctuation rules, please refer to the [GitLab UX guide](https://design.gitl
 - Compress gifs with <https://ezgif.com/optimize> or similar tool.
 - Images should be used (only when necessary) to _illustrate_ the description
 of a process, not to _replace_ it.
+- Max image size: 100KB (gifs included).
+- The GitLab docs do not support videos yet.
 
 Inside the document:
 
