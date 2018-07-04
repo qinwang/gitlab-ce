@@ -2,6 +2,6 @@ module Types
   class MutationType < BaseObject
     graphql_name "Mutation"
 
-    # TODO: Add Mutations as fields
+    field :toggle_wip, mutation: Mutations::MergeRequests::WipMutation
   end
 end

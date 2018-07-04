@@ -91,4 +91,26 @@ describe 'getting merge request information nested in a project' do
       expect(merge_request_graphql_data['pipelines']['edges'].size).to eq(1)
     end
   end
+
+  context 'toggeling wip status' do
+    let(:query) do
+      graphql_query_for(
+        'project',
+        { 'fullPath' => project.full_path },
+        query_graphql_field('mergeRequest', { iid: merge_request.iid }, 'toggleWip')
+      )
+    end
+
+    it_behaves_like 'a working graphql query' do
+      before do
+        post_graphql(query, current_user: current_user)
+      end
+    end
+
+    it 'marks the merge request as WIP' do
+      post_graphql(query, current_user: current_user)
+
+      binding.pry
+    end
+  end
 end
