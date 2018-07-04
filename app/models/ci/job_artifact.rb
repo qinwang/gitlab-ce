@@ -7,8 +7,6 @@ module Ci
     belongs_to :project
     belongs_to :job, class_name: "Ci::Build", foreign_key: :job_id
 
-    default_value_for :file_location, :hashed_path
-
     mount_uploader :file, JobArtifactUploader
 
     before_save :set_size, if: :file_changed?
@@ -29,7 +27,7 @@ module Ci
 
     enum file_location: {
       legacy_path: 1, # a path using a timestamp and raw project/model IDs
-      hashed_path: 2 # a path using a SHA2 based on the project ID
+      hashed_path: 2 # a path using a SHA2 based on the project ID. The current default value.
     }
 
     def update_file_store
