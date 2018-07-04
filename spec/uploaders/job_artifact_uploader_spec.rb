@@ -78,18 +78,18 @@ describe JobArtifactUploader do
   end
 
   describe '#dynamic_segment' do
-    let(:uploaded_content) { File.read(Rails.root + 'spec/fixtures/ci_build_artifacts.zip') }
+    let(:uploaded_content) { File.binread(Rails.root + 'spec/fixtures/ci_build_artifacts.zip') }
     let(:model) { uploader.model }
 
     context 'when a job artifact is stored in legacy_path' do
       let(:job_artifact) { create(:ci_job_artifact, :legacy_archive) }
 
-      it 'store_path returns hashed path' do
-        expect(model.file.store_path).to include(File.join(model.created_at.utc.strftime('%Y_%m'), model.project_id.to_s, model.job_id.to_s))
+      it 'store_path returns the legacy path' do
+        expect(model.file.store_path).to eq(File.join(model.created_at.utc.strftime('%Y_%m'), model.project_id.to_s, model.job_id.to_s, 'ci_build_artifacts.zip'))
       end
 
-      it 'can open the file' do
-        expect(::File.read(model.file.path)).to eq(uploaded_content)
+      it 'has exactly the same content' do
+        expect(::File.binread(model.file.path)).to eq(uploaded_content)
       end
     end
 
@@ -98,12 +98,12 @@ describe JobArtifactUploader do
       let(:disk_hash) { Digest::SHA2.hexdigest(model.project_id.to_s) }
       let(:creation_date) { model.created_at.utc.strftime('%Y_%m_%d') }
 
-      it 'store_path returns legacy path' do
-        expect(model.file.store_path).to include(File.join(disk_hash[0..1], disk_hash[2..3], disk_hash, creation_date, model.job_id.to_s, model.id.to_s))
+      it 'store_path returns hashed path' do
+        expect(model.file.store_path).to eq(File.join(disk_hash[0..1], disk_hash[2..3], disk_hash, creation_date, model.job_id.to_s, model.id.to_s, 'ci_build_artifacts.zip'))
       end
 
-      it 'can open the file' do
-        expect(::File.read(model.file.path)).to eq(uploaded_content)
+      it 'has exactly the same content' do
+        expect(::File.binread(model.file.path)).to eq(uploaded_content)
       end
     end
   end
