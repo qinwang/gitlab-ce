@@ -17,7 +17,7 @@ export default {
       'getUserData',
       'getNoteableData',
       'discussionCount',
-      'unresolvedDiscussions',
+      'unresolvedDiscussionsDiffOrdered',
       'resolvedDiscussionCount',
     ]),
     isLoggedIn() {
@@ -36,7 +36,7 @@ export default {
       return this.getNoteableData.create_issue_to_resolve_discussions_path;
     },
     firstUnresolvedDiscussionId() {
-      const item = this.unresolvedDiscussions[0] || {};
+      const item = this.unresolvedDiscussionsDiffOrdered[0] || {};
 
       return item.id;
     },
@@ -55,7 +55,8 @@ export default {
         return;
       }
 
-      const el = document.querySelector(`[data-discussion-id="${discussionId}"]`);
+      const el = [].slice.call(document.querySelectorAll(`[data-discussion-id="${discussionId}"]`))
+        .filter(element => element.offsetParent !== null); // no parent element is hidden
       const activeTab = window.mrTabs.currentAction;
 
       if (activeTab === 'commits' || activeTab === 'pipelines') {

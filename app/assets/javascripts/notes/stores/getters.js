@@ -75,12 +75,34 @@ export const unresolvedDiscussions = (state, getters) => {
   return state.discussions.filter(n => !n.individual_note && !resolvedMap[n.id]);
 };
 
+export const unresolvedDiscussionsDiffOrdered = (state, getters) => {
+  const resolvedMap = getters.resolvedDiscussionsById;
+
+  return getters.allDiscussionsDiffOrdered.filter(n => !n.individual_note && !resolvedMap[n.id]);
+};
+
 export const allDiscussions = (state, getters) => {
   const resolved = getters.resolvedDiscussionsById;
   const unresolved = getters.unresolvedDiscussions;
 
   return Object.values(resolved).concat(unresolved);
 };
+
+export const allDiscussionsDiffOrdered = (state, getters) =>
+  getters.allDiscussions.sort((a, b) => {
+    if (!a.line_code || !b.line_code || !a.diff_file || !b.diff_file) {
+      return 0;
+    }
+
+    const aLines = a.line_code.match(/([0-9]*)_([0-9]*)$/);
+    const bLines = b.line_code.match(/([0-9]*)_([0-9]*)$/);
+    const filenameComparison = a.diff_file.file_path.localeCompare(b.diff_file.file_path);
+
+    return filenameComparison < 0 ||
+      (filenameComparison === 0 && Math.max(aLines[1], aLines[2]) < Math.max(bLines[1], bLines[2]))
+      ? -1
+      : 1;
+  });
 
 export const resolvedDiscussionsById = state => {
   const map = {};

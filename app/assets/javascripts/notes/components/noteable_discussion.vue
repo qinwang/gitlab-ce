@@ -60,6 +60,11 @@ export default {
       required: false,
       default: false,
     },
+    discussionsByDiffOrder: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   data() {
     return {
@@ -74,6 +79,7 @@ export default {
       'discussionCount',
       'resolvedDiscussionCount',
       'allDiscussions',
+      'allDiscussionsDiffOrdered',
       'unresolvedDiscussions',
     ]),
     transformedDiscussion() {
@@ -124,6 +130,14 @@ export default {
     },
     hasMultipleUnresolvedDiscussions() {
       return this.unresolvedDiscussions.length > 1;
+    },
+    allDiscussionsBase() {
+      return this.discussionsByDiffOrder ? this.allDiscussionsDiffOrdered : this.allDiscussions;
+    },
+    isLastDiscussion() {
+      const discussionIds = this.allDiscussionsBase.map(d => d.id);
+
+      return discussionIds[discussionIds.length - 1] === this.discussion.id;
     },
     shouldRenderDiffs() {
       const { diffDiscussion, diffFile } = this.transformedDiscussion;
@@ -241,7 +255,7 @@ Please check your network connection and try again.`;
         });
     },
     jumpToNextDiscussion() {
-      const discussionIds = this.allDiscussions.map(d => d.id);
+      const discussionIds = this.allDiscussionsBase.map(d => d.id);
       const unresolvedIds = this.unresolvedDiscussions.map(d => d.id);
       const currentIndex = discussionIds.indexOf(this.discussion.id);
       const remainingAfterCurrent = discussionIds.slice(currentIndex + 1);
@@ -249,7 +263,8 @@ Please check your network connection and try again.`;
 
       if (nextIndex > -1) {
         const nextId = remainingAfterCurrent[nextIndex];
-        const el = document.querySelector(`[data-discussion-id="${nextId}"]`);
+        const el = [].slice.call(document.querySelectorAll(`[data-discussion-id="${nextId}"]`))
+          .filter(element => element.offsetParent !== null); // no parent element is hidden
 
         if (el) {
           this.expandDiscussion({ discussionId: nextId });
@@ -397,7 +412,7 @@ Please check your network connection and try again.`;
                           </a>
                         </div>
                         <div
-                          v-if="hasMultipleUnresolvedDiscussions"
+                          v-if="hasMultipleUnresolvedDiscussions && !isLastDiscussion"
                           class="btn-group"
                           role="group">
                           <button
