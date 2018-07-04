@@ -44,14 +44,13 @@ describe MigrateLegacyArtifactsToJobArtifacts, :migration, :sidekiq do
       migrate!
 
       expect(job_artifacts.order(:job_id).pluck('project_id, job_id, file_type, file_store, size, expire_at, file, file_sha256, file_location'))
-        .to eq([
-          [project.id, 1, archive_file_type, local_store, nil, nil, 'archive.zip', nil, legacy_location],
-          [project.id, 3, archive_file_type, local_store, nil, nil, 'archive.zip', nil, legacy_location],
-          [project.id, 3, metadata_file_type, local_store, nil, nil, 'metadata.gz', nil, legacy_location],
-          [project.id, 5, archive_file_type, remote_store, nil, nil, 'archive.zip', nil, legacy_location],
-          [project.id, 5, metadata_file_type, local_store, nil, nil, 'metadata.gz', nil, legacy_location],
-          [project.id, 6, archive_file_type, local_store, nil, nil, 'archive.zip', nil, legacy_location],
-          [project.id, 6, metadata_file_type, local_store, nil, nil, 'metadata.gz', nil, legacy_location]])
+        .to eq([[project.id, 1, archive_file_type, local_store, nil, nil, 'archive.zip', nil, legacy_location],
+                [project.id, 3, archive_file_type, local_store, nil, nil, 'archive.zip', nil, legacy_location],
+                [project.id, 3, metadata_file_type, local_store, nil, nil, 'metadata.gz', nil, legacy_location],
+                [project.id, 5, archive_file_type, remote_store, nil, nil, 'archive.zip', nil, legacy_location],
+                [project.id, 5, metadata_file_type, local_store, nil, nil, 'metadata.gz', nil, legacy_location],
+                [project.id, 6, archive_file_type, local_store, nil, nil, 'archive.zip', nil, legacy_location],
+                [project.id, 6, metadata_file_type, local_store, nil, nil, 'metadata.gz', nil, legacy_location]])
     end
   end
 
