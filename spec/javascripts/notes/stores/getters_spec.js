@@ -109,4 +109,37 @@ describe('Getters Notes Store', () => {
       expect(getters.isNotesFetched(state)).toBeFalsy();
     });
   });
+
+  describe('allDiscussionsDiffOrdered', () => {
+    const discussion1 = {
+      diff_file: {
+        file_path: 'about.md',
+      },
+      line_code: 'abcdefghijkl_50_0',
+    };
+    const discussion2 = {
+      diff_file: {
+        file_path: 'README.md',
+      },
+      line_code: 'abcdefghijkl_0_20',
+    };
+    const discussion3 = {
+      diff_file: {
+        file_path: 'README.md',
+      },
+      line_code: 'abcdefghijkl_21_0',
+    };
+
+    const localGetters = {
+      allDiscussions: [discussion3, discussion1, discussion2],
+    };
+
+    it('should return all discussions in diff order', () => {
+      expect(getters.allDiscussionsDiffOrdered(state, localGetters)).toEqual([
+        discussion1,
+        discussion2,
+        discussion3,
+      ]);
+    });
+  });
 });
