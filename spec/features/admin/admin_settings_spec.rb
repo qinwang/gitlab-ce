@@ -274,7 +274,7 @@ describe 'Admin updates settings' do
 
   it 'Enable hiding third party offers' do
     page.within('.as-third-party-offers') do
-      check 'Do not display offers from third parties from GitLab'
+      check 'Do not display offers from third parties within GitLab'
       click_button 'Save changes'
     end
 
