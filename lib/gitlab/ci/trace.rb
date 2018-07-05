@@ -162,7 +162,8 @@ module Gitlab
             project: job.project,
             file_type: :trace,
             file: stream,
-            file_sha256: Digest::SHA256.file(path).hexdigest)
+            file_sha256: Digest::SHA256.file(path).hexdigest,
+            compression: :raw)
         end
       end
 
