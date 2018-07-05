@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@gitlab-org/gitlab-svgs": "^1.24.0",
-    "@gitlab-org/gitlab-ui": "https://gitlab.com/gitlab-org/frontend/gitlab-ui.git#5181ad3",
+    "@gitlab-org/gitlab-ui": "https://gitlab.com/gitlab-org/frontend/gitlab-ui.git#96e179e",
     "autosize": "^4.0.0",
     "axios": "^0.17.1",
     "babel-core": "^6.26.3",
