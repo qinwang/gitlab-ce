@@ -25,7 +25,10 @@ them to review it for you.
 We use the [monthly release blog post](https://about.gitlab.com/handbook/marketing/blog/release-posts/#monthly-releases) as a changelog checklist to ensure everything
 is documented.
 
-Whenever you submit a merge request for the documentation, use the documentation MR description template.
+Whenever you submit a merge request for the documentation, use the
+"Documentation" MR description template. If you're changing documentation
+location, use the MR description template called "Change documentation
+location" instead.
 
 ## Documentation workflow
 
@@ -180,7 +183,7 @@ Things to note:
   documentation, sometimes it might be useful to search a path deeper.
 - The `*.md` extension is not used when a document is linked to GitLab's
   built-in help page, that's why we omit it in `git grep`.
-- Use the checklist on the documentation MR description template.
+- Use the checklist on the "Change documentation location" MR description template.
 
 #### Alternative redirection method
 

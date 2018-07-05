@@ -81,7 +81,7 @@ someone will search for and use these keywords in the headings.
 
 ## Documentation template for new docs
 
-To start a new document, respect the file tree and file name,
+To start a new document, respect the file tree and file name guidelines,
 as well as the style guidelines. Use the following template:
 
 ```md
@@ -139,4 +139,3 @@ Notes:
 
 - (1): Apply the [tier badges](styleguide.md#product-badges) accordingly
 - (2): Apply the correct format for the [GitLab version introducing the feature](styleguide.md#gitlab-versions-and-tiers)
-

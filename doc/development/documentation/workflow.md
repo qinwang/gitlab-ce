@@ -137,6 +137,7 @@ If the docs aren't being shipped within the feature MR:
 - Add the correct milestone
 - Create a new MR for shipping the docs changes and follow the same
 process [described above](#documentation-shipped-in-the-feature-mr)
+- Use the MR description template called "Documentation"
 - Add the same labels and milestone as you did for the issue
 - Assign the PM for review
 - When done, mention the `@gl\-docsteam` in the MR asking for review
