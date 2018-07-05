@@ -29,12 +29,20 @@ FactoryBot.define do
       group_runners_enabled nil
     end
 
+    after(:build) do |project, evaluator|
+      project.wiki_enabled = evaluator.wiki_access_level != ProjectFeature::DISABLED
+      project.builds_enabled = evaluator.builds_access_level != ProjectFeature::DISABLED
+      project.snippets_enabled = evaluator.snippets_access_level != ProjectFeature::DISABLED
+      project.issues_enabled = evaluator.issues_access_level != ProjectFeature::DISABLED
+      project.merge_requests_enabled = evaluator.merge_requests_access_level != ProjectFeature::DISABLED
+    end
+
     after(:create) do |project, evaluator|
       # Builds and MRs can't have higher visibility level than repository access level.
       builds_access_level = [evaluator.builds_access_level, evaluator.repository_access_level].min
       merge_requests_access_level = [evaluator.merge_requests_access_level, evaluator.repository_access_level].min
 
-      project.project_feature.update_columns(
+      project.project_feature.update_attributes(
         wiki_access_level: evaluator.wiki_access_level,
         builds_access_level: builds_access_level,
         snippets_access_level: evaluator.snippets_access_level,
