@@ -12,7 +12,7 @@ Before getting started, read through the following docs:
 - [Contributing to GitLab documentation](index.md#contributing-to-docs)
 - [Merge requests for GitLab documentation](index.md#merge-requests-for-gitlab-documentation)
 - [Branch naming for docs-only changes](index.md#branch-naming)
-- [Documentation directory struture](index.md#documentation-directory-structure)
+- [Documentation directory structure](index.md#documentation-directory-structure)
 - [Documentation style guidelines](styleguide.md)
 - [Documentation workflow](workflow.md)
 
@@ -73,7 +73,7 @@ Your new document will be discoverable by the user only if:
 should be linked from Issues; Prometheus docs should be linked from
 Monitoring; CI/CD tutorials should be linked from CI/CD examples)
   - When referencing other GitLab products and features, link to their
-respective docs; when referrencing third-party products or technologies,
+respective docs; when referencing third-party products or technologies,
 link out to their external sites, documentation, and resources.
 - The headings are clear. E.g., "App testing" is a bad heading, "Testing
 an application with GitLab CI/CD" is much better. Think of something
@@ -85,13 +85,20 @@ To start a new document, respect the file tree and file name,
 as well as the style guidelines. Use the following template:
 
 ```md
+---
+description: "short document description." # Up to ~200 chars long. They will be displayed in Google Search Snippets.
+---
+
 # Feature Name **[TIER]** (1)
 
 > Introduced in GitLab Tier X.Y (2)
 
+A short description for the feature (can be the same used in the frontmatter's
+`description`).
+
 ## Overview
 
-To write the feature overview, one should consider answering the following questions:
+To write the feature overview, you should consider answering the following questions:
 
 - What is it?
 - Who is it for?
@@ -101,7 +108,7 @@ To write the feature overview, one should consider answering the following quest
 
 ## Use cases
 
-Describe one to three use cases for that feature. Give real life examples.
+Describe one to three use cases for that feature. Give real-life examples.
 
 ## Requirements
 
@@ -112,10 +119,18 @@ on GitLab.
 
 ## Instructions
 
-- Step-by-step guide, with no gaps between the steps.
-- Be clear, concise, and stick to the goal of the doc: explain how to use that feature. Do not use fancy words.
-- Use inclusive language and avoid jargons and uncommon words. The docs should be clear and very easy to understand.
-- Write in the 3rd person ("we", "you", "us", "one", instead of "I" or "me")
+- Write a step-by-step guide, with no gaps between the steps
+- Start with an h2 (`##`), break complex steps into small steps using
+subheadings h3 > h4 > h5 > h6. _Never skip the hierarchy level, such
+as h2 > h4_, as it will break the TOC and may affect the breadcrumbs.
+- Use short and descriptive headings (up to 64 chars). You can use one
+single heading `## How it works` when the feature is simple and the
+document is short.
+- Be clear, concise, and stick to the goal of the doc: explain how to
+use that feature.
+- Use inclusive language and avoid jargons, as well as uncommon and
+fancy words. The docs should be clear and very easy to understand.
+- Write in the 3rd person (use "we", "you", "us", "one", instead of "I" or "me")
 - Always provide internal and external reference links
 - Always link the doc from its higher-level index
 ```

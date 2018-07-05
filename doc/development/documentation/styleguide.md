@@ -72,7 +72,8 @@ For punctuation rules, please refer to the [GitLab UX guide](https://design.gitl
 
 - Add **only one H1** in each document, by adding `#` at the beginning of
   it (when using markdown). The `h1` will be the document `<title>`.
-- For subheadings, use `##`, `###` and so on
+- Start with an h2 (`##`), and respect the order h2 > h3 > h4 > h5 > h6.
+  Never skip the hierarchy level, such as h2 > h4
 - Avoid putting numbers in headings. Numbers shift, hence documentation anchor
   links shift too, which eventually leads to dead links. If you think it is
   compelling to add numbers in headings, make sure to at least discuss it with
