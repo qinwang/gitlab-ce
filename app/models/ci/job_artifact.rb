@@ -25,6 +25,12 @@ module Ci
       trace: 3
     }
 
+    enum compression: {
+      raw: 1,
+      zip: 2,
+      gzip: 3
+    }
+
     def update_file_store
       # The file.object_store is set during `uploader.store!`
       # which happens after object is inserted/updated

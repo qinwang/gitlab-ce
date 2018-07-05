@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180629191052) do
+ActiveRecord::Schema.define(version: 20180705160945) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -337,6 +337,8 @@ ActiveRecord::Schema.define(version: 20180629191052) do
   add_index "ci_builds", ["commit_id", "status", "type"], name: "index_ci_builds_on_commit_id_and_status_and_type", using: :btree
   add_index "ci_builds", ["commit_id", "type", "name", "ref"], name: "index_ci_builds_on_commit_id_and_type_and_name_and_ref", using: :btree
   add_index "ci_builds", ["commit_id", "type", "ref"], name: "index_ci_builds_on_commit_id_and_type_and_ref", using: :btree
+  add_index "ci_builds", ["id"], name: "index_ci_builds_on_id", where: "(artifacts_file <> ''::text)", using: :btree
+  add_index "ci_builds", ["id"], name: "tmp_partial_index_ci_builds_on_id_with_legacy_artifacts", where: "(artifacts_file <> ''::text)", using: :btree
   add_index "ci_builds", ["project_id", "id"], name: "index_ci_builds_on_project_id_and_id", using: :btree
   add_index "ci_builds", ["protected"], name: "index_ci_builds_on_protected", using: :btree
   add_index "ci_builds", ["runner_id"], name: "index_ci_builds_on_runner_id", using: :btree
@@ -392,6 +394,9 @@ ActiveRecord::Schema.define(version: 20180629191052) do
     t.datetime_with_timezone "expire_at"
     t.string "file"
     t.binary "file_sha256"
+    t.integer "file_format", limit: 2
+    t.integer "file_location", limit: 2, default: 2, null: false
+    t.integer "compression"
   end
 
   add_index "ci_job_artifacts", ["expire_at", "job_id"], name: "index_ci_job_artifacts_on_expire_at_and_job_id", using: :btree
@@ -1093,9 +1098,10 @@ ActiveRecord::Schema.define(version: 20180629191052) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "file"
-    t.integer "file_store"
+    t.integer "file_store", null: false
   end
 
+  add_index "lfs_objects", ["file_store"], name: "index_lfs_objects_on_file_store", using: :btree
   add_index "lfs_objects", ["oid"], name: "index_lfs_objects_on_oid", unique: true, using: :btree
 
   create_table "lfs_objects_projects", force: :cascade do |t|
@@ -1738,6 +1744,7 @@ ActiveRecord::Schema.define(version: 20180629191052) do
   end
 
   add_index "redirect_routes", ["path"], name: "index_redirect_routes_on_path", unique: true, using: :btree
+  add_index "redirect_routes", ["path"], name: "index_redirect_routes_on_path_text_pattern_ops", using: :btree, opclasses: {"path"=>"varchar_pattern_ops"}
   add_index "redirect_routes", ["source_type", "source_id"], name: "index_redirect_routes_on_source_type_and_source_id", using: :btree
 
   create_table "releases", force: :cascade do |t|
@@ -1992,11 +1999,12 @@ ActiveRecord::Schema.define(version: 20180629191052) do
     t.datetime "created_at", null: false
     t.string "mount_point"
     t.string "secret"
-    t.integer "store"
+    t.integer "store", null: false
   end
 
   add_index "uploads", ["checksum"], name: "index_uploads_on_checksum", using: :btree
   add_index "uploads", ["model_id", "model_type"], name: "index_uploads_on_model_id_and_model_type", using: :btree
+  add_index "uploads", ["store"], name: "index_uploads_on_store", using: :btree
   add_index "uploads", ["uploader", "path"], name: "index_uploads_on_uploader_and_path", using: :btree
 
   create_table "user_agent_details", force: :cascade do |t|
@@ -2327,7 +2335,7 @@ ActiveRecord::Schema.define(version: 20180629191052) do
   add_foreign_key "term_agreements", "users", on_delete: :cascade
   add_foreign_key "timelogs", "issues", name: "fk_timelogs_issues_issue_id", on_delete: :cascade
   add_foreign_key "timelogs", "merge_requests", name: "fk_timelogs_merge_requests_merge_request_id", on_delete: :cascade
-  add_foreign_key "todos", "namespaces", column: "group_id", on_delete: :cascade
+  add_foreign_key "todos", "namespaces", column: "group_id", name: "fk_a27c483435", on_delete: :cascade
   add_foreign_key "todos", "notes", name: "fk_91d1f47b13", on_delete: :cascade
   add_foreign_key "todos", "projects", name: "fk_45054f9c45", on_delete: :cascade
   add_foreign_key "todos", "users", column: "author_id", name: "fk_ccf0373936", on_delete: :cascade

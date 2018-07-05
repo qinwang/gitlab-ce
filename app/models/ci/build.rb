@@ -534,7 +534,7 @@ module Ci
     end
 
     def artifacts
-      [options[:artifacts]]
+      [options[:artifacts].merge(compression: 'zip', artifact_type: 'archive')]
     end
 
     def cache

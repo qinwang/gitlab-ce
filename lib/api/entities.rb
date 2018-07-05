@@ -1219,7 +1219,7 @@ module API
       end
 
       class Artifacts < Grape::Entity
-        expose :name, :untracked, :paths, :when, :expire_in
+        expose :name, :untracked, :paths, :when, :expire_in, :compression, :artifact_type
       end
 
       class Cache < Grape::Entity

@@ -16,8 +16,9 @@ class UploadedFile
 
   attr_reader :remote_id
   attr_reader :sha256
+  attr_reader :compression
 
-  def initialize(path, filename: nil, content_type: "application/octet-stream", sha256: nil, remote_id: nil)
+  def initialize(path, filename: nil, content_type: "application/octet-stream", sha256: nil, remote_id: nil, compression: nil)
     raise InvalidPathError, "#{path} file does not exist" unless ::File.exist?(path)
 
     @content_type = content_type
@@ -26,6 +27,7 @@ class UploadedFile
     @sha256 = sha256
     @remote_id = remote_id
     @tempfile = File.new(path, 'rb')
+    @compression = compression
   end
 
   def self.from_params(params, field, upload_path)
@@ -45,7 +47,8 @@ class UploadedFile
       filename: params["#{field}.name"],
       content_type: params["#{field}.type"] || 'application/octet-stream',
       sha256: params["#{field}.sha256"],
-      remote_id: params["#{field}.remote_id"])
+      remote_id: params["#{field}.remote_id"],
+      compression: params["#{field}.compression"])
   end
 
   def self.allowed_path?(file_path, paths)
