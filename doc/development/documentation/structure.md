@@ -123,9 +123,9 @@ on GitLab.
 - Start with an h2 (`##`), break complex steps into small steps using
 subheadings h3 > h4 > h5 > h6. _Never skip the hierarchy level, such
 as h2 > h4_, as it will break the TOC and may affect the breadcrumbs.
-- Use short and descriptive headings (up to 64 chars). You can use one
-single heading `## How it works` when the feature is simple and the
-document is short.
+- Use short and descriptive headings (up to ~50 chars). You can use one
+single heading `## How it works` for the instructions when the feature
+is simple and the document is short.
 - Be clear, concise, and stick to the goal of the doc: explain how to
 use that feature.
 - Use inclusive language and avoid jargons, as well as uncommon and
