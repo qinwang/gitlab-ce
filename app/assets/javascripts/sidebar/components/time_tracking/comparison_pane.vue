@@ -1,9 +1,13 @@
 <script>
 import { parseSeconds, stringifyTime } from '../../../lib/utils/pretty_time';
 import tooltip from '../../../vue_shared/directives/tooltip';
+import glProgressBar from '@gitlab-org/gitlab-ui/components/progressBar.vue';
 
 export default {
   name: 'TimeTrackingComparisonPane',
+  components: {
+    glProgressBar,
+  },
   directives: {
     tooltip,
   },
@@ -42,10 +46,13 @@ export default {
       return this.timeEstimate - this.timeSpent;
     },
     timeRemainingPercent() {
-      return `${Math.floor((this.timeSpent / this.timeEstimate) * 100)}%`;
+      return Math.floor((this.timeSpent / this.timeEstimate) * 100);
     },
     timeRemainingStatusClass() {
       return this.timeEstimate >= this.timeSpent ? 'within_estimate' : 'over_estimate';
+    },
+    progressBarVariant() {
+      return this.timeRemainingPercent > 100 ? 'danger' : 'primary';
     },
   },
 };
@@ -62,15 +69,10 @@ export default {
       data-placement="top"
       role="timeRemainingDisplay"
     >
-      <div
-        :aria-valuenow="timeRemainingPercent"
-        class="meter-container"
-      >
-        <div
-          :style="{ width: timeRemainingPercent }"
-          class="meter-fill"
-        >
-        </div>
+      <gl-progress-bar
+        :value="timeRemainingPercent"
+        :variant="progressBarVariant"
+      />
       </div>
       <div class="compare-display-container">
         <div class="compare-display float-left">
