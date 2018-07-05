@@ -17,6 +17,8 @@
 #     archived: string - `only` or `true`.
 #                        `non_archived` is passed to the `ProjectFinder`s if none
 #                        was given.
+#     only_owned: string - `0` or `1`.
+#                        show only owned groups and projects, i.e., hides shared
 class GroupDescendantsFinder
   attr_reader :current_user, :parent_group, :params
 
@@ -24,6 +26,7 @@ class GroupDescendantsFinder
     @current_user = current_user
     @parent_group = parent_group
     @params = params.reverse_merge(non_archived: params[:archived].blank?)
+    @options = {}.reverse_merge(only_owned: params[:only_owned] == '1')
   end
 
   def execute
@@ -134,7 +137,7 @@ class GroupDescendantsFinder
   end
 
   def direct_child_projects
-    GroupProjectsFinder.new(group: parent_group, current_user: current_user, params: params)
+    GroupProjectsFinder.new(group: parent_group, current_user: current_user, params: params, options: @options)
       .execute
   end
 
