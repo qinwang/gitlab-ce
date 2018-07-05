@@ -10,8 +10,8 @@ import groupItemComponent from './components/group_item.vue';
 
 Vue.use(Translate);
 
-export default () => {
-  const el = document.getElementById('js-groups-tree');
+export const createGroupTree = (elId, endpoint, hideProjects = false) => {
+  const el = document.getElementById(elId);
 
   // Don't do anything if element doesn't exist (No groups)
   // This is for when the user enters directly to the page via URL
@@ -29,10 +29,8 @@ export default () => {
       groupsApp,
     },
     data() {
-      const { dataset } = this.$options.el;
-      const hideProjects = dataset.hideProjects === 'true';
       const store = new GroupsStore(hideProjects);
-      const service = new GroupsService(dataset.endpoint);
+      const service = new GroupsService(endpoint);
 
       return {
         store,
@@ -52,7 +50,7 @@ export default () => {
         form,
         filter,
         holder,
-        filterEndpoint: dataset.endpoint,
+        filterEndpoint: endpoint,
         pagePath: dataset.path,
         dropdownSel: dataset.dropdownSel,
         filterInputField: 'filter',
@@ -72,3 +70,5 @@ export default () => {
     },
   });
 };
+
+export default () => {};

@@ -7,22 +7,22 @@
 
 = render 'groups/home_panel'
 
-.groups-header{ class: container_class }
+.groups-header{ class: container_class, data: { endpoints: { default: group_children_path(@group, format: :json), shared: group_shared_projects_path(@group, format: :json) } } }
   .top-area.group-nav-container.scrolling-tabs-container.inner-page-scroll-tabs
     .fade-left= icon('angle-left')
     .fade-right= icon('angle-right')
     %ul.nav-links.scrolling-tabs.mobile-separator.nav.nav-tabs
-      = nav_link(page: group_path) do
-        = link_to group_path, data: { target: 'div#overview', action: 'overview', toggle: 'tab', endpoint: '' } do
+      %li.js-overview-tab
+        = link_to group_path, data: { target: 'div#overview', action: 'overview', toggle: 'tab'} do
           Overview
-      = nav_link(page: group_subgroups_path) do
-        = link_to group_subgroups_path, data: { target: 'div#subgroups', action: 'subgroups', toggle: 'tab', endpoint: '' } do
+      %li.js-subgroups-tab
+        = link_to group_subgroups_path, data: { target: 'div#subgroups', action: 'subgroups', toggle: 'tab'} do
           Subgroups and projects
-      = nav_link(page: group_shared_path) do
-        = link_to group_shared_path, data: { target: 'div#shared', action: 'shared', toggle: 'tab', endpoint: '' } do
+      %li.js-shared-tab
+        = link_to group_shared_path, data: { target: 'div#shared', action: 'shared', toggle: 'tab'} do
           Shared projects
-      = nav_link(page: group_archived_path) do
-        = link_to group_archived_path, data: { target: 'div#archived', action: 'archived', toggle: 'tab', endpoint: '' } do
+      %li.js-archived-tab
+        = link_to group_archived_path, data: { target: 'div#archived', action: 'archived', toggle: 'tab'} do
           Archived projects
 
     .nav-controls
@@ -57,4 +57,19 @@
   - if params[:filter].blank? && !@has_children
     = render "shared/groups/empty_state"
   - else
-    = render "children", children: @children, group: @group
+    %div{ class: container_class }
+      .tab-content
+        #overview.tab-pane
+          = render "group_overview", children: @children, group: @group
+
+        #subgroups.tab-pane
+          = render "subgroups_and_projects", children: @children, group: @group
+
+        #shared.tab-pane
+          = render "shared_projects", children: @children, group: @group
+
+        #archived.tab-pane
+          = render "archived_projects", children: @children, group: @group
+
+      .loading-status
+        = spinner

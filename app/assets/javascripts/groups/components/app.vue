@@ -73,14 +73,7 @@ export default {
     eventHub.$off('updateGroups', this.updateGroups);
   },
   methods: {
-    fetchGroups({
-      parentId,
-      page,
-      filterGroupsBy,
-      sortBy,
-      archived,
-      updatePagination,
-    }) {
+    fetchGroups({ parentId, page, filterGroupsBy, sortBy, archived, updatePagination }) {
       return this.service
         .getGroups(parentId, page, filterGroupsBy, sortBy, archived)
         .then(res => {
@@ -169,9 +162,7 @@ export default {
       this.targetParentGroup = parentGroup;
       this.showModal = true;
       this.groupLeaveConfirmationMessage = s__(
-        `GroupsTree|Are you sure you want to leave the "${
-          group.fullName
-        }" group?`,
+        `GroupsTree|Are you sure you want to leave the "${group.fullName}" group?`,
       );
     },
     hideLeaveGroupModal() {
