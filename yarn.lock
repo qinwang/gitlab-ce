@@ -86,9 +86,9 @@
   version "1.24.0"
   resolved "https://registry.yarnpkg.com/@gitlab-org/gitlab-svgs/-/gitlab-svgs-1.24.0.tgz#3b2b58c5a1d58ce784f486d648bd87cbbb06cedc"
 
-"@gitlab-org/gitlab-ui@https://gitlab.com/gitlab-org/frontend/gitlab-ui.git#5181ad3":
+"@gitlab-org/gitlab-ui@https://gitlab.com/gitlab-org/frontend/gitlab-ui.git#96e179e":
   version "0.0.1"
-  resolved "https://gitlab.com/gitlab-org/frontend/gitlab-ui.git#5181ad3c39594072665f0d560b5c42bdbcafbe47"
+  resolved "https://gitlab.com/gitlab-org/frontend/gitlab-ui.git#96e179e068fb9ea82b90f21802d0447ac14310e6"
   dependencies:
     "@gitlab-org/gitlab-svgs" "^1.23.0"
     bootstrap-vue "^2.0.0-rc.11"
