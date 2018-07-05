@@ -75,6 +75,9 @@ constraints(::Constraints::GroupUrlConstrainer.new) do
         constraints: { id: Gitlab::PathRegex.full_namespace_route_regex, format: /(html|json|atom)/ },
         controller: :groups) do
     get '/', action: :show
+    get :subgroups, to: 'groups#view_subgroups_and_projects'
+    get :shared, to: 'groups#view_shared_projects'
+    get :archived, to: 'groups#view_archived_projects'
     patch '/', action: :update
     put '/', action: :update
     delete '/', action: :destroy

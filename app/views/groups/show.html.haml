@@ -8,9 +8,24 @@
 = render 'groups/home_panel'
 
 .groups-header{ class: container_class }
-  .group-nav-container
-    .nav-controls.clearfix
-      = render "shared/groups/search_form"
+  .top-area.group-nav-container.scrolling-tabs-container.inner-page-scroll-tabs
+    .fade-left= icon('angle-left')
+    .fade-right= icon('angle-right')
+    %ul.nav-links.scrolling-tabs.mobile-separator.nav.nav-tabs
+      = nav_link(page: group_path) do
+        = link_to group_path, data: { target: 'div#overview', action: 'overview', toggle: 'tab', endpoint: '' } do
+          Overview
+      = nav_link(page: group_subgroups_path) do
+        = link_to group_subgroups_path, data: { target: 'div#subgroups', action: 'subgroups', toggle: 'tab', endpoint: '' } do
+          Subgroups and projects
+      = nav_link(page: group_shared_path) do
+        = link_to group_shared_path, data: { target: 'div#shared', action: 'shared', toggle: 'tab', endpoint: '' } do
+          Shared projects
+      = nav_link(page: group_archived_path) do
+        = link_to group_archived_path, data: { target: 'div#archived', action: 'archived', toggle: 'tab', endpoint: '' } do
+          Archived projects
+
+    .nav-controls
       = render "shared/groups/dropdown", show_archive_options: true
       - if can? current_user, :create_projects, @group
         - new_project_label = _("New project")

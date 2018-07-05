@@ -16,7 +16,7 @@ class GroupsController < Groups::ApplicationController
   before_action :group_projects, only: [:projects, :activity, :issues, :merge_requests]
   before_action :event_filter, only: [:activity]
 
-  before_action :user_actions, only: [:show, :subgroups]
+  before_action :user_actions, only: [:show, :subgroups, :view_subgroups_and_projects, :view_shared_projects, :view_archived_projects]
 
   skip_cross_project_access_check :index, :new, :create, :edit, :update,
                                   :destroy, :projects
@@ -62,6 +62,36 @@ class GroupsController < Groups::ApplicationController
         load_events
         render layout: 'xml.atom'
       end
+    end
+  end
+
+  def view_subgroups_and_projects
+    @has_children = GroupDescendantsFinder.new(current_user: current_user,
+                                               parent_group: @group,
+                                               params: params).has_children?
+
+    respond_to do |format|
+      format.html { render 'show' }
+    end
+  end
+
+  def view_shared_projects
+    @has_children = GroupDescendantsFinder.new(current_user: current_user,
+                                               parent_group: @group,
+                                               params: params).has_children?
+
+    respond_to do |format|
+      format.html { render 'show' }
+    end
+  end
+
+  def view_archived_projects
+    @has_children = GroupDescendantsFinder.new(current_user: current_user,
+                                               parent_group: @group,
+                                               params: params).has_children?
+
+    respond_to do |format|
+      format.html { render 'show' }
     end
   end
 
