@@ -18,18 +18,18 @@ Before getting started, read through the following docs:
 
 ## Documentation blurb
 
-Every document should include:
+Every document should include the following content:
 
 - **Feature name**: defines an intuitive name for the feature that clearly
-states what it is
+states what it is.
 - **Feature overview** and description: describe what is it, why should one
-use it, and what it does
-- **Use cases**: describes real use case scenarios for that feature
+use it, and what it does.
+- **Use cases**: describes real use case scenarios for that feature.
 - **Requirements**: describes what one needs to have set up to be able to
 use the feature or to follow along with the tutorial. Define the assumptions
 to follow along (e.g., be familiar with GitLab CI/CD, an account on a
-third-party service, dependencies installed, etc) at the beginning of the doc
-- **Instructions**: clearly describes the steps to use that feature, with no gaps
+third-party service, dependencies installed, etc) at the beginning of the doc.
+- **Instructions**: clearly describes the steps to use that feature, with no gaps.
 - **Troubleshooting** guide (recommended but not required): if you know beforehand what issues
 one might have when setting it up, or when something is changed, or on upgrading, it's
 important to describe it too. Think of things that may go wrong and include them in the
@@ -71,7 +71,7 @@ Your new document will be discoverable by the user only if:
 
 - Crosslinked from the higher-level index (e.g., Issue Boards docs
 should be linked from Issues; Prometheus docs should be linked from
-Monitoring; CI/CD tutorials should be linked from CI/CD examples)
+Monitoring; CI/CD tutorials should be linked from CI/CD examples).
   - When referencing other GitLab products and features, link to their
 respective docs; when referencing third-party products or technologies,
 link out to their external sites, documentation, and resources.
@@ -91,7 +91,7 @@ description: "short document description." # Up to ~200 chars long. They will be
 
 # Feature Name **[TIER]** (1)
 
-> Introduced in GitLab Tier X.Y (2)
+> [Introduced](link_to_issue_or_mr) in GitLab Tier X.Y (2).
 
 A short description for the feature (can be the same used in the frontmatter's
 `description`).
@@ -112,14 +112,16 @@ Describe one to three use cases for that feature. Give real-life examples.
 
 ## Requirements
 
-State any requirements for using the feature and/or following along with the tutorial.
+State any requirements, if any, for using the feature and/or following along with the tutorial.
 
 The only assumption that is redundant and doesn't need to be mentioned is having an account
 on GitLab.
 
 ## Instructions
 
-- Write a step-by-step guide, with no gaps between the steps
+("Instructions" is not necessarily the name of the heading)
+
+- Write a step-by-step guide, with no gaps between the steps.
 - Start with an h2 (`##`), break complex steps into small steps using
 subheadings h3 > h4 > h5 > h6. _Never skip the hierarchy level, such
 as h2 > h4_, as it will break the TOC and may affect the breadcrumbs.
@@ -130,9 +132,9 @@ is simple and the document is short.
 use that feature.
 - Use inclusive language and avoid jargons, as well as uncommon and
 fancy words. The docs should be clear and very easy to understand.
-- Write in the 3rd person (use "we", "you", "us", "one", instead of "I" or "me")
-- Always provide internal and external reference links
-- Always link the doc from its higher-level index
+- Write in the 3rd person (use "we", "you", "us", "one", instead of "I" or "me").
+- Always provide internal and external reference links.
+- Always link the doc from its higher-level index.
 ```
 
 Notes:

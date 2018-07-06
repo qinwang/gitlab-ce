@@ -23,7 +23,8 @@ NOTE: **Note:**
 branch names, directory names, headings, or in anything that generates a path.
 
 NOTE: **Note:**
-**Do not** create new `README.md` files. Name them `index.md` instead.
+**Do not** create new `README.md` files, name them `index.md` instead. There's
+a test that will fail if it spots a new `README.md` file.
 
 ## Text
 

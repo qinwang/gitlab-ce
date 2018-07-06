@@ -15,7 +15,7 @@ Closes
 ## Moving docs to a new location?
 
 Read the guidelines:
-https://docs.gitlab.com/ce/development/writing_documentation.html#changing-document-location
+https://docs.gitlab.com/ce/development/documentation/index.html#changing-document-location
 
 - [ ] Make sure the old link is not removed and has its contents replaced with
       a link to the new location.
