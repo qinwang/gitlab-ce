@@ -1,8 +1,8 @@
 import * as getters from '~/diffs/store/getters';
 import state from '~/diffs/store/modules/diff_state';
+import { PARALLEL_DIFF_VIEW_TYPE, INLINE_DIFF_VIEW_TYPE } from '~/diffs/constants';
 import diffFileMockData from '../mock_data/diff_file';
 import diffDiscussionsMockData from '../mock_data/diff_discussions';
-import { PARALLEL_DIFF_VIEW_TYPE, INLINE_DIFF_VIEW_TYPE } from '~/diffs/constants';
 
 describe('DiffsStoreGetters', () => {
   let localState;

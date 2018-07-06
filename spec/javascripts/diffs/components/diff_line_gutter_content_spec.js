@@ -18,7 +18,7 @@ describe('DiffLineGutterContent', () => {
   };
   const setDiscussions = component => {
     component.$store.dispatch('setInitialNotes', getDiscussionsMockData());
-    component.$store.commit('SET_DIFF_DATA', { diffFiles: [getDiffFileMock()]})
+    component.$store.commit('SET_DIFF_DATA', { diffFiles: [getDiffFileMock()] });
   };
 
   const resetDiscussions = component => {
