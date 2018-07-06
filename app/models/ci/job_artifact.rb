@@ -10,10 +10,10 @@ module Ci
     mount_uploader :file, JobArtifactUploader
 
     before_save :set_size, if: :file_changed?
+    validates :compression, presence: true
     after_save :update_project_statistics_after_save, if: :size_changed?
-    after_destroy :update_project_statistics_after_destroy, unless: :project_destroyed?
-
     after_save :update_file_store, if: :file_changed?
+    after_destroy :update_project_statistics_after_destroy, unless: :project_destroyed?
 
     scope :with_files_stored_locally, -> { where(file_store: [nil, ::JobArtifactUploader::Store::LOCAL]) }
 
@@ -26,7 +26,7 @@ module Ci
     }
 
     enum compression: {
-      raw: 1,
+      raw: 1, # Equavalant to none
       zip: 2,
       gzip: 3
     }
