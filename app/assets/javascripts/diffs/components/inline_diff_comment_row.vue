@@ -70,7 +70,7 @@ export default {
           :discussions="discussions"
         />
         <diff-line-note-form
-          v-if="diffLineCommentForms[line.lineCode]"
+          v-if="hasCommentForm"
           :diff-file="diffFile"
           :diff-lines="diffLines"
           :line="line"
