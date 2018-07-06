@@ -6,10 +6,11 @@ module Gitlab
         # Entry that represents a configuration of job artifacts.
         #
         class Artifacts < Node
+          include Configurable
           include Validatable
           include Attributable
 
-          ALLOWED_KEYS = %i[name untracked paths when expire_in].freeze
+          ALLOWED_KEYS = %i[name untracked paths reports when expire_in].freeze
 
           attributes ALLOWED_KEYS
 
@@ -28,6 +29,9 @@ module Gitlab
               validates :expire_in, duration: true
             end
           end
+
+          entry :reports, Entry::Artifact::Reports,
+              description: 'Report-type artifacts.'
         end
       end
     end
