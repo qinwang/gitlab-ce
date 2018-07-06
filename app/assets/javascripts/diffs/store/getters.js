@@ -8,5 +8,8 @@ export const areAllFilesCollapsed = state => state.diffFiles.every(file => file.
 
 export const commitId = state => (state.commit && state.commit.id ? state.commit.id : null);
 
+export const getDiffFileByHash = state => fileHash =>
+  state.diffFiles.find(file => file.fileHash === fileHash);
+
 // prevent babel-plugin-rewire from generating an invalid default during karma tests
 export default () => {};
