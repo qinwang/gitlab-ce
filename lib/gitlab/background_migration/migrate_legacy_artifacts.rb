@@ -21,7 +21,7 @@ module Gitlab
       private
 
       def insert_archives(start_id, stop_id)
-        ActiveRecord::Base.connection.execute <<-EOF.strip_heredoc
+        ActiveRecord::Base.connection.execute <<~SQL
           INSERT INTO ci_job_artifacts (
                 project_id,
                 job_id,
@@ -50,11 +50,11 @@ module Gitlab
                     SELECT 1 FROM ci_job_artifacts
                     WHERE (ci_builds.id = ci_job_artifacts.job_id)
                       AND ci_job_artifacts.file_type = #{ARCHIVE_FILE_TYPE})
-        EOF
+        SQL
       end
 
       def insert_metadatas(start_id, stop_id)
-        ActiveRecord::Base.connection.execute <<-EOF.strip_heredoc
+        ActiveRecord::Base.connection.execute <<~SQL
           INSERT INTO ci_job_artifacts (
                 project_id,
                 job_id,
@@ -83,11 +83,11 @@ module Gitlab
                     SELECT 1 FROM ci_job_artifacts
                     WHERE (ci_builds.id = ci_job_artifacts.job_id)
                       AND ci_job_artifacts.file_type = #{METADATA_FILE_TYPE})
-        EOF
+        SQL
       end
 
       def delete_legacy_artifacts(start_id, stop_id)
-        ActiveRecord::Base.connection.execute <<-EOF.strip_heredoc
+        ActiveRecord::Base.connection.execute <<~SQL
           UPDATE ci_builds
              SET artifacts_file = NULL,
                  artifacts_file_store = NULL,
@@ -96,7 +96,7 @@ module Gitlab
                  artifacts_metadata_store = NULL
            WHERE id BETWEEN #{start_id.to_i} AND #{stop_id.to_i}
                    AND artifacts_file <> ''
-        EOF
+        SQL
       end
     end
   end
