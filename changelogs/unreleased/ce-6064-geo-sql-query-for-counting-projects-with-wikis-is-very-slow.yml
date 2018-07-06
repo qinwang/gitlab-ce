@@ -1,0 +1,5 @@
+---
+title: SiteStatistic to cache repositories and wikis counts
+merge_request: 6328
+author:
+type: performance
