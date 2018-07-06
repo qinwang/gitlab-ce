@@ -21,12 +21,12 @@ module Ci
 
     enum file_type: {
       archive: 1,
-      metadata: 2,
+      archive_metadata: 2,
       trace: 3
     }
 
-    enum compression: {
-      raw: 1, # Equavalant to none
+    enum file_format: {
+      raw: 1,
       zip: 2,
       gzip: 3
     }
