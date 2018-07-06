@@ -51,7 +51,7 @@ export default {
           :key="line.lineCode"
         />
         <inline-diff-comment-row
-          :diff-file="diffFile"
+          :diff-file-hash="diffFile.fileHash"
           :diff-lines="normalizedDiffLines"
           :line="line"
           :line-index="index"

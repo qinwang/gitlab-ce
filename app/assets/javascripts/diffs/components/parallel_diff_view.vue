@@ -70,9 +70,9 @@ export default {
             :key="index"
           />
           <parallel-diff-comment-row
-            :key="line.left.lineCode || line.right.lineCode"
+            :key="`dcr-${index}`"
             :line="line"
-            :diff-file="diffFile"
+            :diff-file-hash="diffFile.fileHash"
             :diff-lines="parallelDiffLines"
             :line-index="index"
           />
