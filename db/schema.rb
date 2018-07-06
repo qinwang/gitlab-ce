@@ -392,7 +392,7 @@ ActiveRecord::Schema.define(version: 20180705160945) do
     t.datetime_with_timezone "expire_at"
     t.string "file"
     t.binary "file_sha256"
-    t.integer "compression", limit: 2
+    t.integer "file_format", limit: 2
   end
 
   add_index "ci_job_artifacts", ["expire_at", "job_id"], name: "index_ci_job_artifacts_on_expire_at_and_job_id", using: :btree
