@@ -73,7 +73,6 @@ export default {
             :key="`dcr-${index}`"
             :line="line"
             :diff-file-hash="diffFile.fileHash"
-            :diff-lines="parallelDiffLines"
             :line-index="index"
           />
         </template>

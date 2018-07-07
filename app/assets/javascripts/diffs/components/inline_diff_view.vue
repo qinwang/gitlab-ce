@@ -52,7 +52,6 @@ export default {
         />
         <inline-diff-comment-row
           :diff-file-hash="diffFile.fileHash"
-          :diff-lines="normalizedDiffLines"
           :line="line"
           :line-index="index"
           :key="index"
