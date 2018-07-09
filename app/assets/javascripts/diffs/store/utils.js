@@ -182,13 +182,15 @@ export function getDiffRefsByLineCode(diffFiles) {
 
     // We can only use highlightedDiffLines to create the map of diff lines because
     // highlightedDiffLines will also include every parallel diff line in it.
-    diffFile.highlightedDiffLines.forEach(line => {
-      const { lineCode } = line;
+    if (diffFile.highlightedDiffLines) {
+      diffFile.highlightedDiffLines.forEach(line => {
+        const { lineCode } = line;
 
-      if (lineCode) {
-        map[lineCode] = { baseSha, headSha, startSha };
-      }
-    });
+        if (lineCode) {
+          map[lineCode] = { baseSha, headSha, startSha };
+        }
+      });
+    }
   });
 
   return map;

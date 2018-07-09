@@ -9,10 +9,10 @@ export const areAllFilesCollapsed = state => state.diffFiles.every(file => file.
 
 export const commitId = state => (state.commit && state.commit.id ? state.commit.id : null);
 
-export const discussionsByLineCode = (state, getters) => {
+export const discussionsByLineCode = (state, getters, rootState, rootGetters) => {
   const diffRefsByLineCode = getDiffRefsByLineCode(state.diffFiles);
 
-  return getters.discussions.reduce((acc, note) => {
+  return rootGetters.discussions.reduce((acc, note) => {
     const isDiffDiscussion = note.diff_discussion;
     const hasLineCode = note.line_code;
     const isResolvable = note.resolvable;

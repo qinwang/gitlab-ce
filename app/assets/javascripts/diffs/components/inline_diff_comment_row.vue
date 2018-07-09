@@ -30,12 +30,15 @@ export default {
     ...mapState({
       diffLineCommentForms: state => state.diffs.diffLineCommentForms,
     }),
-    ...mapGetters(['discussionsByLineCode']),
+    ...mapGetters('diffs', ['discussionsByLineCode']),
     discussions() {
       return this.discussionsByLineCode[this.line.lineCode] || [];
     },
     className() {
       return this.discussions.length ? '' : 'js-temp-notes-holder';
+    },
+    hasCommentForm() {
+      return this.diffLineCommentForms[this.line.lineCode];
     },
   },
 };
