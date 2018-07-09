@@ -166,7 +166,7 @@ describe ProjectsController do
       User.project_views.keys.each do |project_view|
         context "with #{project_view} view set" do
           before do
-            user.update_attributes(project_view: project_view)
+            user.update(project_view: project_view)
 
             get :show, namespace_id: empty_project.namespace, id: empty_project
           end
@@ -188,7 +188,7 @@ describe ProjectsController do
       User.project_views.keys.each do |project_view|
         context "with #{project_view} view set" do
           before do
-            user.update_attributes(project_view: project_view)
+            user.update(project_view: project_view)
 
             get :show, namespace_id: empty_project.namespace, id: empty_project
           end
@@ -790,23 +790,55 @@ describe ProjectsController do
       project.add_master(user)
     end
 
-    context 'when project export is enabled' do
-      it 'returns 302' do
-        get :download_export, namespace_id: project.namespace, id: project
+    context 'object storage disabled' do
+      before do
+        stub_feature_flags(import_export_object_storage: false)
+      end
 
-        expect(response).to have_gitlab_http_status(302)
+      context 'when project export is enabled' do
+        it 'returns 302' do
+          get :download_export, namespace_id: project.namespace, id: project
+
+          expect(response).to have_gitlab_http_status(302)
+        end
+      end
+
+      context 'when project export is disabled' do
+        before do
+          stub_application_setting(project_export_enabled?: false)
+        end
+
+        it 'returns 404' do
+          get :download_export, namespace_id: project.namespace, id: project
+
+          expect(response).to have_gitlab_http_status(404)
+        end
       end
     end
 
-    context 'when project export is disabled' do
+    context 'object storage enabled' do
       before do
-        stub_application_setting(project_export_enabled?: false)
+        stub_feature_flags(import_export_object_storage: true)
       end
 
-      it 'returns 404' do
-        get :download_export, namespace_id: project.namespace, id: project
+      context 'when project export is enabled' do
+        it 'returns 302' do
+          get :download_export, namespace_id: project.namespace, id: project
 
-        expect(response).to have_gitlab_http_status(404)
+          expect(response).to have_gitlab_http_status(302)
+        end
+      end
+
+      context 'when project export is disabled' do
+        before do
+          stub_application_setting(project_export_enabled?: false)
+        end
+
+        it 'returns 404' do
+          get :download_export, namespace_id: project.namespace, id: project
+
+          expect(response).to have_gitlab_http_status(404)
+        end
       end
     end
   end
