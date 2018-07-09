@@ -35,7 +35,7 @@ Starting with [GitLab Starter][ee] 9.3, this information will
 be automatically extracted and shown right in the merge request widget. To do
 so, the CI/CD job must be named `code_quality` and the artifact path must be
 `gl-code-quality-report.json`.
-[Learn more on code quality diffs in merge requests](https://docs.gitlab.com/ee/user/project/merge_requests/code_quality_diff.html).
+[Learn more on code quality diffs in merge requests](https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html).
 
 CAUTION: **Caution:**
 Code Quality was previously using `codeclimate` and `codequality` for job name and
