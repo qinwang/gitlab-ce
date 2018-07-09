@@ -274,7 +274,7 @@ describe API::ProjectExport do
         stub_uploads_object_storage(ImportExportUploader)
 
         [project, project_finished, project_after_export].each do |p|
-          p.add_master(user)
+          p.add_maintainer(user)
 
           upload = ImportExportUpload.new(project: p)
           upload.export_file = fixture_file_upload('spec/fixtures/project_export.tar.gz', "`/tar.gz")

@@ -31,11 +31,11 @@ describe GroupMembersFinder, '#execute' do
   end
 
   it 'returns members for descendant groups if requested', :nested_groups do
-    member1 = group.add_master(user2)
-    member2 = group.add_master(user1)
-    nested_group.add_master(user2)
-    member3 = nested_group.add_master(user3)
-    member4 = nested_group.add_master(user4)
+    member1 = group.add_maintainer(user2)
+    member2 = group.add_maintainer(user1)
+    nested_group.add_maintainer(user2)
+    member3 = nested_group.add_maintainer(user3)
+    member4 = nested_group.add_maintainer(user4)
 
     result = described_class.new(group).execute(include_descendants: true)
 

@@ -2050,7 +2050,7 @@ describe NotificationService, :mailer do
 
     project.reload
 
-    project.group.parent.add_master(user)
+    project.group.parent.add_maintainer(user)
   end
 
   def should_email_nested_group_user(user, times: 1, recipients: email_recipients)

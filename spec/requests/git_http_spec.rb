@@ -312,7 +312,7 @@ describe 'Git HTTP requests' do
               let(:project) { fork_project(canonical_project, nil, repository: true) }
 
               before do
-                canonical_project.add_master(user)
+                canonical_project.add_maintainer(user)
                 create(:merge_request,
                        source_project: project,
                        target_project:  canonical_project,
