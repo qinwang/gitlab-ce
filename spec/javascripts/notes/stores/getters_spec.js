@@ -148,13 +148,23 @@ describe('Getters Notes Store', () => {
     });
   });
 
-  describe('firstUnresolvedDiscussion', () => {
+  describe('firstUnresolvedDiscussionByDate', () => {
     const localGetters = {
       allResolvableDiscussions: [discussion3, discussion1, discussion2],
     };
 
     it('should return the first, in chronological order', () => {
-      expect(getters.firstUnresolvedDiscussion(state, localGetters)).toEqual(discussion2);
+      expect(getters.firstUnresolvedDiscussionByDate(state, localGetters)).toEqual(discussion2);
+    });
+  });
+
+  describe('firstUnresolvedDiscussionByDiff', () => {
+    const localGetters = {
+      allResolvableDiscussionsDiffOrdered: [discussion3, discussion1, discussion2],
+    };
+
+    it('should return the first, in diff order', () => {
+      expect(getters.firstUnresolvedDiscussionByDiff(state, localGetters)).toEqual(discussion3);
     });
   });
 });

@@ -132,13 +132,13 @@ export default {
     hasMultipleUnresolvedDiscussions() {
       return this.unresolvedDiscussions.length > 1;
     },
-    allDiscussionsOrdered() {
+    allResolvableDiscussionsOrdered() {
       return this.discussionsByDiffOrder ?
         this.allResolvableDiscussionsDiffOrdered :
         this.allResolvableDiscussions;
     },
     isLastDiscussion() {
-      const discussionIds = this.allDiscussionsOrdered.map(d => d.id);
+      const discussionIds = this.allResolvableDiscussionsOrdered.map(d => d.id);
 
       return discussionIds[discussionIds.length - 1] === this.discussion.id;
     },
@@ -258,7 +258,7 @@ Please check your network connection and try again.`;
         });
     },
     jumpToNextDiscussion() {
-      const discussionIds = this.allDiscussionsOrdered.map(d => d.id);
+      const discussionIds = this.allResolvableDiscussionsOrdered.map(d => d.id);
       const unresolvedIds = this.unresolvedDiscussions.map(d => d.id);
       const currentIndex = discussionIds.indexOf(this.discussion.id);
       const remainingAfterCurrent = discussionIds.slice(currentIndex + 1);

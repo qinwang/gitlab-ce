@@ -125,7 +125,7 @@ export const resolvedDiscussionsById = state => {
   return map;
 };
 
-export const firstUnresolvedDiscussion = (state, getters) =>
+export const firstUnresolvedDiscussionByDate = (state, getters) =>
   getters.allResolvableDiscussions.filter(d => !d.resolved).sort((a, b) => {
     const aDate = new Date(a.notes[0].created_at);
     const bDate = new Date(b.notes[0].created_at);
@@ -136,6 +136,9 @@ export const firstUnresolvedDiscussion = (state, getters) =>
 
     return aDate === bDate ? 0 : 1;
   })[0] || false;
+
+export const firstUnresolvedDiscussionByDiff = (state, getters) =>
+  getters.allResolvableDiscussionsDiffOrdered.filter(d => !d.resolved)[0] || false;
 
 export const resolvedDiscussionCount = (state, getters) => {
   const resolvedMap = getters.resolvedDiscussionsById;

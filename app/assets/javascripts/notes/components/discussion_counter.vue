@@ -17,8 +17,8 @@ export default {
       'getUserData',
       'getNoteableData',
       'discussionCount',
-      'allResolvableDiscussions',
-      'firstUnresolvedDiscussion',
+      'firstUnresolvedDiscussionByDiff',
+      'firstUnresolvedDiscussionByDate',
       'resolvedDiscussionCount',
     ]),
     isLoggedIn() {
@@ -36,9 +36,6 @@ export default {
     resolveAllDiscussionsIssuePath() {
       return this.getNoteableData.create_issue_to_resolve_discussions_path;
     },
-    firstUnresolvedDiscussionId() {
-      return this.firstUnresolvedDiscussion.id || false;
-    },
   },
   created() {
     this.resolveSvg = resolveSvg;
@@ -49,10 +46,12 @@ export default {
   methods: {
     ...mapActions(['expandDiscussion']),
     jumpToFirstUnresolvedDiscussion() {
-      const discussionId = this.firstUnresolvedDiscussionId;
-      if (!discussionId) {
+      const discussion = window.mrTabs.currentAction === 'diffs' ?
+        this.firstUnresolvedDiscussionByDiff : this.firstUnresolvedDiscussionByDate;
+      if (!discussion) {
         return;
       }
+      const discussionId = discussion.id;
 
       const el = [].slice.call(document.querySelectorAll(`[data-discussion-id="${discussionId}"]`))
         .filter(element => element.offsetParent !== null); // no parent element is hidden
