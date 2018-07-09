@@ -133,7 +133,9 @@ export default {
       return this.unresolvedDiscussions.length > 1;
     },
     allDiscussionsOrdered() {
-      return this.discussionsByDiffOrder ? this.allResolvableDiscussionsDiffOrdered : this.allResolvableDiscussions;
+      return this.discussionsByDiffOrder ?
+        this.allResolvableDiscussionsDiffOrdered :
+        this.allResolvableDiscussions;
     },
     isLastDiscussion() {
       const discussionIds = this.allDiscussionsOrdered.map(d => d.id);
