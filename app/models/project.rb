@@ -81,7 +81,7 @@ class Project < ActiveRecord::Base
   after_create :create_project_feature, unless: :project_feature
 
   after_create -> { SiteStatistic.track(STATISTICS_ATTRIBUTE) }
-  before_destroy ->(project) { project.project_feature.send(:untrack_statistics_for_deletion) }
+  before_destroy ->(project) { project.project_feature.send(:untrack_statistics_for_deletion) } # rubocop:disable GitlabSecurity/PublicSend
   after_destroy -> { SiteStatistic.untrack(STATISTICS_ATTRIBUTE) }
 
   after_create :create_ci_cd_settings,

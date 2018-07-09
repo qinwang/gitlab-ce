@@ -163,7 +163,7 @@ describe ProjectFeature do
       it 'does not untrack wiki availability when removing a project without wiki access' do
         project_without_wiki
 
-        expect { project_without_wiki.destroy }.to_not change { SiteStatistic.fetch.wikis_count }
+        expect { project_without_wiki.destroy }.not_to change { SiteStatistic.fetch.wikis_count }
       end
     end
   end
