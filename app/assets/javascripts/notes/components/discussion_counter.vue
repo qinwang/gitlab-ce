@@ -17,7 +17,8 @@ export default {
       'getUserData',
       'getNoteableData',
       'discussionCount',
-      'unresolvedDiscussionsDiffOrdered',
+      'allResolvableDiscussions',
+      'firstUnresolvedDiscussion',
       'resolvedDiscussionCount',
     ]),
     isLoggedIn() {
@@ -36,9 +37,7 @@ export default {
       return this.getNoteableData.create_issue_to_resolve_discussions_path;
     },
     firstUnresolvedDiscussionId() {
-      const item = this.unresolvedDiscussionsDiffOrdered[0] || {};
-
-      return item.id;
+      return this.firstUnresolvedDiscussion.id || false;
     },
   },
   created() {

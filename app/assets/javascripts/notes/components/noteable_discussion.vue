@@ -79,7 +79,8 @@ export default {
       'discussionCount',
       'resolvedDiscussionCount',
       'allDiscussions',
-      'allDiscussionsDiffOrdered',
+      'allResolvableDiscussions',
+      'allResolvableDiscussionsDiffOrdered',
       'unresolvedDiscussions',
     ]),
     transformedDiscussion() {
@@ -132,7 +133,7 @@ export default {
       return this.unresolvedDiscussions.length > 1;
     },
     allDiscussionsOrdered() {
-      return this.discussionsByDiffOrder ? this.allDiscussionsDiffOrdered : this.allDiscussions;
+      return this.discussionsByDiffOrder ? this.allResolvableDiscussionsDiffOrdered : this.allResolvableDiscussions;
     },
     isLastDiscussion() {
       const discussionIds = this.allDiscussionsOrdered.map(d => d.id);

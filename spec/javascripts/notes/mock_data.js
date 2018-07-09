@@ -1168,3 +1168,49 @@ export const collapsedSystemNotes = [
     diff_discussion: false,
   },
 ];
+
+export const discussion1 = {
+  resolvable: true,
+  resolved: false,
+  diff_file: {
+    file_path: 'about.md',
+  },
+  line_code: 'abcdefghijkl_50_0',
+  notes: [
+    {
+      created_at: '2018-07-04T16:25:41.749Z',
+    },
+  ],
+};
+
+export const discussion2 = {
+  resolvable: true,
+  resolved: false,
+  diff_file: {
+    file_path: 'README.md',
+  },
+  line_code: 'abcdefghijkl_0_20',
+  notes: [
+    {
+      created_at: '2018-07-04T12:05:41.749Z',
+    },
+  ],
+};
+
+export const discussion3 = {
+  resolvable: true,
+  resolved: false,
+  diff_file: {
+    file_path: 'README.md',
+  },
+  line_code: 'abcdefghijkl_21_0',
+  notes: [
+    {
+      created_at: '2018-07-05T17:25:41.749Z',
+    },
+  ],
+};
+
+export const unresolvableDiscussion = {
+  resolvable: false,
+};

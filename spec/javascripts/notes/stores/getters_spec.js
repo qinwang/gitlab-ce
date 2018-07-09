@@ -5,6 +5,10 @@ import {
   noteableDataMock,
   individualNote,
   collapseNotesMock,
+  discussion1,
+  discussion2,
+  discussion3,
+  unresolvableDiscussion,
 } from '../mock_data';
 
 const discussionWithTwoUnresolvedNotes = 'merge_requests/resolved_diff_discussion.json';
@@ -110,36 +114,47 @@ describe('Getters Notes Store', () => {
     });
   });
 
-  describe('allDiscussionsDiffOrdered', () => {
-    const discussion1 = {
-      diff_file: {
-        file_path: 'about.md',
-      },
-      line_code: 'abcdefghijkl_50_0',
-    };
-    const discussion2 = {
-      diff_file: {
-        file_path: 'README.md',
-      },
-      line_code: 'abcdefghijkl_0_20',
-    };
-    const discussion3 = {
-      diff_file: {
-        file_path: 'README.md',
-      },
-      line_code: 'abcdefghijkl_21_0',
+  describe('allResolvableDiscussions', () => {
+    const localGetters = {
+      allDiscussions: [
+        discussion3,
+        unresolvableDiscussion,
+        discussion1,
+        unresolvableDiscussion,
+        discussion2,
+      ],
     };
 
+    it('should return only resolvable discussions in same order', () => {
+      expect(getters.allResolvableDiscussions(state, localGetters)).toEqual([
+        discussion3,
+        discussion1,
+        discussion2,
+      ]);
+    });
+  });
+
+  describe('allResolvableDiscussionsDiffOrdered', () => {
     const localGetters = {
-      allDiscussions: [discussion3, discussion1, discussion2],
+      allResolvableDiscussions: [discussion3, discussion1, discussion2],
     };
 
     it('should return all discussions in diff order', () => {
-      expect(getters.allDiscussionsDiffOrdered(state, localGetters)).toEqual([
+      expect(getters.allResolvableDiscussionsDiffOrdered(state, localGetters)).toEqual([
         discussion1,
         discussion2,
         discussion3,
       ]);
+    });
+  });
+
+  describe('firstUnresolvedDiscussion', () => {
+    const localGetters = {
+      allResolvableDiscussions: [discussion3, discussion1, discussion2],
+    };
+
+    it('should return the first, in chronological order', () => {
+      expect(getters.firstUnresolvedDiscussion(state, localGetters)).toEqual(discussion2);
     });
   });
 });

@@ -78,7 +78,9 @@ export const unresolvedDiscussions = (state, getters) => {
 export const unresolvedDiscussionsDiffOrdered = (state, getters) => {
   const resolvedMap = getters.resolvedDiscussionsById;
 
-  return getters.allDiscussionsDiffOrdered.filter(n => !n.individual_note && !resolvedMap[n.id]);
+  return getters.allResolvableDiscussionsDiffOrdered.filter(
+    n => !n.individual_note && !resolvedMap[n.id],
+  );
 };
 
 export const allDiscussions = (state, getters) => {
@@ -88,8 +90,11 @@ export const allDiscussions = (state, getters) => {
   return Object.values(resolved).concat(unresolved);
 };
 
-export const allDiscussionsDiffOrdered = (state, getters) =>
-  getters.allDiscussions.sort((a, b) => {
+export const allResolvableDiscussions = (state, getters) =>
+  getters.allDiscussions.filter(d => d.resolvable);
+
+export const allResolvableDiscussionsDiffOrdered = (state, getters) =>
+  getters.allResolvableDiscussions.sort((a, b) => {
     if (!a.line_code || !b.line_code || !a.diff_file || !b.diff_file) {
       return 0;
     }
@@ -119,6 +124,18 @@ export const resolvedDiscussionsById = state => {
 
   return map;
 };
+
+export const firstUnresolvedDiscussion = (state, getters) =>
+  getters.allResolvableDiscussions.filter(d => !d.resolved).sort((a, b) => {
+    const aDate = new Date(a.notes[0].created_at);
+    const bDate = new Date(b.notes[0].created_at);
+
+    if (aDate < bDate) {
+      return -1;
+    }
+
+    return aDate === bDate ? 0 : 1;
+  })[0] || false;
 
 export const resolvedDiscussionCount = (state, getters) => {
   const resolvedMap = getters.resolvedDiscussionsById;
