@@ -85,6 +85,13 @@ module QA
           driver.browser.save_screenshot(path)
         end
 
+        Capybara::Screenshot.register_filename_prefix_formatter(:rspec) do |example|
+          extension = File.extname(example.file_path)
+          screenshot_prefix = example.file_path.sub('./qa/specs/features/', '').sub(/#{extension}\z/, '')
+
+          File.join(QA::Runtime::Namespace.name, screenshot_prefix)
+        end
+
         Capybara.configure do |config|
           config.default_driver = :chrome
           config.javascript_driver = :chrome
