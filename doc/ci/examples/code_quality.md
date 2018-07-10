@@ -1,7 +1,7 @@
-# Analyze project code quality with Code Climate CLI
+# Analyze your project's Code Quality
 
-This example shows how to run [Code Climate CLI][cli] on your code by using
-GitLab CI and Docker.
+This example shows how to run Code Quality on your code by using GitLab CI/CD
+and Docker.
 
 First, you need GitLab Runner with [docker-in-docker executor][dind].
 
@@ -35,7 +35,7 @@ Starting with [GitLab Starter][ee] 9.3, this information will
 be automatically extracted and shown right in the merge request widget. To do
 so, the CI/CD job must be named `code_quality` and the artifact path must be
 `gl-code-quality-report.json`.
-[Learn more on code quality diffs in merge requests](https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html).
+[Learn more on Code Quality in merge requests](https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html).
 
 CAUTION: **Caution:**
 Code Quality was previously using `codeclimate` and `codequality` for job name and
