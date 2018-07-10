@@ -93,9 +93,30 @@ module Gitlab
           end
         else
           unless user_access.can_push_to_branch?(branch_name)
-            raise GitAccess::UnauthorizedError, ERROR_MESSAGES[:push_protected_branch]
+            message = if project.empty_repo?
+                        project_empty_push_message
+                      else
+                        ERROR_MESSAGES[:push_protected_branch]
+                      end
+
+            raise GitAccess::UnauthorizedError, message
           end
         end
+      end
+
+      def project_empty_push_message
+        <<~MESSAGE
+
+        A default branch (e.g. master) does not exist for #{project.full_path}
+        Ask the project Owner of Maintainer to create a default branch:
+
+          #{project_members_url}
+
+        MESSAGE
+      end
+
+      def project_members_url
+        Gitlab::Routing.url_helpers.project_project_members_url(project)
       end
 
       def tag_checks

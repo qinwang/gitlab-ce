@@ -132,6 +132,25 @@ describe Gitlab::Checks::ChangeAccess do
           expect { subject.exec }.to raise_error(Gitlab::GitAccess::UnauthorizedError, 'You are not allowed to push code to protected branches on this project.')
         end
 
+        context 'when project repository is empty' do
+          let(:project) { create(:project) }
+
+          it 'raises an error if the user is not allowed to push to protected branches' do
+            message = <<~MESSAGE
+
+            A default branch (e.g. master) does not exist for #{project.full_path}
+            Ask the project Owner of Maintainer to create a default branch:
+
+              #{Gitlab::Routing.url_helpers.project_project_members_url(project)}
+
+            MESSAGE
+
+            expect(user_access).to receive(:can_push_to_branch?).and_return(false)
+
+            expect { subject.exec }.to raise_error(Gitlab::GitAccess::UnauthorizedError, message)
+          end
+        end
+
         context 'branch deletion' do
           let(:newrev) { '0000000000000000000000000000000000000000' }
           let(:ref) { 'refs/heads/feature' }
