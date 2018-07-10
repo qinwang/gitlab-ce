@@ -45,7 +45,7 @@ There's also a collection of repositories with [example projects](https://gitlab
 
 ## Code quality analysis
 
-[Analyze code quality with the Code Climate CLI](code_climate.md).
+[Analyze code quality with the Code Climate CLI](code_quality.md).
 
 ## Static Application Security Testing (SAST)
 
